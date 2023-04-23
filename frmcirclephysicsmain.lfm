@@ -1,0 +1,381 @@
+object Form1: TForm1
+  Left = 632
+  Height = 804
+  Top = 164
+  Width = 1180
+  Caption = 'Form1'
+  ClientHeight = 804
+  ClientWidth = 1180
+  OnClick = FormClick
+  OnCreate = FormCreate
+  OnMouseUp = FormMouseUp
+  LCLVersion = '2.2.4.0'
+  object lblAngle: TLabel
+    Left = 128
+    Height = 15
+    Top = 15
+    Width = 31
+    Caption = '&Angle'
+    FocusControl = edtAngle
+    ParentColor = False
+  end
+  object edtAngle: TEdit
+    Left = 176
+    Height = 23
+    Top = 11
+    Width = 80
+    TabOrder = 0
+    Text = '191'
+  end
+  object lblVelocity: TLabel
+    Left = 128
+    Height = 15
+    Top = 48
+    Width = 41
+    Caption = '&Velocity'
+    ParentColor = False
+  end
+  object edtVelocity: TEdit
+    Left = 176
+    Height = 23
+    Top = 43
+    Width = 80
+    TabOrder = 1
+    Text = '1.3'
+  end
+  object btnTrigger: TButton
+    Left = 264
+    Height = 25
+    Top = 25
+    Width = 75
+    Action = actTrigger
+    TabOrder = 2
+  end
+  object chaVelocity: TChart
+    Left = 808
+    Height = 208
+    Top = 0
+    Width = 368
+    AxisList = <    
+      item
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelFont.Orientation = 900
+        Title.LabelBrush.Style = bsClear
+      end    
+      item
+        Alignment = calBottom
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelBrush.Style = bsClear
+      end>
+    Title.Text.Strings = (
+      'Velocity'
+    )
+    Title.Visible = True
+    object VelocityLineSeries: TLineSeries
+      Title = 'Velocity'
+      LinePen.Color = clRed
+    end
+  end
+  object chaDistance: TChart
+    Left = 808
+    Height = 200
+    Top = 192
+    Width = 368
+    AxisList = <    
+      item
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelFont.Orientation = 900
+        Title.LabelBrush.Style = bsClear
+      end    
+      item
+        Alignment = calBottom
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelBrush.Style = bsClear
+      end>
+    Title.Text.Strings = (
+      'Displacement'
+    )
+    Title.Visible = True
+    object chaDisplacementLineSeries: TLineSeries
+    end
+  end
+  object chaDistanceToTop: TChart
+    Left = 928
+    Height = 96
+    Top = 392
+    Width = 124
+    AxisList = <    
+      item
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelFont.Orientation = 900
+        Title.LabelBrush.Style = bsClear
+      end    
+      item
+        Alignment = calBottom
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelBrush.Style = bsClear
+      end>
+    Title.Text.Strings = (
+      'TAChart'
+    )
+    object chaDistanceToTopLineSeries: TLineSeries
+    end
+  end
+  object chaDistanceToBottom: TChart
+    Left = 928
+    Height = 96
+    Top = 496
+    Width = 124
+    AxisList = <    
+      item
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelFont.Orientation = 900
+        Title.LabelBrush.Style = bsClear
+      end    
+      item
+        Alignment = calBottom
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelBrush.Style = bsClear
+      end>
+    Title.Text.Strings = (
+      'TAChart'
+    )
+    object chaDistanceToBottomLineSeries: TLineSeries
+    end
+  end
+  object chaDistanceToRight: TChart
+    Left = 1056
+    Height = 96
+    Top = 448
+    Width = 124
+    AxisList = <    
+      item
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelFont.Orientation = 900
+        Title.LabelBrush.Style = bsClear
+      end    
+      item
+        Alignment = calBottom
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelBrush.Style = bsClear
+      end>
+    Title.Text.Strings = (
+      'TAChart'
+    )
+    object chaDistanceToRightLineSeries: TLineSeries
+    end
+  end
+  object chaDistanceToLeft: TChart
+    Left = 808
+    Height = 96
+    Top = 448
+    Width = 124
+    AxisList = <    
+      item
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelFont.Orientation = 900
+        Title.LabelBrush.Style = bsClear
+      end    
+      item
+        Alignment = calBottom
+        Marks.LabelBrush.Style = bsClear
+        Minors = <>
+        Title.LabelBrush.Style = bsClear
+      end>
+    Title.Text.Strings = (
+      'TAChart'
+    )
+    object chaDistanceToLeftLineSeries: TLineSeries
+    end
+  end
+  object lstEvents: TListBox
+    Left = 816
+    Height = 200
+    Top = 592
+    Width = 356
+    ItemHeight = 0
+    TabOrder = 9
+  end
+  object edtTime: TEdit
+    Left = 424
+    Height = 23
+    Top = 10
+    Width = 80
+    TabOrder = 10
+    Text = '557.0'
+  end
+  object btnRenderFrame: TButton
+    Left = 512
+    Height = 25
+    Top = 8
+    Width = 104
+    Caption = 'Render Frame'
+    OnClick = btnRenderFrameClick
+    TabOrder = 11
+  end
+  object lblFrameTime: TLabel
+    Left = 352
+    Height = 15
+    Top = 14
+    Width = 62
+    Caption = 'Frame &Time'
+    FocusControl = edtTime
+    ParentColor = False
+  end
+  object lblTimeIncrement: TLabel
+    Left = 352
+    Height = 15
+    Top = 46
+    Width = 45
+    Caption = 'Time &Inc'
+    FocusControl = edtTimeIncrement
+    ParentColor = False
+  end
+  object edtTimeIncrement: TEdit
+    Left = 424
+    Height = 23
+    Top = 43
+    Width = 80
+    TabOrder = 12
+    Text = '20.0'
+  end
+  object btnTimeAdd: TButton
+    Left = 512
+    Height = 25
+    Top = 43
+    Width = 32
+    Caption = '&+'
+    OnClick = btnTimeAddClick
+    TabOrder = 13
+  end
+  object btnTimeSubtract: TButton
+    Left = 584
+    Height = 25
+    Top = 43
+    Width = 32
+    Caption = '&-'
+    OnClick = btnTimeSubtractClick
+    TabOrder = 14
+  end
+  object lblOriginX: TLabel
+    Left = 8
+    Height = 15
+    Top = 15
+    Width = 43
+    Caption = 'Origin &X'
+    FocusControl = edtOriginX
+    ParentColor = False
+  end
+  object edtOriginX: TEdit
+    Left = 64
+    Height = 23
+    Top = 10
+    Width = 56
+    TabOrder = 15
+    Text = '50'
+  end
+  object lblOriginY: TLabel
+    Left = 8
+    Height = 15
+    Top = 38
+    Width = 43
+    Caption = 'Origin &Y'
+    FocusControl = edtOriginY
+    ParentColor = False
+  end
+  object edtOriginY: TEdit
+    Left = 64
+    Height = 23
+    Top = 38
+    Width = 56
+    TabOrder = 16
+    Text = '50'
+  end
+  object lblDegrees: TLabel
+    Left = 632
+    Height = 15
+    Top = 11
+    Width = 21
+    Caption = '&Deg'
+    ParentColor = False
+  end
+  object edtDegrees: TEdit
+    Left = 664
+    Height = 23
+    Top = 8
+    Width = 48
+    TabOrder = 17
+    Text = '30'
+  end
+  object lblRadians: TLabel
+    Left = 632
+    Height = 15
+    Top = 43
+    Width = 54
+    Caption = 'lblRadians'
+    ParentColor = False
+  end
+  object btnCalc: TButton
+    Left = 718
+    Height = 25
+    Top = 5
+    Width = 75
+    Caption = '&Calc'
+    OnClick = btnCalcClick
+    TabOrder = 18
+  end
+  object Label1: TLabel
+    Left = 632
+    Height = 1
+    Top = 72
+    Width = 1
+    ParentColor = False
+  end
+  object lblSin: TLabel
+    Left = 632
+    Height = 15
+    Top = 68
+    Width = 29
+    Caption = 'lblSin'
+    ParentColor = False
+  end
+  object lblCos: TLabel
+    Left = 632
+    Height = 15
+    Top = 96
+    Width = 33
+    Caption = 'lblCos'
+    ParentColor = False
+  end
+  object ActionList1: TActionList
+    Images = ImageList1
+    Left = 1024
+    Top = 88
+    object actTrigger: TAction
+      Caption = '&Trigger'
+      OnExecute = actTriggerExecute
+    end
+  end
+  object ImageList1: TImageList
+    Left = 1112
+    Top = 80
+  end
+  object AnimationTimer: TTimer
+    Enabled = False
+    Interval = 5
+    OnTimer = AnimationTimerTimer
+    Left = 1080
+    Top = 16
+  end
+end
