@@ -26,6 +26,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="bgragames"/>
+      </Item>
+      <Item>
         <PackageName Value="TAChartLazarusPkg"/>
       </Item>
       <Item>
@@ -41,6 +44,7 @@
         <Filename Value="frmcirclephysicsmain.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmCirclePhysicsMain"/>
       </Unit>
@@ -58,6 +62,15 @@
         <Filename Value="untrajectorypaths.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unTrajectoryPaths"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uncirclephysicsconstants.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="unhelperinterfaces.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unHelperInterfaces"/>
       </Unit>
     </Units>
   </ProjectOptions>

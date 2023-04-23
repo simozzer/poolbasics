@@ -7,13 +7,13 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, StdCtrls,
   MaskEdit, ExtCtrls, TAGraph, TASeries, unBoardRenderer,
-  unCirclePhysics, unTrajectoryPaths;
+  unCirclePhysics, unTrajectoryPaths, BGRABitmap, bgPanel, unHelperInterfaces;
 
 type
 
   { TForm1 }
 
-  TForm1 = class(TForm)
+  TForm1 = class(TForm, IBasicLogger)
     actTrigger: TAction;
     ActionList1: TActionList;
     btnTrigger: TButton;
@@ -57,20 +57,20 @@ type
     procedure actRenderExecute(Sender: TObject; const dTime: double);
     procedure actTriggerExecute(Sender: TObject);
     procedure AnimationTimerTimer(Sender: TObject);
+
     procedure btnCalcClick(Sender: TObject);
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
-    procedure FormClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
-    procedure FormMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+
   private
     FBoardRenderer: TBoardRenderer;
     FBallVector: TBasicVector;
     FcStartAnimationTime: cardinal;
-    FTrajectories: TTrajectoryPath;
+    FTrajectories: ITrajectoryPaths;
     procedure PlotTrajectories;
+    procedure LogMessage(const sMessage: String);
+
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -82,13 +82,15 @@ var
 
 implementation
 
+
+uses
+  uncirclephysicsconstants;
 {$R *.lfm}
 
-const
-  RADIUS = 8;
 
-type
-  TEdgeHit = (ehNone, ehLeft, ehTop, ehRight, ehBottom);
+
+
+
 
 { TForm1 }
 
@@ -104,10 +106,10 @@ begin
   BoardCanvas.Pen.Color := clWhite;
   dBallCenterX := FTrajectories.GetXAtTime(dTime);
   dBallCenterY := FTrajectories.GetYAtTime(dTime);
-  BoardCanvas.Ellipse(Round(dBallCenterX - RADIUS),
-    Round(dBallCenterY - RADIUS),
-    round(dBallCenterX + RADIUS),
-    ROUND(dBallCenterY + RADIUS));
+  BoardCanvas.Ellipse(Round(dBallCenterX - BALL_RADIUS),
+    Round(dBallCenterY - BALL_RADIUS),
+    round(dBallCenterX + BALL_RADIUS),
+    ROUND(dBallCenterY + BALL_RADIUS));
 
   Canvas.Draw(10, 100, FBoardRenderer.Bitmap);
 end;
@@ -150,22 +152,24 @@ begin
       AVector.InitialVelocity, cTimeSinceStart));
 
     chaDistanceToRightLineSeries.add(FBoardRenderer.Bitmap.Width -
-      RADIUS - AVector.GetXAtTime(cTimeSinceStart));
-    chaDistanceToLeftLineSeries.add(AVector.GetXAtTime(cTimeSinceStart) - RADIUS);
+      BALL_RADIUS - AVector.GetXAtTime(cTimeSinceStart));
+    chaDistanceToLeftLineSeries.add(AVector.GetXAtTime(cTimeSinceStart) - BALL_RADIUS);
     chaDistanceToBottomLineSeries.add(FBoardRenderer.Bitmap.Height -
-      RADIUS - AVector.GetYAtTime(cTimeSinceStart));
-    chaDistanceToTopLineSeries.Add(AVector.GetYAtTime(cTimeSinceStart) - RADIUS);
+      BALL_RADIUS - AVector.GetYAtTime(cTimeSinceStart));
+    chaDistanceToTopLineSeries.Add(AVector.GetYAtTime(cTimeSinceStart) - BALL_RADIUS);
     actRenderExecute(Self, cTimeSinceStart);
   end;
 
 end;
 
+
+
 procedure TForm1.btnCalcClick(Sender: TObject);
 var
-  dRadians : double;
+  dRadians: double;
 begin
-  dRadians := (pi/180) * StrToFloatDef(edtDegrees.Text,0.0);
-  lblRadians.Caption:= 'Rad ' + FloatToStr(dRadians);
+  dRadians := (pi / 180) * StrToFloatDef(edtDegrees.Text, 0.0);
+  lblRadians.Caption := 'Rad ' + FloatToStr(dRadians);
   lblSin.Caption := 'Sin ' + FloatToStr(Sin(dRadians));
   lblCos.Caption := 'Cos ' + FloatToStr(Cos(dRadians));
 end;
@@ -187,31 +191,13 @@ procedure TForm1.btnTimeSubtractClick(Sender: TObject);
 begin
   edtTime.Text := FloatToStr(StrToFloatDef(edtTime.Text, 0.0) -
     StrToFloatDef(edtTimeIncrement.Text, 0.0));
-  actRenderExecute(Self, StrToFloatDef(edtTime.Text,0.0));
+  actRenderExecute(Self, StrToFloatDef(edtTime.Text, 0.0));
 end;
 
-procedure TForm1.FormClick(Sender: TObject);
-begin
-
-end;
-
-procedure TForm1.FormCreate(Sender: TObject);
-begin
-
-end;
-
-procedure TForm1.FormMouseUp(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-
-end;
 
 procedure TForm1.PlotTrajectories;
 var
-  dTimeToStop, dXAtStop, dYatStop, dDeplacement, dEarliestHit, dHitTime: double;
-  dXAtCollide, dyAtCollide, dVelAtCollide, dCollideTime, dPreCollisionAngle: Double;
-  APathPart, aNextPathPart: TBasicVector;
-  EdgeHit: TEdgeHit;
+  APathPart: TBasicVector;
 begin
   lstEvents.Clear;
   FBallVector.InitialVelocity := StrToFloatDef(edtVelocity.Text, 0.0);
@@ -219,140 +205,36 @@ begin
   FBallVector.OriginX := StrToFloatDef(edtOriginX.Text, 0.0);
   FBallVector.OriginY := StrToFloatDef(edtOriginY.Text, 0.0);
 
-  FTrajectories.Trajectories.Clear;
-
-
+  FTrajectories.Items.Clear;
 
   APathPart := TBasicVector.Create(FBallVector.OriginX, FBallVector.OriginY,
     FBallVector.InitialVelocity, FBallVector.Angle, 0);
-  FTrajectories.Trajectories.Add(APathPart);
+  FTrajectories.Items.Add(APathPart);
 
-  repeat
-    EdgeHit := ehNone;
+  FTrajectories.CalculateTrajectories;
 
-    dTimeToStop := TBasicMotion.GetTimeToStop(APathPart.InitialVelocity);
-    dEarliestHit := dTimeToStop;
+end;
 
-    dXAtStop := APathPart.GetXAtTime(dTimeToStop);
-    dYatStop := APathPart.GetYAtTime(dTimeToStop);
-
-    if (dXAtStop <= RADIUS) then
-    begin
-      dDeplacement := APathPart.OriginX - RADIUS;
-      dHitTime := APathPart.GetTimeToXDeplacement(dDeplacement);
-      if (dHitTime < dEarliestHit) and (dHitTime > 0) then
-      begin
-        EdgeHit := ehLeft;
-        dEarliestHit := dHitTime;
-      end;
-    end;
-
-    if (dYAtStop <= RADIUS) then
-    begin
-      dDeplacement := APathPart.OriginY - RADIUS;
-      dHitTime := APathPart.GetTimeToYDeplacement(dDeplacement);
-      if (dHitTime < dEarliestHit) and (dHitTime > 0) then
-      begin
-        EdgeHit := ehTop;
-        dEarliestHit := dHitTime;
-      end;
-    end;
-
-    if (dXAtStop >= (FBoardRenderer.Bitmap.Width - RADIUS)) then
-    begin
-      dDeplacement := FBoardRenderer.Bitmap.Width - RADIUS - APathPart.OriginX;
-      dHitTime := APathPart.GetTimeToXDeplacement(dDeplacement);
-      if (dHitTime < dEarliestHit) and (dHitTime > 0) then
-      begin
-        EdgeHit := ehRight;
-        dEarliestHit := dHitTime;
-      end;
-    end;
-
-
-    if (dYAtStop > (FBoardRenderer.Bitmap.Height - RADIUS)) then
-    begin
-      dDeplacement := FBoardRenderer.Bitmap.Height - RADIUS - APathPart.OriginY;
-      dHitTime := APathPart.GetTimeToYDeplacement(dDeplacement);
-      if (dHitTime < dEarliestHit) then
-      begin
-        EdgeHit := ehBottom;
-        dEarliestHit := dHitTime;
-      end;
-    end;
-
-    if (EdgeHit <> ehNone) then
-    begin
-      dXAtCollide := APathPart.GetXAtTime(dEarliestHit);
-      dYAtCollide := APathPart.GetYAtTime(dEarliestHit);
-      dVelAtCollide := TBasicMotion.GetVelocityAtTime(APathPart.InitialVelocity, dEarliestHit);
-      dCollideTime := APathPart.StartTime + dEarliestHit;
-      dPreCollisionAngle := APathPart.Angle;
-
-      APathPart.EndTime:= dCollideTime;
-
-      aNextPathPart := TBasicVector.Create(dXAtCollide, dyAtCollide,
-       dVelAtCollide, dPreCollisionAngle, dCollideTime);
-
-      FTrajectories.Trajectories.Add(aNextPathPart);
-
-      APathPart := aNextPathPart;
-      lstEvents.Items.Add(APathPart.ToString());
-    end;
-
-
-    case EdgeHit of
-      ehNone: lstEvents.Items.Add('No Edge Hit');
-      ehLeft:
-      begin
-        lstEvents.Items.Add('Hit left edge');
-        APathPart.ReverseX;
-      end;
-
-      ehTop:
-      begin
-        lstEvents.Items.Add('Hit top edge');
-        aNextPathPart.ReverseY();
-      end;
-
-      ehRight:
-      begin
-        lstEvents.Items.Add('Hit right edge');
-        aNextPathPart.ReverseX();
-      end;
-
-      ehBottom:
-      begin
-        lstEvents.Items.Add('Hit bottom edge');
-        aNextPathPart.ReverseY();
-      end;
-
-    end;
-    if EdgeHit <> ehNone then
-    begin
-      lstEvents.Items.Add('End Time: ' + FloatToStr(APathPart.StartTime) +
-        ', Angle: ' + FloatToStr(TBasicMotion.RadToDeg(APathPart.Angle)));
-
-    end;
-
-  until EdgeHit = ehNone;
+procedure TForm1.LogMessage(const sMessage: String);
+begin
+  lstEvents.Items.Add(sMessage);
 end;
 
 constructor TForm1.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FBoardRenderer := TBoardRenderer.Create(600, 600, clCream);
+  FBoardRenderer := TBoardRenderer.Create(BOARD_WIDTH, BOARD_HEIGHT, clCream);
   FBallVector := TBasicVector.Create(300, 300, 1, 0.0, 0);
   FTrajectories := TTrajectoryPath.Create;
+  (FTrajectories as IBasicLoggerClient).SetLogger(Self);
 end;
 
 destructor TForm1.Destroy;
 begin
   FBoardRenderer.Free;
-  FTrajectories.Free;
+  FTrajectories := nil;
   FBallVector.Free;
   inherited Destroy;
 end;
 
 end.
-

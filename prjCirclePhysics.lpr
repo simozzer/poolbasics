@@ -11,7 +11,8 @@ uses
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, tachartlazaruspkg, frmCirclePhysicsMain, unCirclePhysics,
-  unBoardRenderer, unTrajectoryPaths
+  unBoardRenderer, unTrajectoryPaths, uncirclephysicsconstants, 
+unHelperInterfaces
   { you can add units after this };
 
 {$R *.res}

@@ -9,6 +9,19 @@ uses
 
 type
 
+  { T2DVector }
+
+  T2DVector = class
+  private
+    FdMagnitude: double;
+    FdXLength: double;
+    FdYLength: double;
+    FdAngle: double;
+  public
+    constructor CreateWithAngle(dMagnitude, dAngle: double);
+    constructor Create(dXLength, dYLength: double);
+  end;
+
   { TBasicVector }
 
   TBasicVector = class(TPersistent)
@@ -16,8 +29,8 @@ type
     FdInitialVelocity: double;
     FdOriginX: double;
     FdOriginY: double;
-    FdFinalX : Double;
-    FdFinalY : Double;
+    FdFinalX: double;
+    FdFinalY: double;
     FdAngle: double;
     FdEndTime: double;
     FdStartTime: double;
@@ -39,7 +52,7 @@ type
     function GetDecelY(): double;
     procedure ReverseX();
     procedure ReverseY();
-    function ToString(): String;
+    function ToString(): string;
     property InitialVelocity: double read FdInitialVelocity write SetInitialVelocity;
     property OriginX: double read FdOriginX write FdOriginX;
     property OriginY: double read FdOriginY write FdOriginY;
@@ -70,7 +83,7 @@ type
 implementation
 
 uses
-  LazLogger;
+  LazLogger, Math;
 
 {*
 v = u + at.
@@ -81,16 +94,43 @@ s = ut + ½at²
 const
   DECELERATION = -0.00125;
 
+{ T2DVector }
+
+constructor T2DVector.CreateWithAngle(dMagnitude, dAngle: double);
+begin
+  FdMagnitude := dMagnitude;
+  FdAngle := dAngle;
+  FdXLength := FdMagnitude * Cos(dAngle);
+  FdYLength := FdMagnitude * Sin(FdAngle);
+end;
+
+constructor T2DVector.Create(dXLength, dYLength: double);
+begin
+  FdXLength := dXLength;
+  FdYLength := dYLength;
+  FdAngle := 0;
+  FdMagnitude := 0;
+  if (FdXLength <> 0) or (FdYLength <> 0) then
+  begin
+    FdMagnitude := Sqrt(sqr(FdXLength) + Sqr(FdYLength));
+
+    if (dXLength <> 0) then
+      FdAngle := ArcTan(dYLength / dXLength)
+    else
+      FdAngle := Math.ArcSin(dYLength / FdMagnitude);
+  end;
+end;
+
 { TBasicMotion }
 
 class function TBasicMotion.RadToDeg(const dRadians: double): double;
 begin
-  RESULT := (180/pi) * dRadians;
+  Result := (180 / pi) * dRadians;
 end;
 
 class function TBasicMotion.DegToRad(const dDegrees: double): double;
 begin
-  RESULT := (pi / 180) * dDegrees;
+  Result := (pi / 180) * dDegrees;
 end;
 
 { TBasicVector }
@@ -138,7 +178,7 @@ begin
   if FdAngle = AValue then Exit;
   while (AValue > (2 * Pi)) do
   begin
-    AValue := AValue - ( 2 *Pi);
+    AValue := AValue - (2 * Pi);
   end;
   while (AValue < 0) do
   begin
@@ -147,8 +187,8 @@ begin
   FdAngle := AValue;
 end;
 
-constructor TBasicVector.Create(
-  const dOriginX, dOriginY, dVelocity, dAngle, dStartTime: double);
+constructor TBasicVector.Create(const dOriginX, dOriginY, dVelocity,
+  dAngle, dStartTime: double);
 begin
   FdOriginX := dOriginX;
   FdOriginY := dOriginY;
@@ -175,19 +215,21 @@ function TBasicVector.GetTimeToXDeplacement(const dDeplacement: double): double;
   // => AT = V - U
   // => T = (V-U)/A
 var
-  dVectorDeplacement : Double;
+  dVectorDeplacement: double;
 begin
-  dVectorDeplacement := abs(dDeplacement/Cos(FdAngle));
-  RESULT := Abs((FdInitialVelocity - TBasicMotion.GetVelocityAtDistance(FdInitialVelocity, dVectorDeplacement)) / DECELERATION);
+  dVectorDeplacement := abs(dDeplacement / Cos(FdAngle));
+  Result := Abs((FdInitialVelocity - TBasicMotion.GetVelocityAtDistance(
+    FdInitialVelocity, dVectorDeplacement)) / DECELERATION);
 end;
 
 function TBasicVector.GetTimeToYDeplacement(const dDeplacement: double): double;
 var
-  dVectorDeplacement : Double;
+  dVectorDeplacement: double;
 begin
   // TODO:: FIX
-  dVectorDeplacement := abs(dDeplacement/sin(FdAngle-Pi));
-  RESULT := Abs((FdInitialVelocity - TBasicMotion.GetVelocityAtDistance(FdInitialVelocity, dVectorDeplacement)) / DECELERATION);
+  dVectorDeplacement := abs(dDeplacement / sin(FdAngle - Pi));
+  Result := Abs((FdInitialVelocity - TBasicMotion.GetVelocityAtDistance(
+    FdInitialVelocity, dVectorDeplacement)) / DECELERATION);
 end;
 
 function TBasicVector.GetDecelX: double;
@@ -201,58 +243,19 @@ begin
 end;
 
 procedure TBasicVector.ReverseX;
-var
-  xVel, yVel, dDeg: double;
 begin
-  dDeg := (180/PI) * Angle;
-
-  xVel := GetInitialVelX();
-  yVel := GetInitialVelY();
-
-  if yVel > 0 then
-  begin
-    if xVel > 0 then
-       Angle := Pi - Angle
-    else
-       Angle := pi - Angle;
-  end
-  else
-  begin
-    if xVel > 0 then
-       Angle := Pi - Angle
-    else
-       Angle := pi - Angle;
-  end;
+  Angle := pi - Angle;
 end;
 
 procedure TBasicVector.ReverseY;
-var
-  xVel, yVel, dDeg: double;
 begin
-  dDeg := (180/PI) * Angle;
-
-  xVel := GetInitialVelX();
-  yVel := GetInitialVelY();
-
-  if yVel > 0 then
-  begin
-    if xVel > 0 then
-       Angle := - Angle
-    else
-       Angle := - Angle;
-  end
-  else
-  begin
-    if xVel > 0 then
-       Angle := - Angle
-    else
-       Angle := - Angle;
-  end;
+  Angle := -Angle;
 end;
 
-function TBasicVector.ToString: String;
+function TBasicVector.ToString: string;
 begin
-  RESULT := Format('%F X:%F, Y:%F, V:%F, A:%F (%F)', [StartTime, OriginX, OriginY, InitialVelocity, Angle, (180/pi) *Angle]);
+  Result := Format('%F X:%F, Y:%F, V:%F, A:%F (%F)',
+    [StartTime, OriginX, OriginY, InitialVelocity, Angle, (180 / pi) * Angle]);
 end;
 
 
