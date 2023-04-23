@@ -226,8 +226,7 @@ function TBasicVector.GetTimeToYDeplacement(const dDeplacement: double): double;
 var
   dVectorDeplacement: double;
 begin
-  // TODO:: FIX
-  dVectorDeplacement := abs(dDeplacement / sin(FdAngle - Pi));
+  dVectorDeplacement := abs(dDeplacement / sin(FdAngle));
   Result := Abs((FdInitialVelocity - TBasicMotion.GetVelocityAtDistance(
     FdInitialVelocity, dVectorDeplacement)) / DECELERATION);
 end;
