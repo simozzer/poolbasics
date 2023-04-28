@@ -26,6 +26,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="bgracontrols"/>
+      </Item>
+      <Item>
         <PackageName Value="bgragames"/>
       </Item>
       <Item>
@@ -72,6 +75,21 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unHelperInterfaces"/>
       </Unit>
+      <Unit>
+        <Filename Value="unothercircles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unOtherCircles"/>
+      </Unit>
+      <Unit>
+        <Filename Value="unphysicsinterfaces.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unPhysicsInterfaces"/>
+      </Unit>
+      <Unit>
+        <Filename Value="unphysicsarea.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unPhysicsArea"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -84,6 +102,13 @@
       <IncludeFiles Value="$(ProjOutDir)"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <CodeGeneration>
+      <TargetCPU Value="x86_64"/>
+      <TargetOS Value="win64"/>
+      <Optimizations>
+        <OptimizationLevel Value="0"/>
+      </Optimizations>
+    </CodeGeneration>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>

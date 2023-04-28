@@ -6,8 +6,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, StdCtrls,
-  MaskEdit, ExtCtrls, TAGraph, TASeries, unBoardRenderer,
-  unCirclePhysics, unTrajectoryPaths, BGRABitmap, bgPanel, unHelperInterfaces;
+  MaskEdit, ExtCtrls, TAGraph, TASeries, unBoardRenderer, unCirclePhysics,
+  unTrajectoryPaths, BGRABitmap,
+  BGRAKnob, unHelperInterfaces, unOtherCircles, unPhysicsArea;
 
 type
 
@@ -21,6 +22,7 @@ type
     btnTimeAdd: TButton;
     btnTimeSubtract: TButton;
     btnCalc: TButton;
+    btnClearLog: TButton;
     chaDistance: TChart;
     chaDisplacementLineSeries: TLineSeries;
     chaDistanceToBottomLineSeries: TLineSeries;
@@ -32,6 +34,7 @@ type
     chaDistanceToLeft: TChart;
     chaDistanceToTopLineSeries: TLineSeries;
     chaVelocity: TChart;
+    chkUpdatePosition: TCheckBox;
     edtDegrees: TEdit;
     edtOriginX: TEdit;
     edtOriginY: TEdit;
@@ -59,20 +62,27 @@ type
     procedure AnimationTimerTimer(Sender: TObject);
 
     procedure btnCalcClick(Sender: TObject);
+    procedure btnClearLogClick(Sender: TObject);
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
+
 
   private
     FBoardRenderer: TBoardRenderer;
     FBallVector: TBasicVector;
     FcStartAnimationTime: cardinal;
     FTrajectories: ITrajectoryPaths;
+    FlstCircles: TCirclesList;
+
+    FAngleControl: TAngleControl;
     procedure PlotTrajectories;
-    procedure LogMessage(const sMessage: String);
+    procedure LogMessage(const sMessage: string);
+
 
 
   public
+    procedure DoAngleChanged(Sender: TObject);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
@@ -85,9 +95,8 @@ implementation
 
 uses
   uncirclephysicsconstants;
+
 {$R *.lfm}
-
-
 
 
 
@@ -98,18 +107,24 @@ procedure TForm1.actRenderExecute(Sender: TObject; const dTime: double);
 var
   BoardCanvas: TCanvas;
   dBallCenterX, dBallCenterY: double;
+  i: integer;
 begin
   FBoardRenderer.Render;
   BoardCanvas := FBoardRenderer.Bitmap.Canvas;
 
   BoardCanvas.Brush.Color := clGray;
-  BoardCanvas.Pen.Color := clWhite;
+  BoardCanvas.Pen.Color := clBlack;
   dBallCenterX := FTrajectories.GetXAtTime(dTime);
   dBallCenterY := FTrajectories.GetYAtTime(dTime);
   BoardCanvas.Ellipse(Round(dBallCenterX - BALL_RADIUS),
     Round(dBallCenterY - BALL_RADIUS),
     round(dBallCenterX + BALL_RADIUS),
     ROUND(dBallCenterY + BALL_RADIUS));
+
+  for i := 0 to pred(FlstCircles.Count) do
+  begin
+    FlstCircles[i].Render(BoardCanvas);
+  end;
 
   Canvas.Draw(10, 100, FBoardRenderer.Bitmap);
 end;
@@ -135,6 +150,8 @@ procedure TForm1.AnimationTimerTimer(Sender: TObject);
 var
   cTimeSinceStart: cardinal;
   AVector: TBasicVector;
+
+  dVectorDuration: double;
 begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
 
@@ -143,9 +160,27 @@ begin
   begin
     actTrigger.Enabled := True;
     AnimationTimer.Enabled := False;
+
+
+    if (FTrajectories.Count > 0) then
+    begin
+      AVector := FTrajectories.getItem(Pred(FTrajectories.GetCount));
+      if (AVector <> nil) then
+      begin
+        edtTime.Text := FloatToStr(AVector.EndTime);
+        dVectorDuration := AVector.EndTime - AVector.StartTime;
+        if (chkUpdatePosition.Checked) then
+        begin
+          edtOriginX.Text := FloatToStr(AVector.GetXAtTime(dVectorDuration));
+          edtOriginY.Text := FloatToStr(AVector.GetYAtTime(dVectorDuration));
+        end;
+      end;
+    end;
+
   end
   else
   begin
+
     VelocityLineSeries.Add(TBasicMotion.GetVelocityAtTime(
       AVector.InitialVelocity, cTimeSinceStart));
     chaDisplacementLineSeries.Add(TBasicMotion.GetDistanceAtTime(
@@ -157,6 +192,7 @@ begin
     chaDistanceToBottomLineSeries.add(FBoardRenderer.Bitmap.Height -
       BALL_RADIUS - AVector.GetYAtTime(cTimeSinceStart));
     chaDistanceToTopLineSeries.Add(AVector.GetYAtTime(cTimeSinceStart) - BALL_RADIUS);
+
     actRenderExecute(Self, cTimeSinceStart);
   end;
 
@@ -172,6 +208,13 @@ begin
   lblRadians.Caption := 'Rad ' + FloatToStr(dRadians);
   lblSin.Caption := 'Sin ' + FloatToStr(Sin(dRadians));
   lblCos.Caption := 'Cos ' + FloatToStr(Cos(dRadians));
+
+  FAngleControl.Angle:= dRadians;
+end;
+
+procedure TForm1.btnClearLogClick(Sender: TObject);
+begin
+  lstEvents.Clear;
 end;
 
 procedure TForm1.btnRenderFrameClick(Sender: TObject);
@@ -206,6 +249,7 @@ begin
   FBallVector.OriginY := StrToFloatDef(edtOriginY.Text, 0.0);
 
   FTrajectories.Items.Clear;
+  FTrajectories.SetCircles(FlstCircles);
 
   APathPart := TBasicVector.Create(FBallVector.OriginX, FBallVector.OriginY,
     FBallVector.InitialVelocity, FBallVector.Angle, 0);
@@ -215,18 +259,42 @@ begin
 
 end;
 
-procedure TForm1.LogMessage(const sMessage: String);
+procedure TForm1.LogMessage(const sMessage: string);
 begin
   lstEvents.Items.Add(sMessage);
 end;
 
+procedure TForm1.DoAngleChanged(Sender: TObject);
+var
+  dAngle : Double;
+begin
+  dAngle :=FAngleControl.Angle + pi;
+  if (dAngle > 2 * pi) then dAngle := dAngle - 2 * pi;
+  dAngle:= dAngle * (180/pi);
+  edtAngle.Text := FloatToStr(dAngle);
+end;
+
 constructor TForm1.Create(AOwner: TComponent);
+var
+  ACircle: TCircle;
 begin
   inherited Create(AOwner);
   FBoardRenderer := TBoardRenderer.Create(BOARD_WIDTH, BOARD_HEIGHT, clCream);
   FBallVector := TBasicVector.Create(300, 300, 1, 0.0, 0);
   FTrajectories := TTrajectoryPath.Create;
   (FTrajectories as IBasicLoggerClient).SetLogger(Self);
+
+  FlstCircles := TCirclesList.Create;
+  ACircle := TCircle.Create(300, 300, BALL_RADIUS);
+  FlstCircles.Add(ACircle);
+
+  FAngleControl := TAngleControl.Create(Self);
+  InsertControl(FAngleControl);
+  FAngleControl.Left := 700;
+  FAngleControl.Top := 180;
+  FAngleControl.OnChange := @Self.DoAngleChanged;
+  FAngleControl.Angle:= 180;
+
 end;
 
 destructor TForm1.Destroy;
@@ -234,6 +302,10 @@ begin
   FBoardRenderer.Free;
   FTrajectories := nil;
   FBallVector.Free;
+  FlstCircles.Clear;
+  FlstCircles.Free;
+  Self.RemoveControl(FAngleControl);
+  FAngleControl.Free;;
   inherited Destroy;
 end;
 
