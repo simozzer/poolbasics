@@ -22,8 +22,6 @@ type
     FdAngle: double;
     FOnChange: TNotifyEvent;
     FbSettingAngle: boolean;
-
-
     procedure SetAngleColor(AValue: TColor);
     procedure SetFillColor(AValue: TColor);
     procedure SetCircleFillColor(AValue: TColor);

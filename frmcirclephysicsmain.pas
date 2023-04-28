@@ -7,8 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, StdCtrls,
   MaskEdit, ExtCtrls, TAGraph, TASeries, unBoardRenderer, unCirclePhysics,
-  unTrajectoryPaths, BGRABitmap,
-  BGRAKnob, unHelperInterfaces, unOtherCircles, unPhysicsArea;
+  unTrajectoryPaths, BGRABitmap, unHelperInterfaces, unOtherCircles, unPhysicsArea;
 
 type
 
@@ -66,8 +65,8 @@ type
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
-
-
+    procedure FormPaint(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FBoardRenderer: TBoardRenderer;
     FBallVector: TBasicVector;
@@ -78,8 +77,6 @@ type
     FAngleControl: TAngleControl;
     procedure PlotTrajectories;
     procedure LogMessage(const sMessage: string);
-
-
 
   public
     procedure DoAngleChanged(Sender: TObject);
@@ -237,16 +234,27 @@ begin
   actRenderExecute(Self, StrToFloatDef(edtTime.Text, 0.0));
 end;
 
+procedure TForm1.FormPaint(Sender: TObject);
+begin
+  PlotTrajectories;
+  actRenderExecute(Self,0);
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+
+end;
+
 
 procedure TForm1.PlotTrajectories;
 var
   APathPart: TBasicVector;
 begin
   lstEvents.Clear;
-  FBallVector.InitialVelocity := StrToFloatDef(edtVelocity.Text, 0.0);
-  FBallVector.Angle := (Pi / 180) * StrToFloatDef(edtAngle.Text, 0.0);
-  FBallVector.OriginX := StrToFloatDef(edtOriginX.Text, 0.0);
-  FBallVector.OriginY := StrToFloatDef(edtOriginY.Text, 0.0);
+  FBallVector.InitialVelocity := StrToFloatDef(edtVelocity.Text, 1/0);
+  FBallVector.Angle := (Pi / 180) * StrToFloatDef(edtAngle.Text, 39.0);
+  FBallVector.OriginX := StrToFloatDef(edtOriginX.Text, 120);
+  FBallVector.OriginY := StrToFloatDef(edtOriginY.Text, 444);
 
   FTrajectories.Items.Clear;
   FTrajectories.SetCircles(FlstCircles);

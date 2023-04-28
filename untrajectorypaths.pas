@@ -51,6 +51,8 @@ type
     function GetCircles: TCirclesList;
     procedure SetCircles(const lstCircles: TCirclesList);
 
+    procedure ProcessEdgeHits(const AVector: TBasicVector;
+      var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
     function GetVectorForTime(const dTime: double): TBasicVector;
@@ -94,9 +96,10 @@ end;
 
 procedure TTrajectoryPath.CalculateTrajectories;
 var
-  dTimeToStop, dXAtStop, dYatStop, dDeplacement, dEarliestHit, dHitTime: double;
+  dTimeToStop,
+  dEarliestHit, dHitTime: double;
   dXAtCollide, dyAtCollide, dVelAtCollide, dCollideTime, dPreCollisionAngle: double;
-  APathPart, aNextPathPart: TBasicVector;
+  APathVector, aNextPathVector: TBasicVector;
   EdgeHit: TEdgeHit;
   ACircle: TCircle;
   i: integer;
@@ -114,18 +117,15 @@ var
   dOtherLengthOfMoveVectorAlongCollisionNormal_a2: double;
   dOptimisedP: double;
 
-  vecThisMovement : Tvector2_double;
+  vecThisMovement: Tvector2_double;
 begin
 
-  APathPart := TBasicVector(FTrajectories[0]);
+  APathVector := TBasicVector(FTrajectories[0]);
   repeat
     EdgeHit := ehNone;
 
-    dTimeToStop := TBasicMotion.GetTimeToStop(APathPart.InitialVelocity);
+    dTimeToStop := APathVector.GetTimeToStop;
     dEarliestHit := dTimeToStop;
-
-    dXAtStop := APathPart.GetXAtTime(dTimeToStop);
-    dYatStop := APathPart.GetYAtTime(dTimeToStop);
 
     aMainVecAfterCircleCollision.init_zero;
     aOtherVecAfterCircleCollision.init_zero;
@@ -136,200 +136,175 @@ begin
       for i := 0 to pred(FlstCircles.Count) do
       begin
         ACircle := FlstCircles[i];
-
-        // check if we travel far enough to hit circle
-        dDistance_dist := ACircle.Distance(APathPart.OriginX, APathPart.OriginY);
-        dSumRadii := BALL_RADIUS + ACircle.Radius;
-        dDistance_dist := dDistance_dist - dSumRadii;
-        if (dDistance_dist < TBasicMotion.GetDistanceToStop(
-          APathPart.InitialVelocity)) then
+        if ACircle.Stationary then
         begin
-          AThisVector := T2DVector.CreateWithAngle(dDistance_dist, APathPart.Angle);
-          try
-            // Get the normalized vector for this ball
-            NormalizedVector_N := AThisVector.GetNormalised;
+
+          // check if we travel far enough to hit circle
+          dDistance_dist := ACircle.Distance(APathVector.OriginX, APathVector.OriginY);
+          dSumRadii := BALL_RADIUS + ACircle.Radius;
+          dDistance_dist := dDistance_dist - dSumRadii;
+          if (dDistance_dist < TBasicMotion.GetDistanceToStop(
+            APathVector.InitialVelocity)) then
+          begin
+            AThisVector := T2DVector.CreateWithAngle(dDistance_dist, APathVector.Angle);
             try
-              // Get the vector between the 2 ball centers
-              AMinusVector_C :=
-                T2DVector.Create(ACircle.CenterX - APathPart.OriginX, ACircle.CenterY -
-                APathPart.OriginY);
+              // Get the normalized vector for this ball
+              NormalizedVector_N := AThisVector.GetNormalised;
               try
+                // Get the vector between the 2 ball centers
+                AMinusVector_C :=
+                  T2DVector.Create(ACircle.CenterX - APathVector.OriginX,
+                  ACircle.CenterY - APathVector.OriginY);
+                try
 
-                //dDotProduct := AMinusVector_C.Magnitude * cos(-AMinusVector_C.Angle);
-                dDotProduct_D := AMinusVector_C.GetDotProduct(NormalizedVector_N);
-                // alternative dotProduct = ax × bx + ay × by
+                  //dDotProduct := AMinusVector_C.Magnitude * cos(-AMinusVector_C.Angle);
+                  dDotProduct_D := AMinusVector_C.GetDotProduct(NormalizedVector_N);
+                  // alternative dotProduct = ax × bx + ay × by
 
-                LogMessage(format('Dot product: %f', [dDotProduct_D]));
+                  //LogMessage(format('Dot product: %f', [dDotProduct_D]));
 
-                // check we're moving towards the target
-                if (dDotProduct_D > 0) then
-                begin
-                  // Check that we get close enough for collision
-                  // double F = (lengthC * lengthC) - (D * D);
-                  dyDistanceToColissionSquared_F :=
-                    Sqr(AMinusVector_C.Magnitude) - sqr(dDotProduct_D);
-                  if (dyDistanceToColissionSquared_F < SQr(dSumRadii)) then
+                  // check we're moving towards the target
+                  if (dDotProduct_D > 0) then
                   begin
-                    // find the distance
-                    //double T = sumRadiiSquared - F;
-                    dXDiffereneAtCollision_T :=
-                      Sqr(dSumRadii) - dyDistanceToColissionSquared_F;
-                    if (dXDiffereneAtCollision_T >= 0) then
+                    // Check that we get close enough for collision
+                    // double F = (lengthC * lengthC) - (D * D);
+                    dyDistanceToColissionSquared_F :=
+                      Sqr(AMinusVector_C.Magnitude) - sqr(dDotProduct_D);
+                    if (dyDistanceToColissionSquared_F < SQr(dSumRadii)) then
                     begin
-                      //doubleble distance = D - sqrt(T);
-                      dXDistanceToCollision_distance :=
-                        dDotProduct_D - Sqrt(dXDiffereneAtCollision_T);
-                      // check distance to travel is enough for possible collision
-                      if TBasicMotion.GetDistanceToStop(APathPart.InitialVelocity) >=
-                        dXDistanceToCollision_distance then
+                      // find the distance
+                      //double T = sumRadiiSquared - F;
+                      dXDiffereneAtCollision_T :=
+                        Sqr(dSumRadii) - dyDistanceToColissionSquared_F;
+                      if (dXDiffereneAtCollision_T >= 0) then
                       begin
-                        // Set the length so that the circles will just touch.
-                        dXCircleHit :=
-                          NormalizedVector_N.Vector.Data[0] * dXDistanceToCollision_distance;
-                        dyCirlceHIt :=
-                          NormalizedVector_N.Vector.Data[1] * dXDistanceToCollision_distance;
-                        dActualDistanceToCollision :=
-                          Sqrt(Sqr(dXCircleHit) + Sqr(dyCirlceHIt));
-                        dHitTime :=
-                          TBasicMotion.GetTimeToDistance(APathPart.InitialVelocity, dActualDistanceToCollision);
-                        if (dHitTime < dEarliestHit) then
+                        //doubleble distance = D - sqrt(T);
+                        dXDistanceToCollision_distance :=
+                          dDotProduct_D - Sqrt(dXDiffereneAtCollision_T);
+                        // check distance to travel is enough for possible collision
+                        if TBasicMotion.GetDistanceToStop(APathVector.InitialVelocity) >=
+                          dXDistanceToCollision_distance then
                         begin
-                          dEarliestHit := dHitTime;
-                          EdgeHit := ehCircle;
-                          // TODO... add circle collision data
+                          // Set the length so that the circles will just touch.
+                          dXCircleHit :=
+                            NormalizedVector_N.Vector.Data[0] *
+                            dXDistanceToCollision_distance;
+                          dyCirlceHIt :=
+                            NormalizedVector_N.Vector.Data[1] *
+                            dXDistanceToCollision_distance;
+                          dActualDistanceToCollision :=
+                            Sqrt(Sqr(dXCircleHit) + Sqr(dyCirlceHIt));
+                          dHitTime :=
+                            TBasicMotion.GetTimeToDistance(
+                            APathVector.InitialVelocity, dActualDistanceToCollision);
+                          if (dHitTime < dEarliestHit) then
+                          begin
+                            dEarliestHit := dHitTime;
+                            EdgeHit := ehCircle;
+                            // TODO... add circle collision data
 
 
-                          // Get normalised data between 2 centers
-                          aNormalisedVectorBetweenCentersAtCollision.init(
-                            ACircle.CenterX - dXCircleHit, ACircle.CenterY - dyCirlceHIt);
-                          aNormalisedVectorBetweenCentersAtCollision.init(
-                            aNormalisedVectorBetweenCentersAtCollision.Data[0] /
-                            aNormalisedVectorBetweenCentersAtCollision.length,
-                            aNormalisedVectorBetweenCentersAtCollision.Data[1] /
-                            aNormalisedVectorBetweenCentersAtCollision.length);
+                            // Get normalised data between 2 centers
+                            aNormalisedVectorBetweenCentersAtCollision.init(
+                              ACircle.CenterX - dXCircleHit, ACircle.CenterY -
+                              dyCirlceHIt);
+                            aNormalisedVectorBetweenCentersAtCollision.init(
+                              aNormalisedVectorBetweenCentersAtCollision.Data[0] /
+                              aNormalisedVectorBetweenCentersAtCollision.length,
+                              aNormalisedVectorBetweenCentersAtCollision.Data[1] /
+                              aNormalisedVectorBetweenCentersAtCollision.length);
 
-                          vecOtherCircleBeforeCollision.init_zero;
+                            vecOtherCircleBeforeCollision.init_zero;
 
-                          // find length of move against normalised vector
+                            // find length of move against normalised vector
 
-                          vecThisMovement := APathPart.GetVelocityVectorAtTime(dHitTime);
+                            vecThisMovement :=
+                              APathVector.GetVelocityVectorAtTime(dHitTime);
 
-                          // get dot product of movement vector and normalised collision vector
-                          dThisLengthOfMoveVectorAlongCollisionNormal_a1 :=
-                            vecThisMovement.data[0] * aNormalisedVectorBetweenCentersAtCollision.Data[0]
-                            + vecThisMovement.Data[1] * aNormalisedVectorBetweenCentersAtCollision.Data[1];
+                            // get dot product of movement vector and normalised collision vector
+                            dThisLengthOfMoveVectorAlongCollisionNormal_a1 :=
+                              vecThisMovement.Data[0] *
+                              aNormalisedVectorBetweenCentersAtCollision.Data[0] +
+                              vecThisMovement.Data[1] *
+                              aNormalisedVectorBetweenCentersAtCollision.Data[1];
 
-                          dOtherLengthOfMoveVectorAlongCollisionNormal_a2 :=
-                            0.0; // TODO
+                            dOtherLengthOfMoveVectorAlongCollisionNormal_a2 :=
+                              0.0; // TODO
 
-                          //                              (2.0 * (a1 - a2)) / (circle1.mass + circle2.mass);
-                          dOptimisedP :=
-                            (2.0 * (dThisLengthOfMoveVectorAlongCollisionNormal_a1 -
-                            dOtherLengthOfMoveVectorAlongCollisionNormal_a2)) /
-                            (1 + 1);
+                            //                              (2.0 * (a1 - a2)) / (circle1.mass + circle2.mass);
+                            dOptimisedP :=
+                              (2.0 *
+                              (dThisLengthOfMoveVectorAlongCollisionNormal_a1 -
+                              dOtherLengthOfMoveVectorAlongCollisionNormal_a2)) /
+                              (1 + 1);
 
-                          // Calculate v1', the new movement vector of circle1
-                          //                              Vector v1' = v1 - optimizedP * circle2.mass * n;
-                          aCalcVec.init(dOptimisedP *
-                            aNormalisedVectorBetweenCentersAtCollision.Data[0], dOptimisedP *
-                            aNormalisedVectorBetweenCentersAtCollision.Data[1]);
-                          aMainVecAfterCircleCollision :=
-                            (APathPart.GetVelocityVectorAtTime(dHitTime) - aCalcVec);
-                          LogMessage(
-                            Format('This vel after collision = XVEL: %f, YVEL: %f', [aMainVecAfterCircleCollision.Data[0],
-                            aMainVecAfterCircleCollision.Data[1]]));
-                          // Calculate v2', the new movement vector of circle2
-                          // v2' = v2 + optimizedP * m1 * n
-                          aOtherVecAfterCircleCollision := vecOtherCircleBeforeCollision - aCalcVec;
-                          LogMessage(
-                            Format('Other vel after collision = XVEL: %f, YVEL: %f', [aOtherVecAfterCircleCollision.Data[0],
-                            aOtherVecAfterCircleCollision.Data[1]]));
+                            // Calculate v1', the new movement vector of circle1
+                            //                              Vector v1' = v1 - optimizedP * circle2.mass * n;
+                            aCalcVec.init(dOptimisedP *
+                              aNormalisedVectorBetweenCentersAtCollision.Data[0],
+                              dOptimisedP *
+                              aNormalisedVectorBetweenCentersAtCollision.Data[1]);
+                            aMainVecAfterCircleCollision :=
+                              (APathVector.GetVelocityVectorAtTime(dHitTime) - aCalcVec);
+                            LogMessage(
+                              Format('This vel after collision = XVEL: %f, YVEL: %f',
+                              [aMainVecAfterCircleCollision.Data[0],
+                              aMainVecAfterCircleCollision.Data[1]]));
+                            // Calculate v2', the new movement vector of circle2
+                            // v2' = v2 + optimizedP * m1 * n
+                            aOtherVecAfterCircleCollision :=
+                              vecOtherCircleBeforeCollision - aCalcVec;
+                            LogMessage(
+                              Format('Other vel after collision = XVEL: %f, YVEL: %f',
+                              [aOtherVecAfterCircleCollision.Data[0],
+                              aOtherVecAfterCircleCollision.Data[1]]));
 
-                          FlstCircles.Clear;
+                            // todo.. move check into later stage (May have hit another circle first)
+                            ACircle.Stationary:=false;
 
+                          end;
 
                         end;
-
                       end;
                     end;
                   end;
+                finally
+                  AMinusVector_C.Free;
                 end;
               finally
-                AMinusVector_C.Free;
+                NormalizedVector_N.Free;
               end;
             finally
-              NormalizedVector_N.Free;
+              AThisVector.Free;
             end;
-          finally
-            AThisVector.Free;
           end;
         end;
+
       end;
     end;
 
 
-    if (dXAtStop <= BALL_RADIUS) then
-    begin
-      dDeplacement := APathPart.OriginX - BALL_RADIUS;
-      dHitTime := APathPart.GetTimeToXDeplacement(dDeplacement);
-      if (dHitTime < dEarliestHit) and (dHitTime > 0) then
-      begin
-        EdgeHit := ehLeft;
-        dEarliestHit := dHitTime;
-      end;
-    end;
 
-    if (dYAtStop <= BALL_RADIUS) then
-    begin
-      dDeplacement := APathPart.OriginY - BALL_RADIUS;
-      dHitTime := APathPart.GetTimeToYDeplacement(dDeplacement);
-      if (dHitTime < dEarliestHit) and (dHitTime > 0) then
-      begin
-        EdgeHit := ehTop;
-        dEarliestHit := dHitTime;
-      end;
-    end;
-
-    if (dXAtStop >= (BOARD_WIDTH - BALL_RADIUS)) then
-    begin
-      dDeplacement := BOARD_WIDTH - BALL_RADIUS - APathPart.OriginX;
-      dHitTime := APathPart.GetTimeToXDeplacement(dDeplacement);
-      if (dHitTime < dEarliestHit) and (dHitTime > 0) then
-      begin
-        EdgeHit := ehRight;
-        dEarliestHit := dHitTime;
-      end;
-    end;
-
-    if (dYAtStop >= (BOARD_HEIGHT - BALL_RADIUS)) then
-    begin
-      dDeplacement := BOARD_HEIGHT - BALL_RADIUS - APathPart.OriginY;
-      dHitTime := APathPart.GetTimeToYDeplacement(dDeplacement);
-      if (dHitTime < dEarliestHit) then
-      begin
-        EdgeHit := ehBottom;
-        dEarliestHit := dHitTime;
-      end;
-    end;
+    ProcessEdgeHits(APathVector, dEarliestHit, EdgeHit);
 
     if (EdgeHit <> ehNone) then
     begin
-      dXAtCollide := APathPart.GetXAtTime(dEarliestHit);
-      dYAtCollide := APathPart.GetYAtTime(dEarliestHit);
-      dVelAtCollide := TBasicMotion.GetVelocityAtTime(APathPart.InitialVelocity,
+      dXAtCollide := APathVector.GetXAtTime(dEarliestHit);
+      dYAtCollide := APathVector.GetYAtTime(dEarliestHit);
+      dVelAtCollide := TBasicMotion.GetVelocityAtTime(APathVector.InitialVelocity,
         dEarliestHit);
-      dCollideTime := APathPart.StartTime + dEarliestHit;
-      dPreCollisionAngle := APathPart.Angle;
+      dCollideTime := APathVector.StartTime + dEarliestHit;
+      dPreCollisionAngle := APathVector.Angle;
 
-      APathPart.EndTime := dCollideTime;
+      APathVector.EndTime := dCollideTime;
 
-      aNextPathPart := TBasicVector.Create(dXAtCollide, dyAtCollide,
+      aNextPathVector := TBasicVector.Create(dXAtCollide, dyAtCollide,
         dVelAtCollide, dPreCollisionAngle, dCollideTime);
 
-      FTrajectories.Add(aNextPathPart);
+      FTrajectories.Add(aNextPathVector);
 
-      APathPart := aNextPathPart;
-      LogMessage(APathPart.ToString());
+      APathVector := aNextPathVector;
+      LogMessage(APathVector.ToString());
     end;
 
 
@@ -338,42 +313,48 @@ begin
       ehLeft:
       begin
         LogMessage('Hit left edge');
-        APathPart.ReverseX;
+        APathVector.ReverseX;
       end;
 
       ehTop:
       begin
         LogMessage('Hit top edge');
-        aNextPathPart.ReverseY();
+        aNextPathVector.ReverseY();
       end;
 
       ehRight:
       begin
         LogMessage('Hit right edge');
-        aNextPathPart.ReverseX();
+        aNextPathVector.ReverseX();
       end;
 
       ehBottom:
       begin
         LogMessage('Hit bottom edge');
-        aNextPathPart.ReverseY();
+        aNextPathVector.ReverseY();
       end;
 
       ehCircle:
       begin
         // TODO: Refine
         LogMessage('Hit Circle');
-        aNextPathPart.InitialVelocity := Sqrt(Sqr(aMainVecAfterCircleCollision.Data[0]) + sqr(aMainVecAfterCircleCollision.Data[1]));
-        aNextPathPart.Angle :=
-          ArcTan2(aMainVecAfterCircleCollision.Data[1], aMainVecAfterCircleCollision.Data[0]);
-     aNextPathPart.EndTime:=aNextPathPart.StartTime + TBasicMotion.GetTimeToStop(aNextPathPart.InitialVelocity);
+        aNextPathVector.InitialVelocity :=
+          Sqrt(Sqr(aMainVecAfterCircleCollision.Data[0]) +
+          sqr(aMainVecAfterCircleCollision.Data[1]));
+        aNextPathVector.Angle :=
+          ArcTan2(aMainVecAfterCircleCollision.Data[1],
+          aMainVecAfterCircleCollision.Data[0]);
+        aNextPathVector.EndTime :=
+          aNextPathVector.StartTime + TBasicMotion.GetTimeToStop(
+          aNextPathVector.InitialVelocity);
       end;
 
     end;
+
     if EdgeHit <> ehNone then
     begin
-      LogMessage('End Time: ' + FloatToStr(APathPart.StartTime) +
-        ', Angle: ' + FloatToStr(TBasicMotion.RadToDeg(APathPart.Angle)));
+      LogMessage('End Time: ' + FloatToStr(APathVector.StartTime) +
+        ', Angle: ' + FloatToStr(TBasicMotion.RadToDeg(APathVector.Angle)));
 
     end;
 
@@ -415,13 +396,61 @@ begin
 end;
 
 procedure TTrajectoryPath.SetCircles(const lstCircles: TCirclesList);
-{$IFDEF MSWINDOWS}
 begin
-{$ENDIF}
-{$IFDEF UNIX}
-begin
-{$ENDIF}
   FlstCircles := lstCircles;
+end;
+
+procedure TTrajectoryPath.ProcessEdgeHits(const AVector: TBasicVector;
+  var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
+var
+  dMaxDisplacmentXAtStop, dMaxDisplacmentYAtStop, dDeplacement, dHitTime: double;
+begin
+  dMaxDisplacmentXAtStop := AVector.GetDisplacementXAtStop;
+  dMaxDisplacmentYAtStop := AVector.GetDisplacementYAtStop;
+
+  if (dMaxDisplacmentXAtStop <= BALL_RADIUS) then
+  begin
+    dDeplacement := AVector.OriginX - BALL_RADIUS;
+    dHitTime := AVector.GetTimeToXDeplacement(dDeplacement);
+    if (dHitTime < dEarliestHitTime) and (dHitTime > 0) then
+    begin
+      EdgeHit := ehLeft;
+      dEarliestHitTime := dHitTime;
+    end;
+  end;
+
+  if (dMaxDisplacmentYAtStop <= BALL_RADIUS) then
+  begin
+    dDeplacement := AVector.OriginY - BALL_RADIUS;
+    dHitTime := AVector.GetTimeToYDeplacement(dDeplacement);
+    if (dHitTime < dEarliestHitTime) and (dHitTime > 0) then
+    begin
+      EdgeHit := ehTop;
+      dEarliestHitTime := dHitTime;
+    end;
+  end;
+
+  if (dMaxDisplacmentXAtStop >= (BOARD_WIDTH - BALL_RADIUS)) then
+  begin
+    dDeplacement := BOARD_WIDTH - BALL_RADIUS - AVector.OriginX;
+    dHitTime := AVector.GetTimeToXDeplacement(dDeplacement);
+    if (dHitTime < dEarliestHitTime) and (dHitTime > 0) then
+    begin
+      EdgeHit := ehRight;
+      dEarliestHitTime := dHitTime;
+    end;
+  end;
+
+  if (dMaxDisplacmentYAtStop >= (BOARD_HEIGHT - BALL_RADIUS)) then
+  begin
+    dDeplacement := BOARD_HEIGHT - BALL_RADIUS - AVector.OriginY;
+    dHitTime := AVector.GetTimeToYDeplacement(dDeplacement);
+    if (dHitTime < dEarliestHitTime) then
+    begin
+      EdgeHit := ehBottom;
+      dEarliestHitTime := dHitTime;
+    end;
+  end;
 end;
 
 

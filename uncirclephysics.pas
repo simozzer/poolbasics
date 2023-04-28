@@ -31,7 +31,7 @@ type
 
   { TBasicVector }
 
-  TBasicVector = class(TPersistent)
+  TBasicVector = class(TObject)
   private
     FdInitialVelocity: double;
     FdOriginX: double;
@@ -46,20 +46,21 @@ type
     function GetYVelAtYDeplacement(const dDesplacement: double): double;
     function GetInitialVelX(): double;
     function GetInitialVelY(): double;
-  protected
-    procedure AssignTo(Dest: TPersistent); override;
   public
     constructor Create(const dOriginX, dOriginY, dVelocity, dAngle, dStartTime: double);
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
     function GetTimeToXDeplacement(const dDeplacement: double): double;
     function GetTimeToYDeplacement(const dDeplacement: double): double;
+    function GetDisplacementXAtStop: double;
+    function GetDisplacementYAtStop: double;
+    function GetTimeToStop: Double;
     function GetDecelX(): double;
     function GetDecelY(): double;
     procedure ReverseX();
     procedure ReverseY();
     function GetVelocityVectorAtTime(const dTime: Double): Tvector2_double;
-    function ToString(): string;
+    function ToString(): string; override;
     property InitialVelocity: double read FdInitialVelocity write SetInitialVelocity;
     property OriginX: double read FdOriginX write FdOriginX;
     property OriginY: double read FdOriginY write FdOriginY;
@@ -207,17 +208,6 @@ begin
   Result := FdInitialVelocity * Sin(FdAngle);
 end;
 
-procedure TBasicVector.AssignTo(Dest: TPersistent);
-var
-  ADest: TBasicVector;
-begin
-  ADest := TBasicVector(Dest);
-  ADest.FdInitialVelocity := FdInitialVelocity;
-  ADest.FdOriginX := FdOriginX;
-  ADest.FdOriginY := FdOriginY;
-  ADest.FdAngle := FdAngle;
-end;
-
 procedure TBasicVector.SetAngle(AValue: double);
 begin
   if FdAngle = AValue then Exit;
@@ -250,14 +240,20 @@ end;
 
 function TBasicVector.GetXAtTime(const dTime: double): double;
 begin
-  Result := FdOriginX + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
-    cos(FdAngle));
+  if (dTime <= GetTimeToStop) then
+    Result := FdOriginX + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
+      cos(FdAngle))
+  else
+    RESULT := FdOriginX + GetDisplacementXAtStop;
 end;
 
 function TBasicVector.GetYAtTime(const dTime: double): double;
 begin
-  Result := FdOriginY + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
-    sin(FdAngle));
+  if (dTime <= GetTimeToStop) then
+     Result := FdOriginY + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
+     sin(FdAngle))
+  else
+    Result := FdOriginY + GetDisplacementYAtStop;
 end;
 
 function TBasicVector.GetTimeToXDeplacement(const dDeplacement: double): double;
@@ -280,6 +276,21 @@ begin
   dVectorDeplacement := abs(dDeplacement / sin(FdAngle));
   Result := Abs((FdInitialVelocity - TBasicMotion.GetVelocityAtDistance(
     FdInitialVelocity, dVectorDeplacement)) / DECELERATION);
+end;
+
+function TBasicVector.GetDisplacementXAtStop: double;
+begin
+  RESULT := GetXAtTime(GetTimeToStop);
+end;
+
+function TBasicVector.GetDisplacementYAtStop: double;
+begin
+  RESULT := GetYAtTime(GetTimeToStop);
+end;
+
+function TBasicVector.GetTimeToStop: Double;
+begin
+  RESULT := TBasicMotion.GetTimeToStop(InitialVelocity)
 end;
 
 function TBasicVector.GetDecelX: double;
