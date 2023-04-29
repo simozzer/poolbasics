@@ -17,15 +17,15 @@ type
     FiWidth: integer;
     FiHeight: integer;
     FBackColor: TColor;
-    procedure SetWidth(const iWidth: Integer);
-    procedure SetHeight(const iHeight: Integer);
+    procedure SetWidth(const iWidth: integer);
+    procedure SetHeight(const iHeight: integer);
   public
     constructor Create(const iWidth, iHeight: integer; backColor: TColor);
     destructor Destroy; override;
     procedure Render;
     property Bitmap: TBitmap read FBitmap;
-    property Width : Integer read FiWidth write SetWidth;
-    property Height : Integer read FiHeight write SetHeight;
+    property Width: integer read FiWidth write SetWidth;
+    property Height: integer read FiHeight write SetHeight;
   end;
 
 
@@ -36,18 +36,18 @@ uses
 
 { TBoardRenderer }
 
-procedure TBoardRenderer.SetWidth(const iWidth: Integer);
+procedure TBoardRenderer.SetWidth(const iWidth: integer);
 begin
   if (iWidth = FiWidth) then exit;
-  FiWidth:= iWidth;
-  FBitmap.Width:= iWidth;
+  FiWidth := iWidth;
+  FBitmap.Width := iWidth;
 end;
 
-procedure TBoardRenderer.SetHeight(const iHeight: Integer);
+procedure TBoardRenderer.SetHeight(const iHeight: integer);
 begin
   if (iHeight = FiHeight) then exit;
-  FiHeight:= iHeight;
-  FBitmap.Height:= FiHeight;
+  FiHeight := iHeight;
+  FBitmap.Height := FiHeight;
 
 end;
 
@@ -82,10 +82,13 @@ begin
   ACanvas.LineTo(FiHeight, FiWidth div 2);
 
   ACanvas.Brush.Color := clBlack;
-  ACanvas.Ellipse(-POCKET_RADIUS, -POCKET_RADIUS,POCKET_RADIUS, POCKET_RADIUS);
-  ACanvas.Ellipse(FiWidth - POCKET_RADIUS, -POCKET_RADIUS,FiWidth + POCKET_RADIUS, POCKET_RADIUS);
-  ACanvas.Ellipse(-POCKET_RADIUS, FiHeight-POCKET_RADIUS,POCKET_RADIUS, FiHeight + POCKET_RADIUS);
-    ACanvas.Ellipse(FiWidth-POCKET_RADIUS, FiHeight-POCKET_RADIUS, FiWidth + POCKET_RADIUS, FiHeight + POCKET_RADIUS);
+  ACanvas.Ellipse(-POCKET_RADIUS, -POCKET_RADIUS, POCKET_RADIUS, POCKET_RADIUS);
+  ACanvas.Ellipse(FiWidth - POCKET_RADIUS, -POCKET_RADIUS, FiWidth +
+    POCKET_RADIUS, POCKET_RADIUS);
+  ACanvas.Ellipse(-POCKET_RADIUS, FiHeight - POCKET_RADIUS, POCKET_RADIUS,
+    FiHeight + POCKET_RADIUS);
+  ACanvas.Ellipse(FiWidth - POCKET_RADIUS, FiHeight - POCKET_RADIUS,
+    FiWidth + POCKET_RADIUS, FiHeight + POCKET_RADIUS);
 end;
 
 end.
