@@ -5,30 +5,9 @@ unit unOtherCircles;
 interface
 
 uses
-  Classes, SysUtils, Graphics, Fgl, matrix;
+  Classes, SysUtils, Graphics, Fgl, unCirclePhysics;
 
 type
-
-  IDeceleratingCircle = interface
-    ['{2AC3E6C6-87ED-4141-82D7-5DDDCB06E703}']
-    function GetCenterX: double;
-    function GetCenterY: double;
-    function GetAngle: double;
-    function GetRadius: double;
-    function GetMass: double;
-    function GetInitialVelocity: double;
-    function GetTimeToStop: double;
-    function GetDistanceToStop: double;
-    function GetXDisplacementAtTime(const dTime: double): double;
-    function GetYDisplacementAtTime(const dTime: double): double;
-    function GetXVelocityAtTime(const dTime: double): double;
-    function GetYVelocityAtTime(const dTime: double): double;
-    function GetXDisplacementAtStop: double;
-    function GetYDisplacementAtStop: double;
-    function GetInitialMovementVector: Tvector2_double;
-    function GetMovementVectorAtTime(const dTime: double): Tvector2_double;
-
-  end;
 
   { TCircle }
 
@@ -41,7 +20,7 @@ type
     FclrPen: TColor;
     FbStationary: boolean;
   public
-    constructor Create(const dCenterX, dCenterY, dRadius: double);
+    constructor Create(const dCenterX, dCenterY, dRadius: double); virtual;
     property Radius: double read FdRadius;
     property CenterX: double read FdCenterX write FdCenterX;
     property CenterY: double read FdCenterY write FdCenterY;
@@ -52,9 +31,35 @@ type
     procedure Render(const ACanvas: TCanvas);
   end;
 
+  { TMovingCircle }
+
+  TMovingCircle= class(TCircle)
+  Private
+    FVector : T2DVector;
+  public
+    property Vector : T2DVector read FVector;
+    constructor Create(const dCenterX, dCenterY, dRadius: double); override;
+    destructor Destroy; override;
+
+  end;
+
   TCirclesList = specialize TFPGObjectList<TCircle>;
 
 implementation
+
+{ TMovingCircle }
+
+constructor TMovingCircle.Create(const dCenterX, dCenterY, dRadius: double);
+begin
+  inherited Create(dCenterX, dCenterY, dRadius);
+  FVector:= T2DVector.Create(0,0);
+end;
+
+destructor TMovingCircle.Destroy;
+begin
+  FVector.Free;
+  inherited Destroy;
+end;
 
 { TCircle }
 

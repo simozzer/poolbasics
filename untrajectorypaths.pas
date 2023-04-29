@@ -481,6 +481,10 @@ begin
   begin
     dTimeInVector := dTime - AVector.StartTime;
     Result := AVector.GetXAtTime(dTimeInVector);
+  end
+  else
+  begin
+     LogMessage(Format('GetXatTime vector not found %f', [dTime]));
   end;
 end;
 
@@ -495,6 +499,10 @@ begin
   begin
     dTimeInVector := dTime - AVector.StartTime;
     Result := AVector.GetYAtTime(dTimeInVector);
+  end
+  else
+  begin
+    LogMessage(Format('GetYatTime vector not found %f', [dTime]));
   end;
 end;
 

@@ -22,6 +22,7 @@ type
     btnTimeSubtract: TButton;
     btnClearLog: TButton;
     btnTrigger: TButton;
+    btnDrawTrajectory: TButton;
     chkUpdatePosition: TCheckBox;
     edtTimeIncrement: TEdit;
     edtTime: TEdit;
@@ -41,6 +42,7 @@ type
     procedure AnimationTimerTimer(Sender: TObject);
 
     procedure btnClearLogClick(Sender: TObject);
+    procedure btnDrawTrajectoryClick(Sender: TObject);
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
@@ -54,6 +56,7 @@ type
     FdVelocity: double;
 
     FAngleControl: TAngleControl;
+    procedure DrawTrajectoryPaths;
     procedure PlotTrajectories;
     procedure LogMessage(const sMessage: string);
     procedure HandleBoardMouseDown(Sender: TObject; Button: TMouseButton;
@@ -164,6 +167,11 @@ begin
   lstEvents.Clear;
 end;
 
+procedure TForm1.btnDrawTrajectoryClick(Sender: TObject);
+begin
+  DrawTrajectoryPaths;
+end;
+
 procedure TForm1.btnRenderFrameClick(Sender: TObject);
 begin
   PlotTrajectories;
@@ -188,6 +196,47 @@ procedure TForm1.trkVelocityChange(Sender: TObject);
 begin
   FdVelocity := (100 - trkVelocity.Position) / 100;
   lblVel.Caption := Format('Vel: %f', [FdVelocity]);
+
+  DrawTrajectoryPaths;
+end;
+
+procedure TForm1.DrawTrajectoryPaths;
+var
+  i: integer;
+  AVector: TBasicVector;
+  BoardCanvas: TCanvas;
+  dBallCenterX, dBallCenterY: double;
+begin
+
+  PlotTrajectories;
+  FBoard.Render;
+
+  BoardCanvas := FBoard.BoardCanvas;
+  BoardCanvas.Brush.Color := clGray;
+  BoardCanvas.Pen.Color := clBlack;
+  dBallCenterX := FTrajectories.GetXAtTime(0);
+  dBallCenterY := FTrajectories.GetYAtTime(0);
+  BoardCanvas.Ellipse(Round(dBallCenterX - PUCK_RADIUS),
+    Round(dBallCenterY - PUCK_RADIUS),
+    round(dBallCenterX + PUCK_RADIUS),
+    ROUND(dBallCenterY + PUCK_RADIUS));
+
+
+  for i := 0 to pred(FlstCircles.Count) do
+  begin
+    FlstCircles[i].Render(BoardCanvas);
+    FlstCircles[i].Stationary := True;
+  end;
+
+  for i := 0 to pred(FTrajectories.Count) do
+  begin
+    AVector := FTrajectories.getItem(i);
+    FBoard.BoardCanvas.Pen.Color := clRed;
+    FBoard.BoardCanvas.MoveTo(Round(AVector.OriginX), Round(AVector.OriginY));
+    FBoard.BoardCanvas.LineTo(Round(AVector.GetXAtTime(AVector.EndTime -
+      AVector.StartTime)), Round(AVector.GetYAtTime(AVector.EndTime - AVector.StartTime)));
+  end;
+  FBoard.Invalidate;
 end;
 
 procedure TForm1.PlotTrajectories;
@@ -222,7 +271,7 @@ begin
   FBallVector.OriginY := y;
   FBallVector.Angle := 0;
   FBallVector.InitialVelocity := 0;
-  actTrigger.Enabled:=true;
+  actTrigger.Enabled := True;
   PlotTrajectories;
   actRenderExecute(Self, 0);
 end;
@@ -235,6 +284,8 @@ begin
   if (dAngle > 2 * pi) then dAngle := dAngle - 2 * pi;
   dAngle := dAngle * (180 / pi);
   lblAngle.Caption := Format('Angle: %f', [dAngle]);
+
+  DrawTrajectoryPaths;
 end;
 
 constructor TForm1.Create(AOwner: TComponent);
