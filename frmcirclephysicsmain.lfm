@@ -125,7 +125,6 @@ object Form1: TForm1
       Top = 368
       Width = 75
       Action = actTrigger
-      Enabled = False
       TabOrder = 1
     end
     object trkVelocity: TTrackBar
@@ -173,6 +172,7 @@ object Form1: TForm1
     Top = 88
     object actTrigger: TAction
       Caption = '&Trigger'
+      Enabled = False
       OnExecute = actTriggerExecute
     end
   end

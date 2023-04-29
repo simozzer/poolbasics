@@ -154,11 +154,32 @@ begin
 end;
 
 procedure TAngleControl.DrawAngleIndicator;
+const
+  ARROW_SIZE = 12;
+var
+  dAngle : Double;
 begin
   BackCanvas.MoveTo(HALF_SIZE, HALF_SIZE);
   BackCanvas.Pen.Color := FclrAngleColor;
   BackCanvas.LineTo(HALF_SIZE + Round(HALF_SIZE * cos(-FdAngle)),
     HALF_SIZE + Round(HALF_SIZE * sin(FdAngle)));
+  BackCanvas.MoveTo(HALF_SIZE, HALF_SIZE);
+
+  // Draw arrow head
+  BackCanvas.LineTo(HALF_SIZE + Round(CENTER_CIRCLE_RADIUS * cos(-FdAngle)),
+    HALF_SIZE + Round(CENTER_CIRCLE_RADIUS * sin(FdAngle)));
+  dAngle := FdAngle + 0.3;
+  BackCanvas.LineTo(HALF_SIZE + Round((CENTER_CIRCLE_RADIUS + ARROW_SIZE) * cos(-dAngle)),
+    HALF_SIZE + Round((CENTER_CIRCLE_RADIUS + ARROW_SIZE)* sin(dAngle)));
+
+  BackCanvas.LineTo(HALF_SIZE + Round(CENTER_CIRCLE_RADIUS * cos(-FdAngle)),
+    HALF_SIZE + Round(CENTER_CIRCLE_RADIUS * sin(FdAngle)));
+  dAngle := FdAngle - 0.3;
+  BackCanvas.LineTo(HALF_SIZE + Round((CENTER_CIRCLE_RADIUS + ARROW_SIZE) * cos(-dAngle)),
+    HALF_SIZE + Round((CENTER_CIRCLE_RADIUS + ARROW_SIZE)* sin(dAngle)));
+
+
+  // draw center circle
   BackCanvas.Brush.Color := FclrCenterCircleFillColor;
   BackCanvas.Ellipse(HALF_SIZE - CENTER_CIRCLE_RADIUS,
     HALF_SIZE - CENTER_CIRCLE_RADIUS,
