@@ -157,6 +157,15 @@ object Form1: TForm1
     ParentColor = False
     ParentFont = False
   end
+  object btnDrawTrajectory: TButton
+    Left = 680
+    Height = 25
+    Top = 640
+    Width = 104
+    Caption = 'Draw Trajectory'
+    OnClick = btnDrawTrajectoryClick
+    TabOrder = 8
+  end
   object ActionList1: TActionList
     Images = ImageList1
     Left = 1024
