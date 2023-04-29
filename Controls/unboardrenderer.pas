@@ -17,11 +17,15 @@ type
     FiWidth: integer;
     FiHeight: integer;
     FBackColor: TColor;
+    procedure SetWidth(const iWidth: Integer);
+    procedure SetHeight(const iHeight: Integer);
   public
     constructor Create(const iWidth, iHeight: integer; backColor: TColor);
     destructor Destroy; override;
     procedure Render;
     property Bitmap: TBitmap read FBitmap;
+    property Width : Integer read FiWidth write SetWidth;
+    property Height : Integer read FiHeight write SetHeight;
   end;
 
 
@@ -31,6 +35,21 @@ uses
   uncirclephysicsconstants;
 
 { TBoardRenderer }
+
+procedure TBoardRenderer.SetWidth(const iWidth: Integer);
+begin
+  if (iWidth = FiWidth) then exit;
+  FiWidth:= iWidth;
+  FBitmap.Width:= iWidth;
+end;
+
+procedure TBoardRenderer.SetHeight(const iHeight: Integer);
+begin
+  if (iHeight = FiHeight) then exit;
+  FiHeight:= iHeight;
+  FBitmap.Height:= FiHeight;
+
+end;
 
 constructor TBoardRenderer.Create(const iWidth, iHeight: integer; backColor: TColor);
 begin

@@ -26,6 +26,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="bgracontrols"/>
+      </Item>
+      <Item>
         <PackageName Value="bgragames"/>
       </Item>
       <Item>
@@ -54,11 +57,6 @@
         <UnitName Value="unCirclePhysics"/>
       </Unit>
       <Unit>
-        <Filename Value="unboardrenderer.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="unBoardRenderer"/>
-      </Unit>
-      <Unit>
         <Filename Value="untrajectorypaths.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unTrajectoryPaths"/>
@@ -72,6 +70,26 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unHelperInterfaces"/>
       </Unit>
+      <Unit>
+        <Filename Value="unothercircles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unOtherCircles"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Controls\unangleselectorcontrol.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unAngleSelectorControl"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Controls\unboardrenderer.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unBoardRenderer"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Controls\ungameboard.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unGameBoard"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -82,8 +100,16 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="Controls"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <CodeGeneration>
+      <TargetCPU Value="x86_64"/>
+      <TargetOS Value="win64"/>
+      <Optimizations>
+        <OptimizationLevel Value="0"/>
+      </Optimizations>
+    </CodeGeneration>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>

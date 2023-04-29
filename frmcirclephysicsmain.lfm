@@ -1,53 +1,12 @@
 object Form1: TForm1
-  Left = 632
+  Left = 263
   Height = 804
-  Top = 164
+  Top = 119
   Width = 1180
   Caption = 'Form1'
   ClientHeight = 804
   ClientWidth = 1180
   LCLVersion = '2.2.4.0'
-  object lblAngle: TLabel
-    Left = 128
-    Height = 15
-    Top = 15
-    Width = 31
-    Caption = '&Angle'
-    FocusControl = edtAngle
-    ParentColor = False
-  end
-  object edtAngle: TEdit
-    Left = 176
-    Height = 23
-    Top = 11
-    Width = 80
-    TabOrder = 0
-    Text = '191'
-  end
-  object lblVelocity: TLabel
-    Left = 128
-    Height = 15
-    Top = 48
-    Width = 41
-    Caption = '&Velocity'
-    ParentColor = False
-  end
-  object edtVelocity: TEdit
-    Left = 176
-    Height = 23
-    Top = 43
-    Width = 80
-    TabOrder = 1
-    Text = '1.3'
-  end
-  object btnTrigger: TButton
-    Left = 264
-    Height = 25
-    Top = 25
-    Width = 75
-    Action = actTrigger
-    TabOrder = 2
-  end
   object chaVelocity: TChart
     Left = 808
     Height = 208
@@ -198,18 +157,18 @@ object Form1: TForm1
   end
   object lstEvents: TListBox
     Left = 816
-    Height = 200
+    Height = 176
     Top = 592
     Width = 356
     ItemHeight = 0
-    TabOrder = 9
+    TabOrder = 6
   end
   object edtTime: TEdit
     Left = 424
     Height = 23
     Top = 10
     Width = 80
-    TabOrder = 10
+    TabOrder = 7
     Text = '557.0'
   end
   object btnRenderFrame: TButton
@@ -219,7 +178,7 @@ object Form1: TForm1
     Width = 104
     Caption = 'Render Frame'
     OnClick = btnRenderFrameClick
-    TabOrder = 11
+    TabOrder = 8
   end
   object lblFrameTime: TLabel
     Left = 352
@@ -244,7 +203,7 @@ object Form1: TForm1
     Height = 23
     Top = 43
     Width = 80
-    TabOrder = 12
+    TabOrder = 9
     Text = '20.0'
   end
   object btnTimeAdd: TButton
@@ -254,7 +213,7 @@ object Form1: TForm1
     Width = 32
     Caption = '&+'
     OnClick = btnTimeAddClick
-    TabOrder = 13
+    TabOrder = 10
   end
   object btnTimeSubtract: TButton
     Left = 584
@@ -263,74 +222,7 @@ object Form1: TForm1
     Width = 32
     Caption = '&-'
     OnClick = btnTimeSubtractClick
-    TabOrder = 14
-  end
-  object lblOriginX: TLabel
-    Left = 8
-    Height = 15
-    Top = 15
-    Width = 43
-    Caption = 'Origin &X'
-    FocusControl = edtOriginX
-    ParentColor = False
-  end
-  object edtOriginX: TEdit
-    Left = 64
-    Height = 23
-    Top = 10
-    Width = 56
-    TabOrder = 15
-    Text = '50'
-  end
-  object lblOriginY: TLabel
-    Left = 8
-    Height = 15
-    Top = 38
-    Width = 43
-    Caption = 'Origin &Y'
-    FocusControl = edtOriginY
-    ParentColor = False
-  end
-  object edtOriginY: TEdit
-    Left = 64
-    Height = 23
-    Top = 38
-    Width = 56
-    TabOrder = 16
-    Text = '50'
-  end
-  object lblDegrees: TLabel
-    Left = 632
-    Height = 15
-    Top = 11
-    Width = 21
-    Caption = '&Deg'
-    ParentColor = False
-  end
-  object edtDegrees: TEdit
-    Left = 664
-    Height = 23
-    Top = 8
-    Width = 48
-    TabOrder = 17
-    Text = '30'
-  end
-  object lblRadians: TLabel
-    Left = 632
-    Height = 15
-    Top = 43
-    Width = 54
-    Caption = 'lblRadians'
-    ParentColor = False
-  end
-  object btnCalc: TButton
-    Left = 718
-    Height = 25
-    Top = 5
-    Width = 75
-    Caption = '&Calc'
-    OnClick = btnCalcClick
-    TabOrder = 18
+    TabOrder = 11
   end
   object Label1: TLabel
     Left = 632
@@ -339,21 +231,69 @@ object Form1: TForm1
     Width = 1
     ParentColor = False
   end
-  object lblSin: TLabel
-    Left = 632
-    Height = 15
-    Top = 68
-    Width = 29
-    Caption = 'lblSin'
-    ParentColor = False
+  object btnClearLog: TButton
+    Left = 1096
+    Height = 25
+    Top = 776
+    Width = 75
+    Caption = '&Clear'
+    OnClick = btnClearLogClick
+    TabOrder = 12
   end
-  object lblCos: TLabel
-    Left = 632
-    Height = 15
-    Top = 96
-    Width = 33
-    Caption = 'lblCos'
-    ParentColor = False
+  object grpTakeShot: TGroupBox
+    Left = 648
+    Height = 433
+    Top = 128
+    Width = 137
+    Caption = 'Take &Shot'
+    ClientHeight = 413
+    ClientWidth = 133
+    TabOrder = 13
+    object lblAngle: TLabel
+      Left = 32
+      Height = 15
+      Top = 8
+      Width = 31
+      Caption = '&Angle'
+      ParentColor = False
+    end
+    object chkUpdatePosition: TCheckBox
+      Left = 8
+      Height = 19
+      Top = 392
+      Width = 104
+      Caption = '&Update Position'
+      Checked = True
+      State = cbChecked
+      TabOrder = 0
+    end
+    object btnTrigger: TButton
+      Left = 16
+      Height = 25
+      Top = 368
+      Width = 75
+      Action = actTrigger
+      TabOrder = 1
+    end
+    object trkVelocity: TTrackBar
+      Left = 40
+      Height = 140
+      Top = 224
+      Width = 25
+      Max = 100
+      OnChange = trkVelocityChange
+      Orientation = trVertical
+      Position = 50
+      TabOrder = 2
+    end
+    object lblVel: TLabel
+      Left = 24
+      Height = 15
+      Top = 208
+      Width = 62
+      Caption = 'Velocity: 0.5'
+      ParentColor = False
+    end
   end
   object ActionList1: TActionList
     Images = ImageList1
