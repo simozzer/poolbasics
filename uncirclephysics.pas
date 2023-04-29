@@ -243,8 +243,8 @@ begin
   if (dTime <= GetTimeToStop) then
     Result := FdOriginX + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
       cos(FdAngle))
-  else
-    RESULT := FdOriginX + GetDisplacementXAtStop;
+ // else
+ //   RESULT := FdOriginX + GetDisplacementXAtStop;
 end;
 
 function TBasicVector.GetYAtTime(const dTime: double): double;
@@ -252,8 +252,8 @@ begin
   if (dTime <= GetTimeToStop) then
      Result := FdOriginY + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
      sin(FdAngle))
-  else
-    Result := FdOriginY + GetDisplacementYAtStop;
+//  else
+ //   Result := FdOriginY + GetDisplacementYAtStop;
 end;
 
 function TBasicVector.GetTimeToXDeplacement(const dDeplacement: double): double;

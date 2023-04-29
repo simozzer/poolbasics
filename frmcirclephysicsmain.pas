@@ -6,8 +6,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, StdCtrls,
-  MaskEdit, ExtCtrls, TAGraph, TASeries, unBoardRenderer, unCirclePhysics,
-  unTrajectoryPaths, BGRABitmap, unHelperInterfaces, unOtherCircles, unPhysicsArea;
+  MaskEdit, ExtCtrls, ComCtrls, TAGraph, TASeries, unGameBoard,
+  unCirclePhysics, unTrajectoryPaths, BGRABitmap, unHelperInterfaces,
+  unOtherCircles, unAngleSelectorControl;
 
 type
 
@@ -16,12 +17,11 @@ type
   TForm1 = class(TForm, IBasicLogger)
     actTrigger: TAction;
     ActionList1: TActionList;
-    btnTrigger: TButton;
     btnRenderFrame: TButton;
     btnTimeAdd: TButton;
     btnTimeSubtract: TButton;
-    btnCalc: TButton;
     btnClearLog: TButton;
+    btnTrigger: TButton;
     chaDistance: TChart;
     chaDisplacementLineSeries: TLineSeries;
     chaDistanceToBottomLineSeries: TLineSeries;
@@ -34,49 +34,41 @@ type
     chaDistanceToTopLineSeries: TLineSeries;
     chaVelocity: TChart;
     chkUpdatePosition: TCheckBox;
-    edtDegrees: TEdit;
-    edtOriginX: TEdit;
-    edtOriginY: TEdit;
     edtTimeIncrement: TEdit;
     edtTime: TEdit;
+    grpTakeShot: TGroupBox;
     Label1: TLabel;
-    lblSin: TLabel;
-    lblRadians: TLabel;
-    lblDegrees: TLabel;
-    lblOriginX: TLabel;
-    lblOriginY: TLabel;
-    lblCos: TLabel;
+    lblAngle: TLabel;
     lblTimeIncrement: TLabel;
     lblFrameTime: TLabel;
+    lblVel: TLabel;
     lstEvents: TListBox;
+    trkVelocity: TTrackBar;
     VelocityLineSeries: TLineSeries;
-    edtVelocity: TEdit;
-    edtAngle: TEdit;
     ImageList1: TImageList;
-    lblVelocity: TLabel;
-    lblAngle: TLabel;
     AnimationTimer: TTimer;
     procedure actRenderExecute(Sender: TObject; const dTime: double);
     procedure actTriggerExecute(Sender: TObject);
     procedure AnimationTimerTimer(Sender: TObject);
 
-    procedure btnCalcClick(Sender: TObject);
     procedure btnClearLogClick(Sender: TObject);
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
-    procedure FormPaint(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    procedure trkVelocityChange(Sender: TObject);
   private
-    FBoardRenderer: TBoardRenderer;
+    FBoard: TCaromGameBoard;
     FBallVector: TBasicVector;
     FcStartAnimationTime: cardinal;
     FTrajectories: ITrajectoryPaths;
     FlstCircles: TCirclesList;
+    FdVelocity: Double;
 
     FAngleControl: TAngleControl;
     procedure PlotTrajectories;
     procedure LogMessage(const sMessage: string);
+    procedure HandleBoardMouseDown(Sender: TObject; Button: TMouseButton;
+                          Shift: TShiftState; X, Y: Integer);
 
   public
     procedure DoAngleChanged(Sender: TObject);
@@ -106,27 +98,29 @@ var
   dBallCenterX, dBallCenterY: double;
   i: integer;
 begin
-  FBoardRenderer.Render;
-  BoardCanvas := FBoardRenderer.Bitmap.Canvas;
+  FBoard.Render;
+  BoardCanvas := FBoard.BoardCanvas;
 
   BoardCanvas.Brush.Color := clGray;
   BoardCanvas.Pen.Color := clBlack;
   dBallCenterX := FTrajectories.GetXAtTime(dTime);
   dBallCenterY := FTrajectories.GetYAtTime(dTime);
-  BoardCanvas.Ellipse(Round(dBallCenterX - BALL_RADIUS),
-    Round(dBallCenterY - BALL_RADIUS),
-    round(dBallCenterX + BALL_RADIUS),
-    ROUND(dBallCenterY + BALL_RADIUS));
+  BoardCanvas.Ellipse(Round(dBallCenterX - PUCK_RADIUS),
+    Round(dBallCenterY - PUCK_RADIUS),
+    round(dBallCenterX + PUCK_RADIUS),
+    ROUND(dBallCenterY + PUCK_RADIUS));
 
   for i := 0 to pred(FlstCircles.Count) do
   begin
     FlstCircles[i].Render(BoardCanvas);
   end;
 
-  Canvas.Draw(10, 100, FBoardRenderer.Bitmap);
+  FBoard.Invalidate;
 end;
 
 procedure TForm1.actTriggerExecute(Sender: TObject);
+var
+  i : Integer;
 begin
   actTrigger.Enabled := False;
 
@@ -136,6 +130,9 @@ begin
   chaDistanceToLeftLineSeries.Clear;
   chaDistanceToBottomLineSeries.Clear;
   chaDistanceToTopLineSeries.Clear;
+
+  For i := 0 to pred(FlstCircles.Count) do
+    TCircle(FlstCircles.Items[i]).Stationary:=true;
 
   PlotTrajectories;
 
@@ -166,11 +163,8 @@ begin
       begin
         edtTime.Text := FloatToStr(AVector.EndTime);
         dVectorDuration := AVector.EndTime - AVector.StartTime;
-        if (chkUpdatePosition.Checked) then
-        begin
-          edtOriginX.Text := FloatToStr(AVector.GetXAtTime(dVectorDuration));
-          edtOriginY.Text := FloatToStr(AVector.GetYAtTime(dVectorDuration));
-        end;
+        FBallVector.OriginX:= FBallVector.GetXAtTime(AVector.EndTime);
+        FBallVector.Originy:= FBallVector.GetyAtTime(AVector.EndTime);
       end;
     end;
 
@@ -183,34 +177,21 @@ begin
     chaDisplacementLineSeries.Add(TBasicMotion.GetDistanceAtTime(
       AVector.InitialVelocity, cTimeSinceStart));
 
-    chaDistanceToRightLineSeries.add(FBoardRenderer.Bitmap.Width -
-      BALL_RADIUS - AVector.GetXAtTime(cTimeSinceStart));
-    chaDistanceToLeftLineSeries.add(AVector.GetXAtTime(cTimeSinceStart) - BALL_RADIUS);
-    chaDistanceToBottomLineSeries.add(FBoardRenderer.Bitmap.Height -
-      BALL_RADIUS - AVector.GetYAtTime(cTimeSinceStart));
-    chaDistanceToTopLineSeries.Add(AVector.GetYAtTime(cTimeSinceStart) - BALL_RADIUS);
+    chaDistanceToRightLineSeries.add(FBoard.Width -
+      PUCK_RADIUS - AVector.GetXAtTime(cTimeSinceStart));
+    chaDistanceToLeftLineSeries.add(AVector.GetXAtTime(cTimeSinceStart) - PUCK_RADIUS);
+    chaDistanceToBottomLineSeries.add(FBoard.Height -
+      PUCK_RADIUS - AVector.GetYAtTime(cTimeSinceStart));
+    chaDistanceToTopLineSeries.Add(AVector.GetYAtTime(cTimeSinceStart) - PUCK_RADIUS);
 
     actRenderExecute(Self, cTimeSinceStart);
   end;
 
 end;
 
-
-
-procedure TForm1.btnCalcClick(Sender: TObject);
-var
-  dRadians: double;
-begin
-  dRadians := (pi / 180) * StrToFloatDef(edtDegrees.Text, 0.0);
-  lblRadians.Caption := 'Rad ' + FloatToStr(dRadians);
-  lblSin.Caption := 'Sin ' + FloatToStr(Sin(dRadians));
-  lblCos.Caption := 'Cos ' + FloatToStr(Cos(dRadians));
-
-  FAngleControl.Angle:= dRadians;
-end;
-
 procedure TForm1.btnClearLogClick(Sender: TObject);
 begin
+   FAngleControl.Repaint;
   lstEvents.Clear;
 end;
 
@@ -234,27 +215,19 @@ begin
   actRenderExecute(Self, StrToFloatDef(edtTime.Text, 0.0));
 end;
 
-procedure TForm1.FormPaint(Sender: TObject);
+procedure TForm1.trkVelocityChange(Sender: TObject);
 begin
-  PlotTrajectories;
-  actRenderExecute(Self,0);
+  FdVelocity:= (100-trkVelocity.Position)/100;
+  lblVel.Caption:= Format('Vel: %f',[FdVelocity]);
 end;
-
-procedure TForm1.FormShow(Sender: TObject);
-begin
-
-end;
-
 
 procedure TForm1.PlotTrajectories;
 var
   APathPart: TBasicVector;
 begin
   lstEvents.Clear;
-  FBallVector.InitialVelocity := StrToFloatDef(edtVelocity.Text, 1/0);
-  FBallVector.Angle := (Pi / 180) * StrToFloatDef(edtAngle.Text, 39.0);
-  FBallVector.OriginX := StrToFloatDef(edtOriginX.Text, 120);
-  FBallVector.OriginY := StrToFloatDef(edtOriginY.Text, 444);
+  FBallVector.InitialVelocity := FdVelocity;
+  FBallVector.Angle := FAngleControl.Angle + pi;
 
   FTrajectories.Items.Clear;
   FTrajectories.SetCircles(FlstCircles);
@@ -272,6 +245,18 @@ begin
   lstEvents.Items.Add(sMessage);
 end;
 
+procedure TForm1.HandleBoardMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if AnimationTimer.Enabled then exit;
+  FBallVector.OriginX:= x;
+  FBallVector.OriginY:= y;
+  FBallVector.Angle:= 0;
+  FBallVector.InitialVelocity:=0;
+  PlotTrajectories;
+  actRenderExecute(Self,0);
+end;
+
 procedure TForm1.DoAngleChanged(Sender: TObject);
 var
   dAngle : Double;
@@ -279,7 +264,7 @@ begin
   dAngle :=FAngleControl.Angle + pi;
   if (dAngle > 2 * pi) then dAngle := dAngle - 2 * pi;
   dAngle:= dAngle * (180/pi);
-  edtAngle.Text := FloatToStr(dAngle);
+  lblAngle.Caption := Format('Angle: %f', [dAngle]);
 end;
 
 constructor TForm1.Create(AOwner: TComponent);
@@ -287,32 +272,42 @@ var
   ACircle: TCircle;
 begin
   inherited Create(AOwner);
-  FBoardRenderer := TBoardRenderer.Create(BOARD_WIDTH, BOARD_HEIGHT, clCream);
+  FBoard := TCaromGameBoard.Create(Self);
+  InsertControl(FBoard);
+  FBoard.Top := 100;
+  FBoard.Left := 12;
+  FBoard.OnMouseDown:= @HandleBoardMouseDown;
+
   FBallVector := TBasicVector.Create(300, 300, 1, 0.0, 0);
   FTrajectories := TTrajectoryPath.Create;
   (FTrajectories as IBasicLoggerClient).SetLogger(Self);
 
   FlstCircles := TCirclesList.Create;
-  ACircle := TCircle.Create(300, 300, BALL_RADIUS);
+  ACircle := TCircle.Create(300, 300, TARGET_RADIUS);
   FlstCircles.Add(ACircle);
 
   FAngleControl := TAngleControl.Create(Self);
-  InsertControl(FAngleControl);
-  FAngleControl.Left := 700;
-  FAngleControl.Top := 180;
+  grpTakeShot.InsertControl(FAngleControl);
+  FAngleControl.Left := 10;
+  FAngleControl.Top := 80;
   FAngleControl.OnChange := @Self.DoAngleChanged;
-  FAngleControl.Angle:= 180;
+  FAngleControl.Angle:= 0;
+
+  FdVelocity:=0.5;
+
+
 
 end;
 
 destructor TForm1.Destroy;
 begin
-  FBoardRenderer.Free;
+  RemoveControl(FBoard);
+  FBoard.Free;
   FTrajectories := nil;
   FBallVector.Free;
   FlstCircles.Clear;
   FlstCircles.Free;
-  Self.RemoveControl(FAngleControl);
+  grpTakeShot.RemoveControl(FAngleControl);
   FAngleControl.Free;;
   inherited Destroy;
 end;
