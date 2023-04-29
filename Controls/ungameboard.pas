@@ -83,8 +83,8 @@ begin
   inherited Create(AOwner);
 
   FRenderer := TBoardRenderer.Create(DEFAULT_WIDTH, DEFAULT_HEIGHT, clCream);
-  Height:= DEFAULT_HEIGHT;
-  Width:= DEFAULT_WIDTH;
+  Height := DEFAULT_HEIGHT;
+  Width := DEFAULT_WIDTH;
   Render;
 end;
 

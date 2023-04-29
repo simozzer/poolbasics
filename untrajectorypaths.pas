@@ -51,7 +51,7 @@ type
     function GetCircles: TCirclesList;
     procedure SetCircles(const lstCircles: TCirclesList);
 
-    procedure ProcessEdgeHits(const AVector: TBasicVector; const dRadius : Double;
+    procedure ProcessEdgeHits(const AVector: TBasicVector; const dRadius: double;
       var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 
     function getTimeToHitStationaryCircle(const AVector: TBasicVector;
@@ -138,8 +138,8 @@ begin
         if ACircle.Stationary then
         begin
 
-          dXCircleHit:= 0;
-          dYCircleHit:=0;
+          dXCircleHit := 0;
+          dYCircleHit := 0;
           dHitTime := getTimeToHitStationaryCircle(APathVector, ACircle,
             dXCircleHit, dYCircleHit);
 
@@ -327,8 +327,8 @@ begin
   FlstCircles := lstCircles;
 end;
 
-procedure TTrajectoryPath.ProcessEdgeHits(const AVector: TBasicVector; const dRadius : Double;
-  var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
+procedure TTrajectoryPath.ProcessEdgeHits(const AVector: TBasicVector;
+  const dRadius: double; var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 var
   dMaxDisplacmentXAtStop, dMaxDisplacmentYAtStop, dDeplacement, dHitTime: double;
 begin
@@ -383,10 +383,9 @@ end;
 function TTrajectoryPath.getTimeToHitStationaryCircle(const AVector: TBasicVector;
   const ACircle: TCircle; var dXCircleHit: double; var dYCircleHit: double): double;
 var
-  dDistanceBetween2Centers, dSumRadii,
-  dDistanceBewteen2Circles, dDotProduct_D, dyDistanceToColissionSquared_F,
-  dXDiffereneAtCollision_T, dHitTime,
-  dXDistanceToCollision_distance, dActualDistanceToCollision: double;
+  dDistanceBetween2Centers, dSumRadii, dDistanceBewteen2Circles,
+  dDotProduct_D, dyDistanceToColissionSquared_F, dXDiffereneAtCollision_T,
+  dHitTime, dXDistanceToCollision_distance, dActualDistanceToCollision: double;
   AThisVector, AVectorBetween2Centers: T2DVector;
   NormalizedVector_N: T2DVector;
 begin
@@ -396,7 +395,8 @@ begin
   dDistanceBetween2Centers := ACircle.Distance(AVector.OriginX, AVector.OriginY);
   dSumRadii := PUCK_RADIUS + ACircle.Radius;
   dDistanceBewteen2Circles := dDistanceBetween2Centers - dSumRadii;
-  if (dDistanceBewteen2Circles < TBasicMotion.GetDistanceToStop(AVector.InitialVelocity)) then
+  if (dDistanceBewteen2Circles < TBasicMotion.GetDistanceToStop(
+    AVector.InitialVelocity)) then
   begin
     AThisVector := T2DVector.CreateWithAngle(dDistanceBewteen2Circles, AVector.Angle);
     try

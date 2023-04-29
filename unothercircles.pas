@@ -9,23 +9,24 @@ uses
 
 type
 
-  IDeceleratingCircle = interface['{2AC3E6C6-87ED-4141-82D7-5DDDCB06E703}']
-    function GetCenterX: Double;
-    function GetCenterY: Double;
-    function GetAngle: Double;
-    function GetRadius: Double;
-    function GetMass: Double;
-    function GetInitialVelocity: Double;
-    function GetTimeToStop: Double;
-    function GetDistanceToStop: Double;
-    function GetXDisplacementAtTime(const dTime:Double): Double;
-    function GetYDisplacementAtTime(const dTime:Double): Double;
-    function GetXVelocityAtTime(const dTime: DOuble): Double;
-    function GetYVelocityAtTime(const dTime : Double): Double;
-    function GetXDisplacementAtStop: Double;
-    function GetYDisplacementAtStop: Double;
+  IDeceleratingCircle = interface
+    ['{2AC3E6C6-87ED-4141-82D7-5DDDCB06E703}']
+    function GetCenterX: double;
+    function GetCenterY: double;
+    function GetAngle: double;
+    function GetRadius: double;
+    function GetMass: double;
+    function GetInitialVelocity: double;
+    function GetTimeToStop: double;
+    function GetDistanceToStop: double;
+    function GetXDisplacementAtTime(const dTime: double): double;
+    function GetYDisplacementAtTime(const dTime: double): double;
+    function GetXVelocityAtTime(const dTime: double): double;
+    function GetYVelocityAtTime(const dTime: double): double;
+    function GetXDisplacementAtStop: double;
+    function GetYDisplacementAtStop: double;
     function GetInitialMovementVector: Tvector2_double;
-    function GetMovementVectorAtTime(const dTime :Double): Tvector2_double;
+    function GetMovementVectorAtTime(const dTime: double): Tvector2_double;
 
   end;
 
@@ -38,7 +39,7 @@ type
     FdCenterY: double;
     FclrBrush: TColor;
     FclrPen: TColor;
-    FbStationary: Boolean;
+    FbStationary: boolean;
   public
     constructor Create(const dCenterX, dCenterY, dRadius: double);
     property Radius: double read FdRadius;
@@ -46,7 +47,7 @@ type
     property CenterY: double read FdCenterY write FdCenterY;
     property BrushColor: TColor read FclrBrush write FclrBrush;
     property PenColor: TColor read FclrPen write FclrPen;
-    property Stationary : Boolean read FbStationary write FbStationary;
+    property Stationary: boolean read FbStationary write FbStationary;
     function Distance(const dOtherCenterX, dOtherCenterY: double): double;
     procedure Render(const ACanvas: TCanvas);
   end;
@@ -64,7 +65,7 @@ begin
   FdRadius := dRadius;
   FclrBrush := clWhite;
   FclrPen := clBlack;
-  FbStationary:= True;
+  FbStationary := True;
 end;
 
 function TCircle.Distance(const dOtherCenterX, dOtherCenterY: double): double;
@@ -77,8 +78,7 @@ begin
   ACanvas.Brush.color := FclrBrush;
   ACanvas.Pen.Color := FclrPen;
   ACanvas.Ellipse(Round(FdCenterX - FdRadius), Round(FdCenterY - FdRadius),
-  Round(FdCenterX +
-    FdRadius), Round(FdCenterY + FdRadius));
+    Round(FdCenterX + FdRadius), Round(FdCenterY + FdRadius));
 end;
 
 end.

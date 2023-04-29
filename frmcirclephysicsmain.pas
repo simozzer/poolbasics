@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, StdCtrls,
-  MaskEdit, ExtCtrls, ComCtrls, TAGraph, TASeries, unGameBoard,
+  MaskEdit, ExtCtrls, ComCtrls, unGameBoard,
   unCirclePhysics, unTrajectoryPaths, BGRABitmap, unHelperInterfaces,
   unOtherCircles, unAngleSelectorControl;
 
@@ -22,29 +22,18 @@ type
     btnTimeSubtract: TButton;
     btnClearLog: TButton;
     btnTrigger: TButton;
-    chaDistance: TChart;
-    chaDisplacementLineSeries: TLineSeries;
-    chaDistanceToBottomLineSeries: TLineSeries;
-    chaDistanceToLeftLineSeries: TLineSeries;
-    chaDistanceToRightLineSeries: TLineSeries;
-    chaDistanceToTop: TChart;
-    chaDistanceToBottom: TChart;
-    chaDistanceToRight: TChart;
-    chaDistanceToLeft: TChart;
-    chaDistanceToTopLineSeries: TLineSeries;
-    chaVelocity: TChart;
     chkUpdatePosition: TCheckBox;
     edtTimeIncrement: TEdit;
     edtTime: TEdit;
     grpTakeShot: TGroupBox;
     Label1: TLabel;
+    Label2: TLabel;
     lblAngle: TLabel;
     lblTimeIncrement: TLabel;
     lblFrameTime: TLabel;
     lblVel: TLabel;
     lstEvents: TListBox;
     trkVelocity: TTrackBar;
-    VelocityLineSeries: TLineSeries;
     ImageList1: TImageList;
     AnimationTimer: TTimer;
     procedure actRenderExecute(Sender: TObject; const dTime: double);
@@ -62,13 +51,13 @@ type
     FcStartAnimationTime: cardinal;
     FTrajectories: ITrajectoryPaths;
     FlstCircles: TCirclesList;
-    FdVelocity: Double;
+    FdVelocity: double;
 
     FAngleControl: TAngleControl;
     procedure PlotTrajectories;
     procedure LogMessage(const sMessage: string);
     procedure HandleBoardMouseDown(Sender: TObject; Button: TMouseButton;
-                          Shift: TShiftState; X, Y: Integer);
+      Shift: TShiftState; X, Y: integer);
 
   public
     procedure DoAngleChanged(Sender: TObject);
@@ -120,19 +109,12 @@ end;
 
 procedure TForm1.actTriggerExecute(Sender: TObject);
 var
-  i : Integer;
+  i: integer;
 begin
   actTrigger.Enabled := False;
 
-  VelocityLineSeries.Clear;
-  chaDisplacementLineSeries.Clear;
-  chaDistanceToRightLineSeries.Clear;
-  chaDistanceToLeftLineSeries.Clear;
-  chaDistanceToBottomLineSeries.Clear;
-  chaDistanceToTopLineSeries.Clear;
-
-  For i := 0 to pred(FlstCircles.Count) do
-    TCircle(FlstCircles.Items[i]).Stationary:=true;
+  for i := 0 to pred(FlstCircles.Count) do
+    TCircle(FlstCircles.Items[i]).Stationary := True;
 
   PlotTrajectories;
 
@@ -152,7 +134,7 @@ begin
   AVector := FTrajectories.GetVectorForTime(cTimeSinceStart);
   if (AVector = nil) then
   begin
-    actTrigger.Enabled := True;
+
     AnimationTimer.Enabled := False;
 
 
@@ -163,27 +145,14 @@ begin
       begin
         edtTime.Text := FloatToStr(AVector.EndTime);
         dVectorDuration := AVector.EndTime - AVector.StartTime;
-        FBallVector.OriginX:= FBallVector.GetXAtTime(AVector.EndTime);
-        FBallVector.Originy:= FBallVector.GetyAtTime(AVector.EndTime);
+        FBallVector.OriginX := FBallVector.GetXAtTime(AVector.EndTime);
+        FBallVector.Originy := FBallVector.GetyAtTime(AVector.EndTime);
       end;
     end;
 
   end
   else
   begin
-
-    VelocityLineSeries.Add(TBasicMotion.GetVelocityAtTime(
-      AVector.InitialVelocity, cTimeSinceStart));
-    chaDisplacementLineSeries.Add(TBasicMotion.GetDistanceAtTime(
-      AVector.InitialVelocity, cTimeSinceStart));
-
-    chaDistanceToRightLineSeries.add(FBoard.Width -
-      PUCK_RADIUS - AVector.GetXAtTime(cTimeSinceStart));
-    chaDistanceToLeftLineSeries.add(AVector.GetXAtTime(cTimeSinceStart) - PUCK_RADIUS);
-    chaDistanceToBottomLineSeries.add(FBoard.Height -
-      PUCK_RADIUS - AVector.GetYAtTime(cTimeSinceStart));
-    chaDistanceToTopLineSeries.Add(AVector.GetYAtTime(cTimeSinceStart) - PUCK_RADIUS);
-
     actRenderExecute(Self, cTimeSinceStart);
   end;
 
@@ -191,7 +160,7 @@ end;
 
 procedure TForm1.btnClearLogClick(Sender: TObject);
 begin
-   FAngleControl.Repaint;
+  FAngleControl.Repaint;
   lstEvents.Clear;
 end;
 
@@ -217,8 +186,8 @@ end;
 
 procedure TForm1.trkVelocityChange(Sender: TObject);
 begin
-  FdVelocity:= (100-trkVelocity.Position)/100;
-  lblVel.Caption:= Format('Vel: %f',[FdVelocity]);
+  FdVelocity := (100 - trkVelocity.Position) / 100;
+  lblVel.Caption := Format('Vel: %f', [FdVelocity]);
 end;
 
 procedure TForm1.PlotTrajectories;
@@ -246,24 +215,25 @@ begin
 end;
 
 procedure TForm1.HandleBoardMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
+  Shift: TShiftState; X, Y: integer);
 begin
   if AnimationTimer.Enabled then exit;
-  FBallVector.OriginX:= x;
-  FBallVector.OriginY:= y;
-  FBallVector.Angle:= 0;
-  FBallVector.InitialVelocity:=0;
+  FBallVector.OriginX := x;
+  FBallVector.OriginY := y;
+  FBallVector.Angle := 0;
+  FBallVector.InitialVelocity := 0;
+  actTrigger.Enabled:=true;
   PlotTrajectories;
-  actRenderExecute(Self,0);
+  actRenderExecute(Self, 0);
 end;
 
 procedure TForm1.DoAngleChanged(Sender: TObject);
 var
-  dAngle : Double;
+  dAngle: double;
 begin
-  dAngle :=FAngleControl.Angle + pi;
+  dAngle := FAngleControl.Angle + pi;
   if (dAngle > 2 * pi) then dAngle := dAngle - 2 * pi;
-  dAngle:= dAngle * (180/pi);
+  dAngle := dAngle * (180 / pi);
   lblAngle.Caption := Format('Angle: %f', [dAngle]);
 end;
 
@@ -276,7 +246,7 @@ begin
   InsertControl(FBoard);
   FBoard.Top := 100;
   FBoard.Left := 12;
-  FBoard.OnMouseDown:= @HandleBoardMouseDown;
+  FBoard.OnMouseDown := @HandleBoardMouseDown;
 
   FBallVector := TBasicVector.Create(300, 300, 1, 0.0, 0);
   FTrajectories := TTrajectoryPath.Create;
@@ -291,11 +261,9 @@ begin
   FAngleControl.Left := 10;
   FAngleControl.Top := 80;
   FAngleControl.OnChange := @Self.DoAngleChanged;
-  FAngleControl.Angle:= 0;
+  FAngleControl.Angle := 0;
 
-  FdVelocity:=0.5;
-
-
+  FdVelocity := 0.5;
 
 end;
 
@@ -308,7 +276,8 @@ begin
   FlstCircles.Clear;
   FlstCircles.Free;
   grpTakeShot.RemoveControl(FAngleControl);
-  FAngleControl.Free;;
+  FAngleControl.Free;
+
   inherited Destroy;
 end;
 

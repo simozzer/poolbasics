@@ -18,16 +18,16 @@ type
     FclrCircleFill: TColor;
     FclrAngleColor: TColor;
     FdAngle: double;
-    FiHeight: Integer;
-    FiWidth: Integer;
+    FiHeight: integer;
+    FiWidth: integer;
     FOnChange: TNotifyEvent;
     FbSettingAngle: boolean;
     procedure SetAngleColor(AValue: TColor);
     procedure SetCenterCircleFillColor(AValue: TColor);
     procedure SetFillColor(AValue: TColor);
     procedure SetCircleFillColor(AValue: TColor);
-    procedure SetHeight(AValue: Integer);
-    procedure SetWidth(AValue: Integer);
+    procedure SetHeight(AValue: integer);
+    procedure SetWidth(AValue: integer);
   protected
 
     procedure SetAngle(const dAngle: double);
@@ -49,10 +49,11 @@ type
     property BackCanvas: TCanvas read GetBackCanvas;
     property FillColor: TColor read FclrFill write SetFillColor;
     property AngleColor: TColor read FclrAngleColor write SetAngleColor;
-    property CenterCircleFillColor: TColor read FclrCenterCircleFillColor write SetCenterCircleFillColor;
+    property CenterCircleFillColor: TColor
+      read FclrCenterCircleFillColor write SetCenterCircleFillColor;
     property Angle: double read FdAngle write SetAngle;
-    property Width: Integer read FiWidth write SetWidth;
-    property Height: Integer  read FiHeight write SetHeight;
+    property Width: integer read FiWidth write SetWidth;
+    property Height: integer read FiHeight write SetHeight;
   published
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
 
@@ -66,7 +67,7 @@ uses
 const
   CONTROL_SIZE = 100;
   HALF_SIZE = CONTROL_SIZE div 2;
-  CENTER_CIRCLE_RADIUS= 10;
+  CENTER_CIRCLE_RADIUS = 10;
 
 
 { TAngleControl }
@@ -87,8 +88,8 @@ end;
 
 procedure TAngleControl.SetCenterCircleFillColor(AValue: TColor);
 begin
-  if FclrCenterCircleFillColor=AValue then Exit;
-  FclrCenterCircleFillColor:=AValue;
+  if FclrCenterCircleFillColor = AValue then Exit;
+  FclrCenterCircleFillColor := AValue;
   Invalidate;
 end;
 
@@ -99,22 +100,22 @@ begin
   Invalidate;
 end;
 
-procedure TAngleControl.SetHeight(AValue: Integer);
+procedure TAngleControl.SetHeight(AValue: integer);
 begin
-  if FiHeight=AValue then Exit;
+  if FiHeight = AValue then Exit;
   inherited Height := AValue;
-  FiHeight:=AValue;
-  FbmpBack.Height:=AValue;
+  FiHeight := AValue;
+  FbmpBack.Height := AValue;
   Invalidate;
 end;
 
-procedure TAngleControl.SetWidth(AValue: Integer);
+procedure TAngleControl.SetWidth(AValue: integer);
 begin
-  if FiWidth=AValue then Exit;
+  if FiWidth = AValue then Exit;
   inherited Width := AValue;
   FbmpBack.Width := AValue;
-  FiWidth:=AValue;
-    Invalidate;
+  FiWidth := AValue;
+  Invalidate;
 end;
 
 
@@ -156,7 +157,8 @@ procedure TAngleControl.DrawAngleIndicator;
 begin
   BackCanvas.MoveTo(HALF_SIZE, HALF_SIZE);
   BackCanvas.Pen.Color := FclrAngleColor;
-  BackCanvas.LineTo(HALF_SIZE + Round(HALF_SIZE * cos(-FdAngle)), HALF_SIZE + Round(HALF_SIZE * sin(FdAngle)));
+  BackCanvas.LineTo(HALF_SIZE + Round(HALF_SIZE * cos(-FdAngle)),
+    HALF_SIZE + Round(HALF_SIZE * sin(FdAngle)));
   BackCanvas.Brush.Color := FclrCenterCircleFillColor;
   BackCanvas.Ellipse(HALF_SIZE - CENTER_CIRCLE_RADIUS,
     HALF_SIZE - CENTER_CIRCLE_RADIUS,

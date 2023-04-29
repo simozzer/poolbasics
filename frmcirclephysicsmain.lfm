@@ -7,222 +7,74 @@ object Form1: TForm1
   ClientHeight = 804
   ClientWidth = 1180
   LCLVersion = '2.2.4.0'
-  object chaVelocity: TChart
-    Left = 808
-    Height = 208
-    Top = 0
-    Width = 368
-    AxisList = <    
-      item
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelFont.Orientation = 900
-        Title.LabelBrush.Style = bsClear
-      end    
-      item
-        Alignment = calBottom
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelBrush.Style = bsClear
-      end>
-    Title.Text.Strings = (
-      'Velocity'
-    )
-    Title.Visible = True
-    object VelocityLineSeries: TLineSeries
-      Title = 'Velocity'
-      LinePen.Color = clRed
-    end
-  end
-  object chaDistance: TChart
-    Left = 808
-    Height = 200
-    Top = 192
-    Width = 368
-    AxisList = <    
-      item
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelFont.Orientation = 900
-        Title.LabelBrush.Style = bsClear
-      end    
-      item
-        Alignment = calBottom
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelBrush.Style = bsClear
-      end>
-    Title.Text.Strings = (
-      'Displacement'
-    )
-    Title.Visible = True
-    object chaDisplacementLineSeries: TLineSeries
-    end
-  end
-  object chaDistanceToTop: TChart
-    Left = 928
-    Height = 96
-    Top = 392
-    Width = 124
-    AxisList = <    
-      item
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelFont.Orientation = 900
-        Title.LabelBrush.Style = bsClear
-      end    
-      item
-        Alignment = calBottom
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelBrush.Style = bsClear
-      end>
-    Title.Text.Strings = (
-      'TAChart'
-    )
-    object chaDistanceToTopLineSeries: TLineSeries
-    end
-  end
-  object chaDistanceToBottom: TChart
-    Left = 928
-    Height = 96
-    Top = 496
-    Width = 124
-    AxisList = <    
-      item
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelFont.Orientation = 900
-        Title.LabelBrush.Style = bsClear
-      end    
-      item
-        Alignment = calBottom
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelBrush.Style = bsClear
-      end>
-    Title.Text.Strings = (
-      'TAChart'
-    )
-    object chaDistanceToBottomLineSeries: TLineSeries
-    end
-  end
-  object chaDistanceToRight: TChart
-    Left = 1056
-    Height = 96
-    Top = 448
-    Width = 124
-    AxisList = <    
-      item
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelFont.Orientation = 900
-        Title.LabelBrush.Style = bsClear
-      end    
-      item
-        Alignment = calBottom
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelBrush.Style = bsClear
-      end>
-    Title.Text.Strings = (
-      'TAChart'
-    )
-    object chaDistanceToRightLineSeries: TLineSeries
-    end
-  end
-  object chaDistanceToLeft: TChart
-    Left = 808
-    Height = 96
-    Top = 448
-    Width = 124
-    AxisList = <    
-      item
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelFont.Orientation = 900
-        Title.LabelBrush.Style = bsClear
-      end    
-      item
-        Alignment = calBottom
-        Marks.LabelBrush.Style = bsClear
-        Minors = <>
-        Title.LabelBrush.Style = bsClear
-      end>
-    Title.Text.Strings = (
-      'TAChart'
-    )
-    object chaDistanceToLeftLineSeries: TLineSeries
-    end
-  end
   object lstEvents: TListBox
     Left = 816
-    Height = 176
-    Top = 592
+    Height = 758
+    Top = 10
     Width = 356
     ItemHeight = 0
-    TabOrder = 6
+    TabOrder = 0
   end
   object edtTime: TEdit
-    Left = 424
+    Left = 728
     Height = 23
-    Top = 10
+    Top = 456
     Width = 80
-    TabOrder = 7
+    TabOrder = 1
     Text = '557.0'
   end
   object btnRenderFrame: TButton
-    Left = 512
+    Left = 680
     Height = 25
-    Top = 8
+    Top = 528
     Width = 104
     Caption = 'Render Frame'
     OnClick = btnRenderFrameClick
-    TabOrder = 8
+    TabOrder = 2
   end
   object lblFrameTime: TLabel
-    Left = 352
+    Left = 656
     Height = 15
-    Top = 14
+    Top = 460
     Width = 62
     Caption = 'Frame &Time'
     FocusControl = edtTime
     ParentColor = False
   end
   object lblTimeIncrement: TLabel
-    Left = 352
+    Left = 656
     Height = 15
-    Top = 46
+    Top = 492
     Width = 45
     Caption = 'Time &Inc'
     FocusControl = edtTimeIncrement
     ParentColor = False
   end
   object edtTimeIncrement: TEdit
-    Left = 424
+    Left = 728
     Height = 23
-    Top = 43
+    Top = 489
     Width = 80
-    TabOrder = 9
+    TabOrder = 3
     Text = '20.0'
   end
   object btnTimeAdd: TButton
-    Left = 512
+    Left = 680
     Height = 25
-    Top = 43
+    Top = 563
     Width = 32
     Caption = '&+'
     OnClick = btnTimeAddClick
-    TabOrder = 10
+    TabOrder = 4
   end
   object btnTimeSubtract: TButton
-    Left = 584
+    Left = 752
     Height = 25
-    Top = 43
+    Top = 563
     Width = 32
     Caption = '&-'
     OnClick = btnTimeSubtractClick
-    TabOrder = 11
+    TabOrder = 5
   end
   object Label1: TLabel
     Left = 632
@@ -238,17 +90,17 @@ object Form1: TForm1
     Width = 75
     Caption = '&Clear'
     OnClick = btnClearLogClick
-    TabOrder = 12
+    TabOrder = 6
   end
   object grpTakeShot: TGroupBox
-    Left = 648
+    Left = 664
     Height = 433
-    Top = 128
+    Top = 8
     Width = 137
     Caption = 'Take &Shot'
     ClientHeight = 413
     ClientWidth = 133
-    TabOrder = 13
+    TabOrder = 7
     object lblAngle: TLabel
       Left = 32
       Height = 15
@@ -294,6 +146,16 @@ object Form1: TForm1
       Caption = 'Velocity: 0.5'
       ParentColor = False
     end
+  end
+  object Label2: TLabel
+    Left = 96
+    Height = 15
+    Top = 48
+    Width = 481
+    Caption = 'Click on board to place puck then setup velocity and angle and press the trigger button'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
   end
   object ActionList1: TActionList
     Images = ImageList1
