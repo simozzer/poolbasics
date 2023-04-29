@@ -98,8 +98,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unGameBoard"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="18"/>
-        <CursorPos X="78" Y="23"/>
+        <TopLine Value="17"/>
+        <CursorPos X="52" Y="36"/>
         <UsageCount Value="38"/>
         <Loaded Value="True"/>
       </Unit>
