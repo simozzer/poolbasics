@@ -42,10 +42,6 @@ type
     function GetVector: Tvector2_double;
     procedure SetAngle(AValue: double);
     procedure SetInitialVelocity(const AValue: double);
-    function GetXVelAtXDeplacement(const dDesplacement: double): double;
-    function GetYVelAtYDeplacement(const dDesplacement: double): double;
-    function GetInitialVelX(): double;
-    function GetInitialVelY(): double;
   public
     constructor Create(const dOriginX, dOriginY, dVelocity, dAngle, dStartTime: double);
     function GetXAtTime(const dTime: double): double;
@@ -55,8 +51,6 @@ type
     function GetDisplacementXAtStop: double;
     function GetDisplacementYAtStop: double;
     function GetTimeToStop: double;
-    function GetDecelX(): double;
-    function GetDecelY(): double;
     procedure ReverseX();
     procedure ReverseY();
     function GetVelocityVectorAtTime(const dTime: double): Tvector2_double;
@@ -178,26 +172,6 @@ begin
   FdInitialVelocity := AValue;
 end;
 
-function TBasicVector.GetXVelAtXDeplacement(const dDesplacement: double): double;
-begin
-  Result := Sqr(GetInitialVelX()) + (2 * GetDecelX() * dDesplacement);
-end;
-
-function TBasicVector.GetYVelAtYDeplacement(const dDesplacement: double): double;
-begin
-  Result := Sqr(GetInitialVelY()) + (2 * GetDecelY() * dDesplacement);
-end;
-
-function TBasicVector.GetInitialVelX: double;
-begin
-  Result := FdInitialVelocity * cos(FdAngle);
-end;
-
-function TBasicVector.GetInitialVelY: double;
-begin
-  Result := FdInitialVelocity * Sin(FdAngle);
-end;
-
 procedure TBasicVector.SetAngle(AValue: double);
 begin
   if FdAngle = AValue then Exit;
@@ -280,16 +254,6 @@ begin
   Result := TBasicMotion.GetTimeToStop(InitialVelocity);
 end;
 
-function TBasicVector.GetDecelX: double;
-begin
-  Result := DECELERATION * Cos(FdAngle);
-end;
-
-function TBasicVector.GetDecelY: double;
-begin
-  Result := DECELERATION * Sin(FdAngle);
-end;
-
 procedure TBasicVector.ReverseX;
 begin
   Angle := pi - Angle;
@@ -311,7 +275,7 @@ end;
 function TBasicVector.ToString: string;
 begin
   Result := Format('%F X:%F, Y:%F, V:%F, A:%F (%F)',
-    [StartTime, OriginX, OriginY, InitialVelocity, Angle, (180 / pi) * Angle]);
+    [StartTime, OriginX, OriginY, InitialVelocity, Angle, TBasicMotion.RadToDeg(Angle)]);
 end;
 
 

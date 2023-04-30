@@ -102,12 +102,6 @@ begin
     else
       Inc(i);
   end;
-  {
-  if (Result = nil) and (FTrajectories.Count > 0) then
-  begin
-    RESULT := TBasicVector(FTrajectories[FTrajectories.Count - 1]);
-  end;
-  }
 
 end;
 
@@ -423,53 +417,51 @@ end;
 function TTrajectoryPath.CalculateBounceAfterHittingCircle(const AVector: TBasicVector;
   const dX, dY: double; const ACircle: TCircle; const dHitTime : Double): TBounceResult;
 var
-  aNormalisedVectorBetweenCentersAtCollision, vecOtherCircleBeforeCollision,
-  vecThisMovement, aCalcVec: Tvector2_double;
-  dThisLengthOfMoveVectorAlongCollisionNormal_a1,
-  dOtherLengthOfMoveVectorAlongCollisionNormal_a2, dOptimisedP: double;
+  deltaX, deltaY,  dAngle, dSin, dCos : Double;
+  vx1, vy1, vx2, vy2 : Double;
+  vecVel : Tvector2_double;
 
+  vx1Final,vx2Final, vy1Final, vy2Final : Double;
+  vx1Rotated,vx2Rotated, vy1Rotated, vy2Rotated : Double;
+  circleVecVel : Tvector2_double;
 begin
-  // Get normalised data between 2 centers
-  aNormalisedVectorBetweenCentersAtCollision.init(
-    ACircle.CenterX - dX, ACircle.CenterY - dY);
-  aNormalisedVectorBetweenCentersAtCollision.init(
-    aNormalisedVectorBetweenCentersAtCollision.Data[0] /
-    aNormalisedVectorBetweenCentersAtCollision.length,
-    aNormalisedVectorBetweenCentersAtCollision.Data[1] /
-    aNormalisedVectorBetweenCentersAtCollision.length);
+  // calculate distance between 2 circles
+  deltaX := ACircle.CenterX - dX;
+  deltaY := ACircle.CenterY - DY;
 
-  vecOtherCircleBeforeCollision.init_zero;
+  // Calculate collision angle
+  dAngle := arctan2(deltaY, deltaX);
 
-  // find length of move against normalised vector
+  dSin := Sin(dAngle);
+  dCos := Cos(dAngle);
 
-  vecThisMovement :=
-    AVector.GetVelocityVectorAtTime(dHitTime);
+  vecVel := AVector.GetVelocityVectorAtTime(dHitTime);
+  circleVecVel.init_zero; // TODO change for moving circle
 
-  // get dot product of movement vector and normalised collision vector
-  dThisLengthOfMoveVectorAlongCollisionNormal_a1 :=
-    vecThisMovement.Data[0] * aNormalisedVectorBetweenCentersAtCollision.Data[0] +
-    vecThisMovement.Data[1] * aNormalisedVectorBetweenCentersAtCollision.Data[1];
+  // Rotate the velocities so that we can calculate the new velocities
+  vx1 := vecVel.data[0] * dCos + vecVel.data[1] * dSin;
+  vy1 := vecVel.data[1] * dCos - vecVel.data[0] * dSin;
+  vx2 := circleVecVel.Data[0] * dCos + circleVecVel.Data[1] * dSin;
+  vy2 := circleVecVel.Data[1] * dCos - circleVecVel.Data[0] * dSin;
 
-  dOtherLengthOfMoveVectorAlongCollisionNormal_a2 :=
-    0.0; // TODO
+  // Calculate the new velocities after the collision
+  vx1Final := ((PUCK_RADIUS - Acircle.Radius) * vx1 + (2 * Acircle.Radius) * vx2) / (PUCK_RADIUS + Acircle.Radius);
+  vx2Final := ((Acircle.Radius - PUCK_RADIUS) * vx2 + (2 * PUCK_RADIUS) * vx1) / (PUCK_RADIUS + Acircle.Radius);
+  vy1Final := vy1 - DECELERATION;
+  vy2Final := vy2 - DECELERATION;
 
-  //  (2.0 * (a1 - a2)) / (circle1.mass + circle2.mass);
-  dOptimisedP :=
-    (2.0 * (dThisLengthOfMoveVectorAlongCollisionNormal_a1 -
-    dOtherLengthOfMoveVectorAlongCollisionNormal_a2)) / (1 + 1);
+  // Rotate the velocities back again
+  vx1Rotated := vx1Final * dCos - vy1Final * dSin;
+  vy1Rotated := vy1Final * dCos + vx1Final * dSin;
+  vx2Rotated := vx2Final * dCos - vy2Final * dSin;
+  vy2Rotated := vy2Final * dCos + vx2Final * dSin;
 
-  // Calculate v1', the new movement vector of circle1
-  //                              Vector v1' = v1 - optimizedP * circle2.mass * n;
-  aCalcVec.init(dOptimisedP * aNormalisedVectorBetweenCentersAtCollision.Data[0],
-    dOptimisedP * aNormalisedVectorBetweenCentersAtCollision.Data[1]);
-
-  RESULT.Vector1 := AVector.GetVelocityVectorAtTime(dHitTime) - aCalcVec;
+  RESULT.Vector1.init(vx1Rotated, vy1Rotated);
     Format('This vel after collision = XVEL: %f, YVEL: %f',
     [RESULT.Vector1.Data[0], RESULT.Vector1.Data[1]]);
   // Calculate v2', the new movement vector of circle2
   // v2' = v2 + optimizedP * m1 * n
-  RESULT.Vector2 :=
-    vecOtherCircleBeforeCollision - aCalcVec;
+  RESULT.Vector2.init(vx2Rotated, vy2Rotated);
   LogMessage(
     Format('Other vel after collision = XVEL: %f, YVEL: %f',
     [RESULT.Vector2.Data[0], RESULT.Vector2.Data[1]]));

@@ -31,6 +31,8 @@ type
     property Width: integer read FiWidth write SetWidth;
     property Height: integer read FiHeight write SetHeight;
     property OnMouseDown;
+    property OnMouseUp;
+    property OnMouseMOve;
 
   end;
 
