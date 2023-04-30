@@ -17,12 +17,14 @@ type
   TForm1 = class(TForm, IBasicLogger)
     actTrigger: TAction;
     ActionList1: TActionList;
+    btnMoreAngle: TButton;
     btnRenderFrame: TButton;
     btnTimeAdd: TButton;
     btnTimeSubtract: TButton;
     btnClearLog: TButton;
     btnTrigger: TButton;
     btnDrawTrajectory: TButton;
+    btnLessAngle: TButton;
     chkUpdatePosition: TCheckBox;
     edtTimeIncrement: TEdit;
     edtTime: TEdit;
@@ -43,6 +45,8 @@ type
 
     procedure btnClearLogClick(Sender: TObject);
     procedure btnDrawTrajectoryClick(Sender: TObject);
+    procedure btnLessAngleClick(Sender: TObject);
+    procedure btnMoreAngleClick(Sender: TObject);
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
@@ -170,6 +174,16 @@ end;
 procedure TForm1.btnDrawTrajectoryClick(Sender: TObject);
 begin
   DrawTrajectoryPaths;
+end;
+
+procedure TForm1.btnLessAngleClick(Sender: TObject);
+begin
+  FAngleControl.Angle:= FAngleControl.Angle - ANGLE_MICRO_CHANGE;
+end;
+
+procedure TForm1.btnMoreAngleClick(Sender: TObject);
+begin
+  FAngleControl.Angle:= FAngleControl.Angle + ANGLE_MICRO_CHANGE;
 end;
 
 procedure TForm1.btnRenderFrameClick(Sender: TObject);

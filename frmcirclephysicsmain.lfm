@@ -146,6 +146,24 @@ object Form1: TForm1
       Caption = 'Velocity: 0.5'
       ParentColor = False
     end
+    object btnLessAngle: TButton
+      Left = 16
+      Height = 25
+      Top = 34
+      Width = 24
+      Caption = '<-'
+      OnClick = btnLessAngleClick
+      TabOrder = 3
+    end
+    object btnMoreAngle: TButton
+      Left = 80
+      Height = 25
+      Top = 34
+      Width = 24
+      Caption = '->'
+      OnClick = btnMoreAngleClick
+      TabOrder = 4
+    end
   end
   object Label2: TLabel
     Left = 96

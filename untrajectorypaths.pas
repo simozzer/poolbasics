@@ -80,21 +80,26 @@ function TTrajectoryPath.GetVectorForTime(const dTime: double): TBasicVector;
 var
   AVector: TBasicVector;
   i: integer;
+  dt : Double;
 begin
   i := 0;
+  dT := dTime;
+  if (dT < 0) then dT := 0;
   Result := nil;
   while (Result = nil) and (i < FTrajectories.Count) do
   begin
     AVector := TBasicVector(FTrajectories[i]);
-    if (dTime >= AVector.StartTime) and (dTime < AVector.EndTime) then
+    if (dT >= AVector.StartTime) and (dT <= AVector.EndTime) then
       Result := AVector
     else
       Inc(i);
   end;
+  {
   if (Result = nil) and (FTrajectories.Count > 0) then
   begin
-    AVector := TBasicVector(FTrajectories[FTrajectories.Count - 1]);
+    RESULT := TBasicVector(FTrajectories[FTrajectories.Count - 1]);
   end;
+  }
 
 end;
 
@@ -495,12 +500,15 @@ function TTrajectoryPath.GetYAtTime(const dTime: double): double;
 var
   AVector: TBasicVector;
   dTimeInVector: double;
+  dT : Double;
 begin
   Result := 0;
+  dt := dTime;
+  if (dT < 0) then dt := 0;
   AVector := GetVectorForTime(dTime);
   if (AVector <> nil) then
   begin
-    dTimeInVector := dTime - AVector.StartTime;
+    dTimeInVector := dT - AVector.StartTime;
     Result := AVector.GetYAtTime(dTimeInVector);
   end
   else
