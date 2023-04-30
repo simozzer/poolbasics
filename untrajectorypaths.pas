@@ -239,25 +239,25 @@ begin
       ehNone: LogMessage('No Edge Hit');
       ehLeft:
       begin
-        LogMessage('Hit left edge');
+      //  LogMessage('Hit left edge');
         APathVector.ReverseX;
       end;
 
       ehTop:
       begin
-        LogMessage('Hit top edge');
+    //    LogMessage('Hit top edge');
         aNextPathVector.ReverseY();
       end;
 
       ehRight:
       begin
-        LogMessage('Hit right edge');
+       // LogMessage('Hit right edge');
         aNextPathVector.ReverseX();
       end;
 
       ehBottom:
       begin
-        LogMessage('Hit bottom edge');
+      //  LogMessage('Hit bottom edge');
         aNextPathVector.ReverseY();
       end;
 

@@ -206,6 +206,8 @@ var
   AVector: TBasicVector;
   BoardCanvas: TCanvas;
   dBallCenterX, dBallCenterY: double;
+
+  X, Y :Double;
 begin
 
   PlotTrajectories;
@@ -231,10 +233,15 @@ begin
   for i := 0 to pred(FTrajectories.Count) do
   begin
     AVector := FTrajectories.getItem(i);
-    FBoard.BoardCanvas.Pen.Color := clRed;
-    FBoard.BoardCanvas.MoveTo(Round(AVector.OriginX), Round(AVector.OriginY));
-    FBoard.BoardCanvas.LineTo(Round(AVector.GetXAtTime(AVector.EndTime -
-      AVector.StartTime)), Round(AVector.GetYAtTime(AVector.EndTime - AVector.StartTime)));
+    BoardCanvas.Pen.Color := clRed;
+    BoardCanvas.MoveTo(Round(AVector.OriginX), Round(AVector.OriginY));
+    dBallCenterX:= AVector.GetXAtTime(AVector.EndTime - AVector.StartTime);
+    dBallCenterY:= AVector.GetYAtTime(AVector.EndTime - AVector.StartTime);
+    BoardCanvas.LineTo(Round(dBallCenterX), Round(dBallCenterY));
+    BoardCanvas.Ellipse(round(dBallCenterX - PUCK_RADIUS),
+    round(dBallCenterY - PUCK_RADIUS),
+    round(dBallCenterX + PUCK_RADIUS),
+    round(dBallCenterY + PUCK_RADIUS));
   end;
   FBoard.Invalidate;
 end;
