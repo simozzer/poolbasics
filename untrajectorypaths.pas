@@ -150,13 +150,11 @@ begin
           begin
             dEarliestHit := dHitTime;
             EdgeHit := ehCircle;
-            // TODO... add circle collision data
 
             BounceResult := CalculateBounceAfterHittingCircle(APathVector, dXCircleHit, dYCircleHit,
               ACircle, dHitTime);
 
-            // todo.. move check into later stage (May have hit another circle first)
-            ACircle.Stationary := False;
+            ACircle.Stationary := False; // for now just mark the other circle as moving
           end;
         end;
 
@@ -455,7 +453,7 @@ begin
   dOtherLengthOfMoveVectorAlongCollisionNormal_a2 :=
     0.0; // TODO
 
-  //                              (2.0 * (a1 - a2)) / (circle1.mass + circle2.mass);
+  //  (2.0 * (a1 - a2)) / (circle1.mass + circle2.mass);
   dOptimisedP :=
     (2.0 * (dThisLengthOfMoveVectorAlongCollisionNormal_a1 -
     dOtherLengthOfMoveVectorAlongCollisionNormal_a2)) / (1 + 1);
