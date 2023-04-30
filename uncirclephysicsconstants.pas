@@ -26,6 +26,9 @@ const
 const
   TARGET_RADIUS = 8;
 
+const
+  ANGLE_MICRO_CHANGE = 0.003;
+
 implementation
 
 end.
