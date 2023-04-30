@@ -112,18 +112,6 @@ end;
 function T2DVector.GetAngle: double;
 begin
   Result := ArcTan2(FVector.Data[1], FVector.Data[0]);
-  {
-  RESULT := 0;
-  if (FVector.data[0] <> 0) or (FVector.data[1] <> 0) then
-    begin
-      if (FVector.data[0] <> 0) then
-        RESULT := ArcTan(FVector.data[1] / FVector.data[0])
-      else if FVector.data[0] > 0 then
-        RESULT := PI/2
-      else
-        RESULT := 1.5 * PI;
-    end;
-    }
 end;
 
 function T2DVector.GetVector: Tvector2_double;
@@ -229,8 +217,8 @@ begin
   Result.init(GetXAtTime(FdEndTime - FdStartTime), GetYAtTime(FdEndTime - FdStartTime));
 end;
 
-constructor TBasicVector.Create(const dOriginX, dOriginY, dVelocity,
-  dAngle, dStartTime: double);
+constructor TBasicVector.Create(
+  const dOriginX, dOriginY, dVelocity, dAngle, dStartTime: double);
 begin
   FdOriginX := dOriginX;
   FdOriginY := dOriginY;
@@ -242,20 +230,14 @@ end;
 
 function TBasicVector.GetXAtTime(const dTime: double): double;
 begin
-  if (dTime <= GetTimeToStop) then
-    Result := FdOriginX + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
-      cos(FdAngle));
-  // else
-  //   RESULT := FdOriginX + GetDisplacementXAtStop;
+  Result := FdOriginX + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
+    cos(FdAngle));
 end;
 
 function TBasicVector.GetYAtTime(const dTime: double): double;
 begin
-  if (dTime <= GetTimeToStop) then
-    Result := FdOriginY + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
-      sin(FdAngle));
-  //  else
-  //   Result := FdOriginY + GetDisplacementYAtStop;
+  Result := FdOriginY + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
+    sin(FdAngle));
 end;
 
 function TBasicVector.GetTimeToXDeplacement(const dDeplacement: double): double;

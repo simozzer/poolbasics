@@ -29,10 +29,8 @@
         <Filename Value="uncirclephysics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCirclePhysics"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="315"/>
-        <CursorPos Y="278"/>
+        <CursorPos X="55" Y="114"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -41,8 +39,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unTrajectoryPaths"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="209"/>
-        <CursorPos X="70" Y="217"/>
+        <TopLine Value="400"/>
+        <CursorPos Y="490"/>
         <FoldState Value=" T0m24H0E1 PiQlA2 TM Hq621d"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
@@ -50,6 +48,7 @@
       <Unit>
         <Filename Value="uncirclephysicsconstants.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <CursorPos X="22" Y="15"/>
         <UsageCount Value="223"/>
@@ -69,6 +68,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unOtherCircles"/>
         <EditorIndex Value="7"/>
+        <TopLine Value="26"/>
         <CursorPos X="37" Y="8"/>
         <UsageCount Value="219"/>
         <Loaded Value="True"/>
@@ -80,7 +80,7 @@
         <EditorIndex Value="9"/>
         <TopLine Value="108"/>
         <CursorPos X="24" Y="182"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="41"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -90,7 +90,7 @@
         <EditorIndex Value="8"/>
         <TopLine Value="8"/>
         <CursorPos X="70" Y="23"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -100,7 +100,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="17"/>
         <CursorPos X="52" Y="36"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -232,30 +232,6 @@
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="frmcirclephysicsmain.pas"/>
-        <Caret Line="171" Column="20" TopLine="155"/>
-      </Position>
-      <Position>
-        <Filename Value="frmcirclephysicsmain.pas"/>
-        <Caret Line="54" Column="5" TopLine="45"/>
-      </Position>
-      <Position>
-        <Filename Value="frmcirclephysicsmain.pas"/>
-        <Caret Line="181" Column="7" TopLine="168"/>
-      </Position>
-      <Position>
-        <Filename Value="untrajectorypaths.pas"/>
-        <Caret Line="20" Column="3" TopLine="4"/>
-      </Position>
-      <Position>
-        <Filename Value="untrajectorypaths.pas"/>
-        <Caret Line="40" Column="46" TopLine="24"/>
-      </Position>
-      <Position>
-        <Filename Value="frmcirclephysicsmain.pas"/>
-        <Caret Line="54" Column="20" TopLine="38"/>
-      </Position>
-      <Position>
         <Filename Value="untrajectorypaths.pas"/>
         <Caret Line="20" Column="3" TopLine="4"/>
       </Position>
@@ -351,6 +327,30 @@
         <Filename Value="frmcirclephysicsmain.pas"/>
         <Caret Line="244" Column="39" TopLine="228"/>
       </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="62" Column="28" TopLine="51"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="89" Column="49" TopLine="77"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="485" Column="24" TopLine="471"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="480" Column="14" TopLine="400"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="490" TopLine="400"/>
+      </Position>
+      <Position>
+        <Filename Value="uncirclephysics.pas"/>
+        <Caret Line="51" Column="26" TopLine="36"/>
+      </Position>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -369,14 +369,14 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="untrajectorypaths.pas"/>
-        <Line Value="487"/>
+        <Line Value="508"/>
       </Item>
       <Item>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="untrajectorypaths.pas"/>
-        <Line Value="505"/>
+        <Line Value="490"/>
       </Item>
     </BreakPoints>
   </Debugging>
