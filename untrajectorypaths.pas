@@ -8,71 +8,60 @@ uses
   Classes, SysUtils, unCirclePhysics, unHelperInterfaces, unOtherCircles, Matrix;
 
 type
+  // Enumeration for describing which objects were hit
   TEdgeHit = (ehNone, ehLeft, ehTop, ehRight, ehBottom, ehCircle);
 
 
+  // Which edge was hit, and at what time
   TEdgeHitDetail = record
     EdgeHit: TEdgeHit;
     HitTime: double;
   end;
 
+  // Information describing the angles of 2 circles after collision
   TBounceResult = record
     Vector1: Tvector2_double;
     Vector2: Tvector2_double;
   end;
 
 
-  ITrajectoryPaths = interface
-    ['{98B877F0-13F2-4B85-AFFE-4E395428FF99}']
-    function GetCount: cardinal;
-    function GetItems: TList;
-    function getItem(const iIndex: cardinal): TBasicVector;
-    function GetCircles: TCirclesList;
-    procedure SetCircles(const lstCircles: TCirclesList);
-    property Items: TList read GetItems;
-    property Item[const iIndex: cardinal]: TBasicVector read GetItem;
-    property Count: cardinal read GetCount;
-    property OtherCircles: TCirclesList read GetCircles write SetCircles;
 
-    function GetXAtTime(const dTime: double): double;
-    function GetYAtTime(const dTime: double): double;
-    function GetVectorForTime(const dTime: double): TBasicVector;
-    procedure CalculateTrajectories;
-  end;
 
   { TTrajectoryPath }
 
   TTrajectoryPath = class(TInterfacedObject, ITrajectoryPaths, IBasicLoggerClient)
   private
     FintfLogger: IBasicLogger;
-    FTrajectories: TList;
+    FTrajectories: TInterfaceList;
     FlstCircles: TCirclesList;
-  private
+
     procedure SetLogger(const intfLogger: IBasicLogger);
     procedure LogMessage(const sMessage: string);
+  public
     function GetCount: cardinal;
-    function GetItems: TList;
-    function GetItem(const iIndex: cardinal): TBasicVector;
+    function GetItems: TInterfaceList;
+    function GetItem(const iIndex: cardinal): IBasicVector;
     function GetCircles: TCirclesList;
     procedure SetCircles(const lstCircles: TCirclesList);
 
-    procedure ProcessEdgeHits(const AVector: TBasicVector; const dRadius: double;
+    procedure ProcessEdgeHits(const AVector: IBasicVector; const dRadius: double;
       var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 
-    function getTimeToHitStationaryCircle(const AVector: TBasicVector;
-      const ACircle: TCircle; var dXCircleHit: double; var dYCircleHit: double): double;
+    function getTimeToHitStationaryCircle(const AVector: IBasicVector;
+      const ACircle: ICircle; var dXCircleHit: double; var dYCircleHit: double): double;
 
-    function CalculateBounceAfterHittingCircle(const AVector: TBasicVector;
-      const dX, dY: double; const ACircle: TCircle;
+    function CalculateBounceAfterHittingCircle(const AVector: IBasicVector;
+      const dX, dY: double; const ACircle: ICircle;
       const dHitTime: double): TBounceResult;
 
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
-    function GetVectorForTime(const dTime: double): TBasicVector;
+    function GetVectorForTime(const dTime: double): IBasicVector;
     procedure CalculateTrajectories;
-  public
     constructor Create;
     destructor Destroy; override;
+    property Count: cardinal read GetCount;
+    property Items: TInterfaceList read GetItems;
   end;
 
 
@@ -85,9 +74,9 @@ uses
 
 { TTrajectoryPath }
 
-function TTrajectoryPath.GetVectorForTime(const dTime: double): TBasicVector;
+function TTrajectoryPath.GetVectorForTime(const dTime: double): IBasicVector;
 var
-  AVector: TBasicVector;
+  AVector: IBasicVector;
   i: integer;
   dt: double;
 begin
@@ -97,7 +86,7 @@ begin
   Result := nil;
   while (Result = nil) and (i < FTrajectories.Count) do
   begin
-    AVector := TBasicVector(FTrajectories[i]);
+    AVector := IBasicVector(FTrajectories[i]);
     if (dT >= AVector.StartTime) and (dT <= AVector.EndTime) then
       Result := AVector
     else
@@ -110,9 +99,9 @@ procedure TTrajectoryPath.CalculateTrajectories;
 var
   dTimeToStop, dEarliestHit, dHitTime: double;
   dXAtCollide, dyAtCollide, dVelAtCollide, dCollideTime, dPreCollisionAngle: double;
-  APathVector, aNextPathVector: TBasicVector;
+  APathVector, aNextPathVector: IBasicVector;
   EdgeHit: TEdgeHit;
-  ACircle: TCircle;
+  ACircle: ICircle;
   i: integer;
 
   dXCircleHit, dYCircleHit: double;
@@ -120,7 +109,7 @@ var
   BounceResult: TBounceResult;
 begin
 
-  APathVector := TBasicVector(FTrajectories[0]);
+  APathVector := IBasicVector(FTrajectories[0]);
   repeat
     EdgeHit := ehNone;
 
@@ -147,7 +136,8 @@ begin
             EdgeHit := ehCircle;
 
             BounceResult := CalculateBounceAfterHittingCircle(APathVector,
-              dXCircleHit + APathVector.OriginX, dYCircleHit + APathVector.OriginY, ACircle, dHitTime);
+              dXCircleHit + APathVector.OriginX, dYCircleHit +
+              APathVector.OriginY, ACircle, dHitTime);
 
             ACircle.Stationary := False; // for now just mark the other circle as moving
           end;
@@ -252,14 +242,14 @@ begin
   Result := FTrajectories.Count;
 end;
 
-function TTrajectoryPath.GetItems: TList;
+function TTrajectoryPath.GetItems: TInterfaceList;
 begin
   Result := FTrajectories;
 end;
 
-function TTrajectoryPath.GetItem(const iIndex: cardinal): TBasicVector;
+function TTrajectoryPath.GetItem(const iIndex: cardinal): IBasicVector;
 begin
-  Result := TBasicVector(FTrajectories[iIndex]);
+  Result := IBasicVector(FTrajectories[iIndex]);
 end;
 
 function TTrajectoryPath.GetCircles: TCirclesList;
@@ -272,7 +262,7 @@ begin
   FlstCircles := lstCircles;
 end;
 
-procedure TTrajectoryPath.ProcessEdgeHits(const AVector: TBasicVector;
+procedure TTrajectoryPath.ProcessEdgeHits(const AVector: IBasicVector;
   const dRadius: double; var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 var
   dMaxDisplacmentXAtStop, dMaxDisplacmentYAtStop, dDeplacement, dHitTime: double;
@@ -325,14 +315,14 @@ begin
   end;
 end;
 
-function TTrajectoryPath.getTimeToHitStationaryCircle(const AVector: TBasicVector;
-  const ACircle: TCircle; var dXCircleHit: double; var dYCircleHit: double): double;
+function TTrajectoryPath.getTimeToHitStationaryCircle(const AVector: IBasicVector;
+  const ACircle: ICircle; var dXCircleHit: double; var dYCircleHit: double): double;
 var
   dDistanceBetween2Centers, dSumRadii, dDistanceBewteen2Circles,
   dDotProduct_D, dyDistanceToColissionSquared_F, dXDiffereneAtCollision_T,
   dHitTime, dXDistanceToCollision_distance, dActualDistanceToCollision: double;
-  AThisVector, AVectorBetween2Centers: T2DVector;
-  NormalizedVector_N: T2DVector;
+  AThisVector, AVectorBetween2Centers: I2DVector;
+  NormalizedVector_N: I2DVector;
 begin
   Result := -1;
 
@@ -344,78 +334,66 @@ begin
     AVector.InitialVelocity)) then
   begin
     AThisVector := T2DVector.CreateWithAngle(dDistanceBewteen2Circles, AVector.Angle);
-    try
-      // Get the normalized vector for this ball
-      NormalizedVector_N := AThisVector.GetNormalised;
-      try
-        // Get the vector between the 2 ball centers
-        AVectorBetween2Centers :=
-          T2DVector.Create(ACircle.CenterX - AVector.OriginX,
-          ACircle.CenterY - AVector.OriginY);
-        try
 
-          //dDotProduct := AVectorBetween2Centers.Magnitude * cos(-AVectorBetween2Centers.Angle);
-          dDotProduct_D := AVectorBetween2Centers.GetDotProduct(NormalizedVector_N);
+    // Get the normalized vector for this ball
+    NormalizedVector_N := AThisVector.GetNormalised;
 
-          // check we're moving towards the target
-          if (dDotProduct_D > 0) then
+    // Get the vector between the 2 ball centers
+    AVectorBetween2Centers :=
+      T2DVector.Create(ACircle.CenterX - AVector.OriginX,
+      ACircle.CenterY - AVector.OriginY);
+
+
+    //dDotProduct := AVectorBetween2Centers.Magnitude * cos(-AVectorBetween2Centers.Angle);
+    dDotProduct_D := AVectorBetween2Centers.GetDotProduct(NormalizedVector_N);
+
+    // check we're moving towards the target
+    if (dDotProduct_D > 0) then
+    begin
+      // Check that we get close enough for collision
+      // double F = (lengthC * lengthC) - (D * D);
+      dyDistanceToColissionSquared_F :=
+        Sqr(AVectorBetween2Centers.Magnitude) - sqr(dDotProduct_D);
+      if (dyDistanceToColissionSquared_F < SQr(dSumRadii)) then
+      begin
+        // find the distance
+        //double T = sumRadiiSquared - F;
+        dXDiffereneAtCollision_T :=
+          Sqr(dSumRadii) - dyDistanceToColissionSquared_F;
+        if (dXDiffereneAtCollision_T >= 0) then
+        begin
+          //doubleble distance = D - sqrt(T);
+          dXDistanceToCollision_distance :=
+            dDotProduct_D - Sqrt(dXDiffereneAtCollision_T);
+          // check distance to travel is enough for possible collision
+          if TBasicMotion.GetDistanceToStop(AVector.InitialVelocity) >=
+            dXDistanceToCollision_distance then
           begin
-            // Check that we get close enough for collision
-            // double F = (lengthC * lengthC) - (D * D);
-            dyDistanceToColissionSquared_F :=
-              Sqr(AVectorBetween2Centers.Magnitude) - sqr(dDotProduct_D);
-            if (dyDistanceToColissionSquared_F < SQr(dSumRadii)) then
-            begin
-              // find the distance
-              //double T = sumRadiiSquared - F;
-              dXDiffereneAtCollision_T :=
-                Sqr(dSumRadii) - dyDistanceToColissionSquared_F;
-              if (dXDiffereneAtCollision_T >= 0) then
-              begin
-                //doubleble distance = D - sqrt(T);
-                dXDistanceToCollision_distance :=
-                  dDotProduct_D - Sqrt(dXDiffereneAtCollision_T);
-                // check distance to travel is enough for possible collision
-                if TBasicMotion.GetDistanceToStop(AVector.InitialVelocity) >=
-                  dXDistanceToCollision_distance then
-                begin
-                  // Set the length so that the circles will just touch.
-                  dXCircleHit :=
-                    NormalizedVector_N.Vector.Data[0] *
-                    dXDistanceToCollision_distance;
-                  dYCircleHit :=
-                    NormalizedVector_N.Vector.Data[1] *
-                    dXDistanceToCollision_distance;
+            // Set the length so that the circles will just touch.
+            dXCircleHit :=
+              NormalizedVector_N.Vector.Data[0] *
+              dXDistanceToCollision_distance;
+            dYCircleHit :=
+              NormalizedVector_N.Vector.Data[1] *
+              dXDistanceToCollision_distance;
 
-                  // Calculate the time at which the collision occurred
-                  dActualDistanceToCollision :=
-                    Sqrt(Sqr(dXCircleHit) + Sqr(dYCircleHit));
-                  dHitTime :=
-                    TBasicMotion.GetTimeToDistance(
-                    AVector.InitialVelocity, dActualDistanceToCollision);
+            // Calculate the time at which the collision occurred
+            dActualDistanceToCollision :=
+              Sqrt(Sqr(dXCircleHit) + Sqr(dYCircleHit));
+            dHitTime :=
+              TBasicMotion.GetTimeToDistance(
+              AVector.InitialVelocity, dActualDistanceToCollision);
 
-                  Result := dHitTime;
-                end;
-              end;
-            end;
+            Result := dHitTime;
           end;
-
-        finally
-          AVectorBetween2Centers.Free;
         end;
-
-      finally
-        NormalizedVector_N.Free;
       end;
-
-    finally
-      AThisVector.Free;
     end;
   end;
 end;
 
 function TTrajectoryPath.CalculateBounceAfterHittingCircle(
-  const AVector: TBasicVector; const dX, dY: double; const ACircle: TCircle;
+  const AVector: IBasicVector; const dX, dY: double; const ACircle: ICircle;
   const dHitTime: double): TBounceResult;
 var
   deltaX, deltaY, dAngle, dSin, dCos, dPuckAngle, dAngleDifference: double;
@@ -427,10 +405,11 @@ var
   circleVecVel: Tvector2_double;
 begin
   // calculate distance between 2 circles
-  deltaX := Dx- ACircle.CenterX;
-  deltaY := Dy -ACircle.CenterY;
+  deltaX := Dx - ACircle.CenterX;
+  deltaY := Dy - ACircle.CenterY;
 
-  LogMessage(Format('dist between circle centrers %f',[Sqrt(sqR(deltaX) + Sqr(deltaY))]));
+  LogMessage(Format('dist between circle centrers %f',
+    [Sqrt(sqR(deltaX) + Sqr(deltaY))]));
 
   // Calculate collision angle
   dAngle := arctan2(deltaY, deltaX);
@@ -438,8 +417,8 @@ begin
   // calculate the angle of the puck
 
   dPuckAngle := AVector.Angle;
-  dAngleDifference:= dPuckAngle - dAngle;
-  LogMessage(Format('Difference in collision angle %f',[dAngleDifference]));
+  dAngleDifference := dPuckAngle - dAngle;
+  LogMessage(Format('Difference in collision angle %f', [dAngleDifference]));
 
 
   dSin := Sin(dAngle);
@@ -459,7 +438,7 @@ begin
     (PUCK_RADIUS + Acircle.Radius);
   vx2Final := ((Acircle.Radius - PUCK_RADIUS) * vx2 + (2 * PUCK_RADIUS) * vx1) /
     (PUCK_RADIUS + Acircle.Radius);
-  vy1Final := vy1- DECELERATION;
+  vy1Final := vy1 - DECELERATION;
   vy2Final := vy2;// - DECELERATION;
 
   // Rotate the velocities back again
@@ -485,7 +464,7 @@ end;
 
 function TTrajectoryPath.GetXAtTime(const dTime: double): double;
 var
-  AVector: TBasicVector;
+  AVector: IBasicVector;
   dTimeInVector: double;
   dT: double;
 begin
@@ -506,7 +485,7 @@ end;
 
 function TTrajectoryPath.GetYAtTime(const dTime: double): double;
 var
-  AVector: TBasicVector;
+  AVector: IBasicVector;
   dTimeInVector: double;
   dT: double;
 begin
@@ -527,7 +506,7 @@ end;
 
 constructor TTrajectoryPath.Create;
 begin
-  FTrajectories := TList.Create;
+  FTrajectories := TInterfaceList.Create;
   FlstCircles := nil;
   FintfLogger := nil;
 end;
