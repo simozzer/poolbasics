@@ -20,6 +20,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmCirclePhysicsMain"/>
+        <IsVisibleTab Value="True"/>
         <TopLine Value="110"/>
         <CursorPos X="8" Y="117"/>
         <UsageCount Value="224"/>
@@ -31,8 +32,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCirclePhysics"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="135"/>
-        <CursorPos X="54" Y="155"/>
+        <CursorPos X="48" Y="80"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -40,10 +40,9 @@
         <Filename Value="untrajectorypaths.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unTrajectoryPaths"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
-        <TopLine Value="334"/>
-        <CursorPos X="20" Y="349"/>
+        <TopLine Value="13"/>
+        <CursorPos Y="28"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -60,9 +59,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unHelperInterfaces"/>
         <EditorIndex Value="10"/>
-        <TopLine Value="6"/>
-        <CursorPos X="14" Y="25"/>
-        <FoldState Value=" T7igHW5"/>
+        <TopLine Value="132"/>
+        <CursorPos X="32" Y="145"/>
+        <FoldState Value=" T7j0HW^"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -71,8 +70,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unOtherCircles"/>
         <EditorIndex Value="11"/>
-        <TopLine Value="88"/>
-        <CursorPos X="99" Y="100"/>
+        <TopLine Value="28"/>
+        <CursorPos Y="41"/>
         <UsageCount Value="219"/>
         <Loaded Value="True"/>
       </Unit>
@@ -83,7 +82,7 @@
         <EditorIndex Value="14"/>
         <TopLine Value="150"/>
         <CursorPos X="21" Y="168"/>
-        <UsageCount Value="146"/>
+        <UsageCount Value="147"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -93,7 +92,7 @@
         <EditorIndex Value="13"/>
         <TopLine Value="8"/>
         <CursorPos X="70" Y="20"/>
-        <UsageCount Value="145"/>
+        <UsageCount Value="146"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -103,7 +102,7 @@
         <EditorIndex Value="5"/>
         <TopLine Value="3"/>
         <CursorPos X="19" Y="20"/>
-        <UsageCount Value="145"/>
+        <UsageCount Value="146"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -126,7 +125,7 @@
         <EditorIndex Value="12"/>
         <TopLine Value="1169"/>
         <CursorPos X="14" Y="1188"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -258,14 +257,6 @@
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="36" TopLine="13"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="14" Column="46"/>
-      </Position>
-      <Position>
         <Filename Value="untrajectorypaths.pas"/>
         <Caret Line="117" Column="13" TopLine="107"/>
       </Position>
@@ -377,6 +368,14 @@
         <Filename Value="untrajectorypaths.pas"/>
         <Caret Line="349" Column="70" TopLine="334"/>
       </Position>
+      <Position>
+        <Filename Value="unhelperinterfaces.pas"/>
+        <Caret Line="162" Column="9" TopLine="124"/>
+      </Position>
+      <Position>
+        <Filename Value="unhelperinterfaces.pas"/>
+        <Caret Line="149" Column="3" TopLine="87"/>
+      </Position>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -395,21 +394,21 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="untrajectorypaths.pas"/>
-        <Line Value="501"/>
+        <Line Value="488"/>
       </Item>
       <Item>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="untrajectorypaths.pas"/>
-        <Line Value="480"/>
+        <Line Value="467"/>
       </Item>
       <Item>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="uncirclephysics.pas"/>
-        <Line Value="310"/>
+        <Line Value="313"/>
       </Item>
     </BreakPoints>
   </Debugging>

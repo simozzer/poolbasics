@@ -10,7 +10,7 @@ uses
 type
 
   { T2DVector }
-
+  // A simple class for storing vectors and doing simple vector calculations
   T2DVector = class(TInterfacedObject,I2DVector)
   private
     FVector: Tvector2_double;
@@ -31,6 +31,8 @@ type
 
   { TBasicVector }
 
+  { Movement vector - including methods for calculating position
+    and velocities at specified points in time }
   TBasicVector = class(TInterfacedObject, IBasicVector)
   private
     FdInitialVelocity: double;
@@ -75,6 +77,7 @@ type
 
   { TBasicMotion }
 
+  // Static class for basic equations of motion
   TBasicMotion = class
   public
     class function GetTimeToStop(const dVelocity: double): double;

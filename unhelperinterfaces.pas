@@ -5,7 +5,7 @@ unit unHelperInterfaces;
 interface
 
 uses
-  Classes, SysUtils, Matrix, Graphics;
+  Classes, SysUtils, Matrix, Graphics, FGL;
 
 type
   IBasicLogger = interface
@@ -35,6 +35,7 @@ type
     function CreateWithAngle(const dMagnitude, dAngle: double):I2DVector;
     function Create(const dXLength, dYLength: double):I2DVector;
   end;
+
 
   IGameCircle = interface
     ['{B8C03731-DE0F-4808-B4B8-8A7C9E2ACFE2}']
@@ -138,6 +139,28 @@ type
     property Stationary: boolean read GetStationary write SetStationary;
     function Distance(const dOtherCenterX, dOtherCenterY: double): double;
     procedure Render(const ACanvas: TCanvas);
+  end;
+
+
+  // Contains a list of ICircle
+  TCirclesList = specialize TFPGInterfacedObjectList<ICircle>;
+
+  // Path information for 1 object, which can be queried by time
+  ITrajectoryPaths = interface
+    ['{98B877F0-13F2-4B85-AFFE-4E395428FF99}']
+    function GetCount: cardinal;
+    function GetItems: TInterfaceList;
+    function getItem(const iIndex: cardinal): IBasicVector;
+    function GetCircles: TCirclesList;
+    procedure SetCircles(const lstCircles: TCirclesList);
+    property Items: TInterfaceList read GetItems;
+    property Item[const iIndex: cardinal]: IBasicVector read GetItem;
+    property Count: cardinal read GetCount;
+    property OtherCircles: TCirclesList read GetCircles write SetCircles;
+    function GetXAtTime(const dTime: double): double;
+    function GetYAtTime(const dTime: double): double;
+    function GetVectorForTime(const dTime: double): IBasicVector;
+    procedure CalculateTrajectories;
   end;
 
 

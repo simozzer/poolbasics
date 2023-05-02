@@ -38,7 +38,7 @@ type
   end;
 
 
-  TCirclesList = specialize TFPGInterfacedObjectList<ICircle>;
+
 
 implementation
 
