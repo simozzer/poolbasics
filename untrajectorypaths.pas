@@ -334,8 +334,8 @@ var
   dDistanceBetween2Centers, dSumRadii, dDistanceBewteen2Circles,
   dDotProduct_D, dyDistanceToColissionSquared_F, dXDiffereneAtCollision_T,
   dHitTime, dXDistanceToCollision_distance, dActualDistanceToCollision: double;
-  AThisVector, AVectorBetween2Centers: T2DVector;
-  NormalizedVector_N: T2DVector;
+  AThisVector, AVectorBetween2Centers: I2DVector;
+  NormalizedVector_N: I2DVector;
 begin
   Result := -1;
 
@@ -347,72 +347,60 @@ begin
     AVector.InitialVelocity)) then
   begin
     AThisVector := T2DVector.CreateWithAngle(dDistanceBewteen2Circles, AVector.Angle);
-    try
-      // Get the normalized vector for this ball
-      NormalizedVector_N := AThisVector.GetNormalised;
-      try
-        // Get the vector between the 2 ball centers
-        AVectorBetween2Centers :=
-          T2DVector.Create(ACircle.CenterX - AVector.OriginX,
-          ACircle.CenterY - AVector.OriginY);
-        try
 
-          //dDotProduct := AVectorBetween2Centers.Magnitude * cos(-AVectorBetween2Centers.Angle);
-          dDotProduct_D := AVectorBetween2Centers.GetDotProduct(NormalizedVector_N);
+    // Get the normalized vector for this ball
+    NormalizedVector_N := AThisVector.GetNormalised;
 
-          // check we're moving towards the target
-          if (dDotProduct_D > 0) then
+    // Get the vector between the 2 ball centers
+    AVectorBetween2Centers :=
+      T2DVector.Create(ACircle.CenterX - AVector.OriginX,
+      ACircle.CenterY - AVector.OriginY);
+
+
+    //dDotProduct := AVectorBetween2Centers.Magnitude * cos(-AVectorBetween2Centers.Angle);
+    dDotProduct_D := AVectorBetween2Centers.GetDotProduct(NormalizedVector_N);
+
+    // check we're moving towards the target
+    if (dDotProduct_D > 0) then
+    begin
+      // Check that we get close enough for collision
+      // double F = (lengthC * lengthC) - (D * D);
+      dyDistanceToColissionSquared_F :=
+        Sqr(AVectorBetween2Centers.Magnitude) - sqr(dDotProduct_D);
+      if (dyDistanceToColissionSquared_F < SQr(dSumRadii)) then
+      begin
+        // find the distance
+        //double T = sumRadiiSquared - F;
+        dXDiffereneAtCollision_T :=
+          Sqr(dSumRadii) - dyDistanceToColissionSquared_F;
+        if (dXDiffereneAtCollision_T >= 0) then
+        begin
+          //doubleble distance = D - sqrt(T);
+          dXDistanceToCollision_distance :=
+            dDotProduct_D - Sqrt(dXDiffereneAtCollision_T);
+          // check distance to travel is enough for possible collision
+          if TBasicMotion.GetDistanceToStop(AVector.InitialVelocity) >=
+            dXDistanceToCollision_distance then
           begin
-            // Check that we get close enough for collision
-            // double F = (lengthC * lengthC) - (D * D);
-            dyDistanceToColissionSquared_F :=
-              Sqr(AVectorBetween2Centers.Magnitude) - sqr(dDotProduct_D);
-            if (dyDistanceToColissionSquared_F < SQr(dSumRadii)) then
-            begin
-              // find the distance
-              //double T = sumRadiiSquared - F;
-              dXDiffereneAtCollision_T :=
-                Sqr(dSumRadii) - dyDistanceToColissionSquared_F;
-              if (dXDiffereneAtCollision_T >= 0) then
-              begin
-                //doubleble distance = D - sqrt(T);
-                dXDistanceToCollision_distance :=
-                  dDotProduct_D - Sqrt(dXDiffereneAtCollision_T);
-                // check distance to travel is enough for possible collision
-                if TBasicMotion.GetDistanceToStop(AVector.InitialVelocity) >=
-                  dXDistanceToCollision_distance then
-                begin
-                  // Set the length so that the circles will just touch.
-                  dXCircleHit :=
-                    NormalizedVector_N.Vector.Data[0] *
-                    dXDistanceToCollision_distance;
-                  dYCircleHit :=
-                    NormalizedVector_N.Vector.Data[1] *
-                    dXDistanceToCollision_distance;
+            // Set the length so that the circles will just touch.
+            dXCircleHit :=
+              NormalizedVector_N.Vector.Data[0] *
+              dXDistanceToCollision_distance;
+            dYCircleHit :=
+              NormalizedVector_N.Vector.Data[1] *
+              dXDistanceToCollision_distance;
 
-                  // Calculate the time at which the collision occurred
-                  dActualDistanceToCollision :=
-                    Sqrt(Sqr(dXCircleHit) + Sqr(dYCircleHit));
-                  dHitTime :=
-                    TBasicMotion.GetTimeToDistance(
-                    AVector.InitialVelocity, dActualDistanceToCollision);
+            // Calculate the time at which the collision occurred
+            dActualDistanceToCollision :=
+              Sqrt(Sqr(dXCircleHit) + Sqr(dYCircleHit));
+            dHitTime :=
+              TBasicMotion.GetTimeToDistance(
+              AVector.InitialVelocity, dActualDistanceToCollision);
 
-                  Result := dHitTime;
-                end;
-              end;
-            end;
+            Result := dHitTime;
           end;
-
-        finally
-          AVectorBetween2Centers.Free;
         end;
-
-      finally
-        NormalizedVector_N.Free;
       end;
-
-    finally
-      AThisVector.Free;
     end;
   end;
 end;

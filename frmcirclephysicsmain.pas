@@ -127,7 +127,7 @@ begin
   actTrigger.Enabled := False;
 
   for i := 0 to pred(FlstCircles.Count) do
-    TCircle(FlstCircles.Items[i]).Stationary := True;
+    ICircle(FlstCircles.Items[i]).Stationary := True;
 
   PlotTrajectories;
 

@@ -20,8 +20,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmCirclePhysicsMain"/>
-        <TopLine Value="48"/>
-        <CursorPos X="79" Y="52"/>
+        <TopLine Value="110"/>
+        <CursorPos X="8" Y="117"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -31,7 +31,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCirclePhysics"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="76" Y="10"/>
+        <TopLine Value="135"/>
+        <CursorPos X="54" Y="155"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -39,9 +40,10 @@
         <Filename Value="untrajectorypaths.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unTrajectoryPaths"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
-        <TopLine Value="420"/>
-        <CursorPos X="80" Y="430"/>
+        <TopLine Value="334"/>
+        <CursorPos X="20" Y="349"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -58,7 +60,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unHelperInterfaces"/>
         <EditorIndex Value="10"/>
-        <FoldState Value=" T7KGj1 PWi4H%"/>
+        <TopLine Value="6"/>
+        <CursorPos X="14" Y="25"/>
+        <FoldState Value=" T7igHW5"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -66,10 +70,9 @@
         <Filename Value="unothercircles.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unOtherCircles"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="11"/>
-        <TopLine Value="23"/>
-        <CursorPos X="76" Y="34"/>
+        <TopLine Value="88"/>
+        <CursorPos X="99" Y="100"/>
         <UsageCount Value="219"/>
         <Loaded Value="True"/>
       </Unit>
@@ -249,78 +252,11 @@
         <EditorIndex Value="1"/>
         <TopLine Value="478"/>
         <CursorPos X="40" Y="497"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="33" Column="57" TopLine="12"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="107" Column="29" TopLine="95"/>
-      </Position>
-      <Position>
-        <Filename Value="unhelperinterfaces.pas"/>
-        <Caret Line="122" Column="7" TopLine="86"/>
-      </Position>
-      <Position>
-        <Filename Value="unhelperinterfaces.pas"/>
-        <Caret Line="115" Column="55" TopLine="91"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="37" Column="55" TopLine="4"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="56" Column="23" TopLine="22"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="8" Column="72" TopLine="2"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="14" Column="13" TopLine="7"/>
-      </Position>
-      <Position>
-        <Filename Value="unhelperinterfaces.pas"/>
-        <Caret Line="103" Column="5" TopLine="83"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="22" Column="12"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="14" Column="13"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="23" Column="18"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="16" Column="5" TopLine="10"/>
-      </Position>
-      <Position>
-        <Filename Value="unhelperinterfaces.pas"/>
-        <Caret Line="102" Column="3" TopLine="83"/>
-      </Position>
-      <Position>
-        <Filename Value="unothercircles.pas"/>
-        <Caret Line="14" Column="13"/>
-      </Position>
-      <Position>
-        <Filename Value="uncirclephysics.pas"/>
-      </Position>
-      <Position>
-        <Filename Value="unhelperinterfaces.pas"/>
-        <Caret TopLine="13"/>
-      </Position>
       <Position>
         <Filename Value="unothercircles.pas"/>
         <Caret Line="36" TopLine="13"/>
@@ -373,6 +309,74 @@
         <Filename Value="unothercircles.pas"/>
         <Caret Line="41" Column="54" TopLine="22"/>
       </Position>
+      <Position>
+        <Filename Value="unothercircles.pas"/>
+        <Caret Line="100" Column="99" TopLine="88"/>
+      </Position>
+      <Position>
+        <Filename Value="frmcirclephysicsmain.pas"/>
+        <Caret Line="339" Column="12" TopLine="319"/>
+      </Position>
+      <Position>
+        <Filename Value="frmcirclephysicsmain.pas"/>
+        <Caret Line="59" Column="8" TopLine="41"/>
+      </Position>
+      <Position>
+        <Filename Value="frmcirclephysicsmain.pas"/>
+        <Caret Line="115" Column="25" TopLine="95"/>
+      </Position>
+      <Position>
+        <Filename Value="unhelperinterfaces.pas"/>
+        <Caret Line="34" Column="68"/>
+      </Position>
+      <Position>
+        <Filename Value="uncirclephysics.pas"/>
+        <Caret Line="14" Column="49" TopLine="10"/>
+      </Position>
+      <Position>
+        <Filename Value="uncirclephysics.pas"/>
+        <Caret Line="17" Column="5" TopLine="10"/>
+      </Position>
+      <Position>
+        <Filename Value="unhelperinterfaces.pas"/>
+        <Caret Line="22" Column="35" TopLine="2"/>
+      </Position>
+      <Position>
+        <Filename Value="uncirclephysics.pas"/>
+        <Caret Line="23" Column="36"/>
+      </Position>
+      <Position>
+        <Filename Value="uncirclephysics.pas"/>
+        <Caret Line="155" Column="54" TopLine="135"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="337" Column="41" TopLine="334"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="352" Column="40" TopLine="333"/>
+      </Position>
+      <Position>
+        <Filename Value="unhelperinterfaces.pas"/>
+        <Caret Line="25" Column="14" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="338" Column="24" TopLine="333"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="358" TopLine="346"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="354" Column="51" TopLine="348"/>
+      </Position>
+      <Position>
+        <Filename Value="untrajectorypaths.pas"/>
+        <Caret Line="349" Column="70" TopLine="334"/>
+      </Position>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -391,14 +395,14 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="untrajectorypaths.pas"/>
-        <Line Value="513"/>
+        <Line Value="501"/>
       </Item>
       <Item>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="untrajectorypaths.pas"/>
-        <Line Value="492"/>
+        <Line Value="480"/>
       </Item>
       <Item>
         <Kind Value="bpkSource"/>

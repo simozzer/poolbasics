@@ -18,6 +18,24 @@ type
     procedure SetLogger(const intfLogger: IBasicLogger);
   end;
 
+  I2DVector = interface ['{ED2CF05C-5AA5-4C3E-994C-36D0788EA64D}']
+    function GetMagnitude: double;
+    function GetAngle: double;
+    function GetVector: Tvector2_double;
+    function GetNormalised: I2DVector;
+    function GetDotProduct(const AVector: I2DVector): double;
+    function GetDotProductV(const AVec: Tvector2_double): double;
+    function Minus(const AVector: I2DVector): I2DVector;
+    property Magnitude: double read GetMagnitude;
+    property Angle: double read GetAngle;
+    property Vector: Tvector2_double read GetVector;
+  end;
+
+  I2DVectorFactory = interface ['{944D01C4-CF45-49C1-A316-1C321D355D77}']
+    function CreateWithAngle(const dMagnitude, dAngle: double):I2DVector;
+    function Create(const dXLength, dYLength: double):I2DVector;
+  end;
+
   IGameCircle = interface
     ['{B8C03731-DE0F-4808-B4B8-8A7C9E2ACFE2}']
     function GetXAtTime(const dTime: double): double;

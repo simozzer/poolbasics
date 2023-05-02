@@ -11,7 +11,7 @@ type
 
   { T2DVector }
 
-  T2DVector = class
+  T2DVector = class(TInterfacedObject,I2DVector)
   private
     FVector: Tvector2_double;
     function GetMagnitude: double;
@@ -20,10 +20,10 @@ type
   public
     constructor CreateWithAngle(const dMagnitude, dAngle: double);
     constructor Create(const dXLength, dYLength: double);
-    function GetNormalised: T2DVector;
-    function GetDotProduct(const AVector: T2DVector): double;
+    function GetNormalised: I2DVector;
+    function GetDotProduct(const AVector: I2DVector): double;
     function GetDotProductV(const AVec: Tvector2_double): double;
-    function Minus(const AVector: T2DVector): T2DVector;
+    function Minus(const AVector: I2DVector): I2DVector;
     property Magnitude: double read GetMagnitude;
     property Angle: double read GetAngle;
     property Vector: Tvector2_double read GetVector;
@@ -132,7 +132,7 @@ begin
   FVector.init(dXLength, dYLength);
 end;
 
-function T2DVector.GetNormalised: T2DVector;
+function T2DVector.GetNormalised: I2DVector;
 begin
   if (FVector.length > 0) then
     Result := T2DVector.Create(FVector.Data[0] / FVector.length,
@@ -141,7 +141,7 @@ begin
     Result := T2DVector.Create(0, 0);
 end;
 
-function T2DVector.GetDotProduct(const AVector: T2DVector): double;
+function T2DVector.GetDotProduct(const AVector: I2DVector): double;
 begin
   Result := FVector.Data[0] * AVector.Vector.Data[0] + FVector.Data[1] *
     AVector.Vector.Data[1];
@@ -152,7 +152,7 @@ begin
   Result := FVector.Data[0] * AVec.Data[0] + FVector.Data[1] * AVec.Data[1];
 end;
 
-function T2DVector.Minus(const AVector: T2DVector): T2DVector;
+function T2DVector.Minus(const AVector: I2DVector): I2DVector;
 var
   Vec: Tvector2_double;
 begin
