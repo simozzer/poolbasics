@@ -25,18 +25,18 @@ type
   ITrajectoryPaths = interface
     ['{98B877F0-13F2-4B85-AFFE-4E395428FF99}']
     function GetCount: cardinal;
-    function GetItems: TList;
-    function getItem(const iIndex: cardinal): TBasicVector;
+    function GetItems: TInterfaceList;
+    function getItem(const iIndex: cardinal): IBasicVector;
     function GetCircles: TCirclesList;
     procedure SetCircles(const lstCircles: TCirclesList);
-    property Items: TList read GetItems;
-    property Item[const iIndex: cardinal]: TBasicVector read GetItem;
+    property Items: TInterfaceList read GetItems;
+    property Item[const iIndex: cardinal]: IBasicVector read GetItem;
     property Count: cardinal read GetCount;
     property OtherCircles: TCirclesList read GetCircles write SetCircles;
 
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
-    function GetVectorForTime(const dTime: double): TBasicVector;
+    function GetVectorForTime(const dTime: double): IBasicVector;
     procedure CalculateTrajectories;
   end;
 
@@ -45,34 +45,36 @@ type
   TTrajectoryPath = class(TInterfacedObject, ITrajectoryPaths, IBasicLoggerClient)
   private
     FintfLogger: IBasicLogger;
-    FTrajectories: TList;
+    FTrajectories: TInterfaceList;
     FlstCircles: TCirclesList;
-  private
+
     procedure SetLogger(const intfLogger: IBasicLogger);
     procedure LogMessage(const sMessage: string);
+  public
     function GetCount: cardinal;
-    function GetItems: TList;
-    function GetItem(const iIndex: cardinal): TBasicVector;
+    function GetItems: TInterfaceList;
+    function GetItem(const iIndex: cardinal): IBasicVector;
     function GetCircles: TCirclesList;
     procedure SetCircles(const lstCircles: TCirclesList);
 
-    procedure ProcessEdgeHits(const AVector: TBasicVector; const dRadius: double;
+    procedure ProcessEdgeHits(const AVector: IBasicVector; const dRadius: double;
       var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 
-    function getTimeToHitStationaryCircle(const AVector: TBasicVector;
+    function getTimeToHitStationaryCircle(const AVector: IBasicVector;
       const ACircle: TCircle; var dXCircleHit: double; var dYCircleHit: double): double;
 
-    function CalculateBounceAfterHittingCircle(const AVector: TBasicVector;
+    function CalculateBounceAfterHittingCircle(const AVector: IBasicVector;
       const dX, dY: double; const ACircle: TCircle;
       const dHitTime: double): TBounceResult;
 
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
-    function GetVectorForTime(const dTime: double): TBasicVector;
+    function GetVectorForTime(const dTime: double): IBasicVector;
     procedure CalculateTrajectories;
-  public
     constructor Create;
     destructor Destroy; override;
+    property Count: cardinal read GetCount;
+    property Items: TInterfaceList read GetItems;
   end;
 
 
@@ -85,9 +87,9 @@ uses
 
 { TTrajectoryPath }
 
-function TTrajectoryPath.GetVectorForTime(const dTime: double): TBasicVector;
+function TTrajectoryPath.GetVectorForTime(const dTime: double): IBasicVector;
 var
-  AVector: TBasicVector;
+  AVector: IBasicVector;
   i: integer;
   dt: double;
 begin
@@ -97,7 +99,7 @@ begin
   Result := nil;
   while (Result = nil) and (i < FTrajectories.Count) do
   begin
-    AVector := TBasicVector(FTrajectories[i]);
+    AVector := IBasicVector(FTrajectories[i]);
     if (dT >= AVector.StartTime) and (dT <= AVector.EndTime) then
       Result := AVector
     else
@@ -110,7 +112,7 @@ procedure TTrajectoryPath.CalculateTrajectories;
 var
   dTimeToStop, dEarliestHit, dHitTime: double;
   dXAtCollide, dyAtCollide, dVelAtCollide, dCollideTime, dPreCollisionAngle: double;
-  APathVector, aNextPathVector: TBasicVector;
+  APathVector, aNextPathVector: IBasicVector;
   EdgeHit: TEdgeHit;
   ACircle: TCircle;
   i: integer;
@@ -120,7 +122,7 @@ var
   BounceResult: TBounceResult;
 begin
 
-  APathVector := TBasicVector(FTrajectories[0]);
+  APathVector := IBasicVector(FTrajectories[0]);
   repeat
     EdgeHit := ehNone;
 
@@ -147,7 +149,8 @@ begin
             EdgeHit := ehCircle;
 
             BounceResult := CalculateBounceAfterHittingCircle(APathVector,
-              dXCircleHit + APathVector.OriginX, dYCircleHit + APathVector.OriginY, ACircle, dHitTime);
+              dXCircleHit + APathVector.OriginX, dYCircleHit +
+              APathVector.OriginY, ACircle, dHitTime);
 
             ACircle.Stationary := False; // for now just mark the other circle as moving
           end;
@@ -252,14 +255,14 @@ begin
   Result := FTrajectories.Count;
 end;
 
-function TTrajectoryPath.GetItems: TList;
+function TTrajectoryPath.GetItems: TInterfaceList;
 begin
   Result := FTrajectories;
 end;
 
-function TTrajectoryPath.GetItem(const iIndex: cardinal): TBasicVector;
+function TTrajectoryPath.GetItem(const iIndex: cardinal): IBasicVector;
 begin
-  Result := TBasicVector(FTrajectories[iIndex]);
+  Result := IBasicVector(FTrajectories[iIndex]);
 end;
 
 function TTrajectoryPath.GetCircles: TCirclesList;
@@ -272,7 +275,7 @@ begin
   FlstCircles := lstCircles;
 end;
 
-procedure TTrajectoryPath.ProcessEdgeHits(const AVector: TBasicVector;
+procedure TTrajectoryPath.ProcessEdgeHits(const AVector: IBasicVector;
   const dRadius: double; var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 var
   dMaxDisplacmentXAtStop, dMaxDisplacmentYAtStop, dDeplacement, dHitTime: double;
@@ -325,7 +328,7 @@ begin
   end;
 end;
 
-function TTrajectoryPath.getTimeToHitStationaryCircle(const AVector: TBasicVector;
+function TTrajectoryPath.getTimeToHitStationaryCircle(const AVector: IBasicVector;
   const ACircle: TCircle; var dXCircleHit: double; var dYCircleHit: double): double;
 var
   dDistanceBetween2Centers, dSumRadii, dDistanceBewteen2Circles,
@@ -414,9 +417,8 @@ begin
   end;
 end;
 
-function TTrajectoryPath.CalculateBounceAfterHittingCircle(
-  const AVector: TBasicVector; const dX, dY: double; const ACircle: TCircle;
-  const dHitTime: double): TBounceResult;
+function TTrajectoryPath.CalculateBounceAfterHittingCircle(const AVector: IBasicVector;
+  const dX, dY: double; const ACircle: TCircle; const dHitTime: double): TBounceResult;
 var
   deltaX, deltaY, dAngle, dSin, dCos, dPuckAngle, dAngleDifference: double;
   vx1, vy1, vx2, vy2: double;
@@ -427,10 +429,11 @@ var
   circleVecVel: Tvector2_double;
 begin
   // calculate distance between 2 circles
-  deltaX := Dx- ACircle.CenterX;
-  deltaY := Dy -ACircle.CenterY;
+  deltaX := Dx - ACircle.CenterX;
+  deltaY := Dy - ACircle.CenterY;
 
-  LogMessage(Format('dist between circle centrers %f',[Sqrt(sqR(deltaX) + Sqr(deltaY))]));
+  LogMessage(Format('dist between circle centrers %f',
+    [Sqrt(sqR(deltaX) + Sqr(deltaY))]));
 
   // Calculate collision angle
   dAngle := arctan2(deltaY, deltaX);
@@ -438,8 +441,8 @@ begin
   // calculate the angle of the puck
 
   dPuckAngle := AVector.Angle;
-  dAngleDifference:= dPuckAngle - dAngle;
-  LogMessage(Format('Difference in collision angle %f',[dAngleDifference]));
+  dAngleDifference := dPuckAngle - dAngle;
+  LogMessage(Format('Difference in collision angle %f', [dAngleDifference]));
 
 
   dSin := Sin(dAngle);
@@ -459,7 +462,7 @@ begin
     (PUCK_RADIUS + Acircle.Radius);
   vx2Final := ((Acircle.Radius - PUCK_RADIUS) * vx2 + (2 * PUCK_RADIUS) * vx1) /
     (PUCK_RADIUS + Acircle.Radius);
-  vy1Final := vy1- DECELERATION;
+  vy1Final := vy1 - DECELERATION;
   vy2Final := vy2;// - DECELERATION;
 
   // Rotate the velocities back again
@@ -485,7 +488,7 @@ end;
 
 function TTrajectoryPath.GetXAtTime(const dTime: double): double;
 var
-  AVector: TBasicVector;
+  AVector: IBasicVector;
   dTimeInVector: double;
   dT: double;
 begin
@@ -506,7 +509,7 @@ end;
 
 function TTrajectoryPath.GetYAtTime(const dTime: double): double;
 var
-  AVector: TBasicVector;
+  AVector: IBasicVector;
   dTimeInVector: double;
   dT: double;
 begin
@@ -527,7 +530,7 @@ end;
 
 constructor TTrajectoryPath.Create;
 begin
-  FTrajectories := TList.Create;
+  FTrajectories := TInterfaceList.Create;
   FlstCircles := nil;
   FintfLogger := nil;
 end;

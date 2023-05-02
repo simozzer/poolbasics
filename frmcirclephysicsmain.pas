@@ -50,16 +50,15 @@ type
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
-    procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure trkVelocityChange(Sender: TObject);
   private
     FBoard: TCaromGameBoard;
-    FBallVector: TBasicVector;
+    FBallVector: IBasicVector;
     FcStartAnimationTime: cardinal;
     FTrajectories: ITrajectoryPaths;
     FlstCircles: TCirclesList;
     FdVelocity: double;
-    FbDraggingBall: Boolean;
+    FbDraggingBall: boolean;
 
     FAngleControl: TAngleControl;
     procedure DrawTrajectoryPaths;
@@ -69,7 +68,7 @@ type
     procedure HandleBoardMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure HandleBoardMouseMove(Sender: TObject; Shift: TShiftState;
-                              X, Y: Integer);
+      X, Y: integer);
     procedure HandleBoardMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
 
@@ -139,9 +138,7 @@ end;
 procedure TForm1.AnimationTimerTimer(Sender: TObject);
 var
   cTimeSinceStart: cardinal;
-  AVector: TBasicVector;
-
-  dVectorDuration: double;
+  AVector: IBasicVector;
 begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
 
@@ -158,7 +155,6 @@ begin
       if (AVector <> nil) then
       begin
         edtTime.Text := FloatToStr(AVector.EndTime);
-        dVectorDuration := AVector.EndTime - AVector.StartTime;
         FBallVector.OriginX := FBallVector.GetXAtTime(AVector.EndTime);
         FBallVector.Originy := FBallVector.GetyAtTime(AVector.EndTime);
       end;
@@ -185,12 +181,12 @@ end;
 
 procedure TForm1.btnLessAngleClick(Sender: TObject);
 begin
-  FAngleControl.Angle:= FAngleControl.Angle - ANGLE_MICRO_CHANGE;
+  FAngleControl.Angle := FAngleControl.Angle - ANGLE_MICRO_CHANGE;
 end;
 
 procedure TForm1.btnMoreAngleClick(Sender: TObject);
 begin
-  FAngleControl.Angle:= FAngleControl.Angle + ANGLE_MICRO_CHANGE;
+  FAngleControl.Angle := FAngleControl.Angle + ANGLE_MICRO_CHANGE;
 end;
 
 procedure TForm1.btnRenderFrameClick(Sender: TObject);
@@ -213,11 +209,6 @@ begin
   actRenderExecute(Self, StrToFloatDef(edtTime.Text, 0.0));
 end;
 
-procedure TForm1.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
-begin
-
-end;
 
 procedure TForm1.trkVelocityChange(Sender: TObject);
 begin
@@ -230,11 +221,11 @@ end;
 procedure TForm1.DrawTrajectoryPaths;
 var
   i: integer;
-  AVector: TBasicVector;
+  AVector: IBasicVector;
   BoardCanvas: TCanvas;
   dBallCenterX, dBallCenterY: double;
 
-  X, Y :Double;
+  X, Y: double;
 begin
 
   PlotTrajectories;
@@ -262,20 +253,20 @@ begin
     AVector := FTrajectories.getItem(i);
     BoardCanvas.Pen.Color := clRed;
     BoardCanvas.MoveTo(Round(AVector.OriginX), Round(AVector.OriginY));
-    dBallCenterX:= AVector.GetXAtTime(AVector.EndTime - AVector.StartTime);
-    dBallCenterY:= AVector.GetYAtTime(AVector.EndTime - AVector.StartTime);
+    dBallCenterX := AVector.GetXAtTime(AVector.EndTime - AVector.StartTime);
+    dBallCenterY := AVector.GetYAtTime(AVector.EndTime - AVector.StartTime);
     BoardCanvas.LineTo(Round(dBallCenterX), Round(dBallCenterY));
     BoardCanvas.Ellipse(round(dBallCenterX - PUCK_RADIUS),
-    round(dBallCenterY - PUCK_RADIUS),
-    round(dBallCenterX + PUCK_RADIUS),
-    round(dBallCenterY + PUCK_RADIUS));
+      round(dBallCenterY - PUCK_RADIUS),
+      round(dBallCenterX + PUCK_RADIUS),
+      round(dBallCenterY + PUCK_RADIUS));
   end;
   FBoard.Invalidate;
 end;
 
 procedure TForm1.PlotTrajectories;
 var
-  APathPart: TBasicVector;
+  APathPart: IBasicVector;
 begin
   lstEvents.Clear;
   FBallVector.InitialVelocity := FdVelocity;
@@ -301,8 +292,8 @@ procedure TForm1.HandleBoardMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
   if AnimationTimer.Enabled then exit;
-  FbDraggingBall := true;
-  actTrigger.Enabled := true;
+  FbDraggingBall := True;
+  actTrigger.Enabled := True;
   FBallVector.OriginX := x;
   FBallVector.OriginY := y;
   FBallVector.Angle := FAngleControl.Angle;
@@ -311,7 +302,7 @@ begin
 end;
 
 procedure TForm1.HandleBoardMouseMove(Sender: TObject; Shift: TShiftState;
-                              X, Y: Integer);
+  X, Y: integer);
 begin
   if not FbDraggingBall then exit;
   FBallVector.OriginX := x;
@@ -327,8 +318,8 @@ begin
   FBallVector.OriginX := x;
   FBallVector.OriginY := y;
   DrawTrajectoryPaths;
-  FbDraggingBall:= false;
- // actRenderExecute(Self, 0);
+  FbDraggingBall := False;
+  // actRenderExecute(Self, 0);
 end;
 
 procedure TForm1.DoAngleChanged(Sender: TObject);
@@ -373,7 +364,7 @@ begin
 
   FdVelocity := 0.5;
 
-  FbDraggingBall:=False;
+  FbDraggingBall := False;
 
 end;
 
@@ -382,7 +373,7 @@ begin
   RemoveControl(FBoard);
   FBoard.Free;
   FTrajectories := nil;
-  FBallVector.Free;
+
   FlstCircles.Clear;
   FlstCircles.Free;
   grpTakeShot.RemoveControl(FAngleControl);
