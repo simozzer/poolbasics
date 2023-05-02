@@ -61,10 +61,10 @@ type
       var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 
     function getTimeToHitStationaryCircle(const AVector: IBasicVector;
-      const ACircle: TCircle; var dXCircleHit: double; var dYCircleHit: double): double;
+      const ACircle: ICircle; var dXCircleHit: double; var dYCircleHit: double): double;
 
     function CalculateBounceAfterHittingCircle(const AVector: IBasicVector;
-      const dX, dY: double; const ACircle: TCircle;
+      const dX, dY: double; const ACircle: ICircle;
       const dHitTime: double): TBounceResult;
 
     function GetXAtTime(const dTime: double): double;
@@ -114,7 +114,7 @@ var
   dXAtCollide, dyAtCollide, dVelAtCollide, dCollideTime, dPreCollisionAngle: double;
   APathVector, aNextPathVector: IBasicVector;
   EdgeHit: TEdgeHit;
-  ACircle: TCircle;
+  ACircle: ICircle;
   i: integer;
 
   dXCircleHit, dYCircleHit: double;
@@ -329,7 +329,7 @@ begin
 end;
 
 function TTrajectoryPath.getTimeToHitStationaryCircle(const AVector: IBasicVector;
-  const ACircle: TCircle; var dXCircleHit: double; var dYCircleHit: double): double;
+  const ACircle: ICircle; var dXCircleHit: double; var dYCircleHit: double): double;
 var
   dDistanceBetween2Centers, dSumRadii, dDistanceBewteen2Circles,
   dDotProduct_D, dyDistanceToColissionSquared_F, dXDiffereneAtCollision_T,
@@ -417,8 +417,9 @@ begin
   end;
 end;
 
-function TTrajectoryPath.CalculateBounceAfterHittingCircle(const AVector: IBasicVector;
-  const dX, dY: double; const ACircle: TCircle; const dHitTime: double): TBounceResult;
+function TTrajectoryPath.CalculateBounceAfterHittingCircle(
+  const AVector: IBasicVector; const dX, dY: double; const ACircle: ICircle;
+  const dHitTime: double): TBounceResult;
 var
   deltaX, deltaY, dAngle, dSin, dCos, dPuckAngle, dAngleDifference: double;
   vx1, vy1, vx2, vy2: double;

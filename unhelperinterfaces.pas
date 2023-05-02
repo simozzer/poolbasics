@@ -99,6 +99,29 @@ type
     property Vector: Tvector2_double read GetVector;
   end;
 
+  ICircle = interface
+    ['{2535367A-D8B6-4B38-B5AC-82576F719FF5}']
+    function GetCenterX: double;
+    procedure SetCenterX(const cX: double);
+    function GetCenterY: double;
+    procedure SetCenterY(const cY: double);
+    function GetRadius: double;
+    function GetBrushColor: TColor;
+    procedure SetBrushColor(const clr: TColor);
+    function GetPenColor: TColor;
+    procedure SetPenColor(const clr: TColor);
+    function GetStationary: boolean;
+    procedure SetStationary(const bStationary: boolean);
+    property Radius: double read GetRadius;
+    property CenterX: double read GetCenterX write SetCenterX;
+    property CenterY: double read GetCenterY write SetCenterY;
+    property BrushColor: TColor read GetBrushColor write SetBrushColor;
+    property PenColor: TColor read GetPenColor write SetPenColor;
+    property Stationary: boolean read GetStationary write SetStationary;
+    function Distance(const dOtherCenterX, dOtherCenterY: double): double;
+    procedure Render(const ACanvas: TCanvas);
+  end;
+
 
 
 

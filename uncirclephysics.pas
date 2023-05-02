@@ -245,8 +245,8 @@ begin
   Result := FdAngle;
 end;
 
-constructor TBasicVector.Create(
-  const dOriginX, dOriginY, dVelocity, dAngle, dStartTime: double);
+constructor TBasicVector.Create(const dOriginX, dOriginY, dVelocity,
+  dAngle, dStartTime: double);
 begin
   FdOriginX := dOriginX;
   FdOriginY := dOriginY;

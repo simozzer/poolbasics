@@ -5,13 +5,13 @@ unit unOtherCircles;
 interface
 
 uses
-  Classes, SysUtils, Graphics, Fgl, unCirclePhysics;
+  Classes, SysUtils, Graphics, Fgl, unCirclePhysics, unHelperInterfaces;
 
 type
 
   { TCircle }
 
-  TCircle = class
+  TCircle = class(TInterfacedObject, ICircle)
   private
     FdRadius: double;
     FdCenterX: double;
@@ -19,49 +19,86 @@ type
     FclrBrush: TColor;
     FclrPen: TColor;
     FbStationary: boolean;
+  protected
+    function GetCenterX: double;
+    procedure SetCenterX(const cX: double);
+    function GetCenterY: double;
+    procedure SetCenterY(const cY: double);
+    function GetRadius: double;
+    function GetBrushColor: TColor;
+    procedure SetBrushColor(const clr: TColor);
+    function GetPenColor: TColor;
+    procedure SetPenColor(const clr: TColor);
+    function GetStationary: boolean;
+    procedure SetStationary(const bStationary: boolean);
   public
     constructor Create(const dCenterX, dCenterY, dRadius: double); virtual;
-    property Radius: double read FdRadius;
-    property CenterX: double read FdCenterX write FdCenterX;
-    property CenterY: double read FdCenterY write FdCenterY;
-    property BrushColor: TColor read FclrBrush write FclrBrush;
-    property PenColor: TColor read FclrPen write FclrPen;
-    property Stationary: boolean read FbStationary write FbStationary;
     function Distance(const dOtherCenterX, dOtherCenterY: double): double;
     procedure Render(const ACanvas: TCanvas);
   end;
 
-  { TMovingCircle }
 
-  TMovingCircle = class(TCircle)
-  private
-    FVector: T2DVector;
-  public
-    property Vector: T2DVector read FVector;
-    constructor Create(const dCenterX, dCenterY, dRadius: double); override;
-    destructor Destroy; override;
-
-  end;
-
-  TCirclesList = specialize TFPGObjectList<TCircle>;
+  TCirclesList = specialize TFPGInterfacedObjectList<ICircle>;
 
 implementation
 
-{ TMovingCircle }
-
-constructor TMovingCircle.Create(const dCenterX, dCenterY, dRadius: double);
-begin
-  inherited Create(dCenterX, dCenterY, dRadius);
-  FVector := T2DVector.Create(0, 0);
-end;
-
-destructor TMovingCircle.Destroy;
-begin
-  FVector.Free;
-  inherited Destroy;
-end;
 
 { TCircle }
+
+function TCircle.GetCenterX: double;
+begin
+  Result := FdCenterX;
+end;
+
+procedure TCircle.SetCenterX(const cX: double);
+begin
+  FdCenterX := cX;
+end;
+
+function TCircle.GetCenterY: double;
+begin
+  Result := FdCenterY;
+end;
+
+procedure TCircle.SetCenterY(const cY: double);
+begin
+  FdCenterY := cY;
+end;
+
+function TCircle.GetRadius: double;
+begin
+  Result := FdRadius;
+end;
+
+function TCircle.GetBrushColor: TColor;
+begin
+  Result := FclrBrush;
+end;
+
+procedure TCircle.SetBrushColor(const clr: TColor);
+begin
+  FclrBrush := clr;
+end;
+
+function TCircle.GetPenColor: TColor;
+begin
+  Result := FclrPen;
+end;
+
+procedure TCircle.SetPenColor(const clr: TColor);
+begin
+  FclrPen := clr;
+end;
+
+function TCircle.GetStationary: boolean;
+begin
+  Result := FbStationary;
+end;
+
+procedure TCircle.SetStationary(const bStationary: boolean);
+begin
+  FbStationary := bStationary;
+end;
 
 constructor TCircle.Create(const dCenterX, dCenterY, dRadius: double);
 begin
