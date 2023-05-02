@@ -8,37 +8,24 @@ uses
   Classes, SysUtils, unCirclePhysics, unHelperInterfaces, unOtherCircles, Matrix;
 
 type
+  // Enumeration for describing which objects were hit
   TEdgeHit = (ehNone, ehLeft, ehTop, ehRight, ehBottom, ehCircle);
 
 
+  // Which edge was hit, and at what time
   TEdgeHitDetail = record
     EdgeHit: TEdgeHit;
     HitTime: double;
   end;
 
+  // Information describing the angles of 2 circles after collision
   TBounceResult = record
     Vector1: Tvector2_double;
     Vector2: Tvector2_double;
   end;
 
 
-  ITrajectoryPaths = interface
-    ['{98B877F0-13F2-4B85-AFFE-4E395428FF99}']
-    function GetCount: cardinal;
-    function GetItems: TInterfaceList;
-    function getItem(const iIndex: cardinal): IBasicVector;
-    function GetCircles: TCirclesList;
-    procedure SetCircles(const lstCircles: TCirclesList);
-    property Items: TInterfaceList read GetItems;
-    property Item[const iIndex: cardinal]: IBasicVector read GetItem;
-    property Count: cardinal read GetCount;
-    property OtherCircles: TCirclesList read GetCircles write SetCircles;
 
-    function GetXAtTime(const dTime: double): double;
-    function GetYAtTime(const dTime: double): double;
-    function GetVectorForTime(const dTime: double): IBasicVector;
-    procedure CalculateTrajectories;
-  end;
 
   { TTrajectoryPath }
 
