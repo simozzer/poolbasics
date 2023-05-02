@@ -191,8 +191,8 @@ begin
   Result.init(GetXAtTime(FdEndTime - FdStartTime), GetYAtTime(FdEndTime - FdStartTime));
 end;
 
-constructor TBasicVector.Create(
-  const dOriginX, dOriginY, dVelocity, dAngle, dStartTime: double);
+constructor TBasicVector.Create(const dOriginX, dOriginY, dVelocity,
+  dAngle, dStartTime: double);
 begin
   FdOriginX := dOriginX;
   FdOriginY := dOriginY;
@@ -232,9 +232,9 @@ var
   dVectorDeplacement: double;
 begin
   if (FdAngle = 0) then
-     dVectorDeplacement := dDeplacement
+    dVectorDeplacement := dDeplacement
   else
-      dVectorDeplacement := abs(dDeplacement / sin(FdAngle));
+    dVectorDeplacement := abs(dDeplacement / sin(FdAngle));
   Result := Abs((FdInitialVelocity - TBasicMotion.GetVelocityAtDistance(
     FdInitialVelocity, dVectorDeplacement)) / DECELERATION);
 end;
