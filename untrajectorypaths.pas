@@ -63,7 +63,8 @@ type
       const ACircle: TCircle; var dXCircleHit: double; var dYCircleHit: double): double;
 
     function CalculateBounceAfterHittingCircle(const AVector: TBasicVector;
-      const dX, dY: double; const ACircle: TCircle; const dHitTime : DOuble): TBounceResult;
+      const dX, dY: double; const ACircle: TCircle;
+      const dHitTime: double): TBounceResult;
 
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
@@ -116,7 +117,7 @@ var
 
   dXCircleHit, dYCircleHit: double;
 
-  BounceResult : TBounceResult;
+  BounceResult: TBounceResult;
 begin
 
   APathVector := TBasicVector(FTrajectories[0]);
@@ -145,8 +146,8 @@ begin
             dEarliestHit := dHitTime;
             EdgeHit := ehCircle;
 
-            BounceResult := CalculateBounceAfterHittingCircle(APathVector, dXCircleHit, dYCircleHit,
-              ACircle, dHitTime);
+            BounceResult := CalculateBounceAfterHittingCircle(APathVector,
+              dXCircleHit + APathVector.OriginX, dYCircleHit + APathVector.OriginY, ACircle, dHitTime);
 
             ACircle.Stationary := False; // for now just mark the other circle as moving
           end;
@@ -214,8 +215,7 @@ begin
           Sqrt(Sqr(BounceResult.Vector1.Data[0]) +
           sqr(BounceResult.Vector1.Data[1]));
         aNextPathVector.Angle :=
-          ArcTan2(BounceResult.Vector1.Data[1],
-          BounceResult.Vector1.Data[0]);
+          ArcTan2(BounceResult.Vector1.Data[1], BounceResult.Vector1.Data[0]);
         aNextPathVector.EndTime :=
           aNextPathVector.StartTime + TBasicMotion.GetTimeToStop(
           aNextPathVector.InitialVelocity);
@@ -414,23 +414,33 @@ begin
   end;
 end;
 
-function TTrajectoryPath.CalculateBounceAfterHittingCircle(const AVector: TBasicVector;
-  const dX, dY: double; const ACircle: TCircle; const dHitTime : Double): TBounceResult;
+function TTrajectoryPath.CalculateBounceAfterHittingCircle(
+  const AVector: TBasicVector; const dX, dY: double; const ACircle: TCircle;
+  const dHitTime: double): TBounceResult;
 var
-  deltaX, deltaY,  dAngle, dSin, dCos : Double;
-  vx1, vy1, vx2, vy2 : Double;
-  vecVel : Tvector2_double;
+  deltaX, deltaY, dAngle, dSin, dCos, dPuckAngle, dAngleDifference: double;
+  vx1, vy1, vx2, vy2: double;
+  vecVel: Tvector2_double;
 
-  vx1Final,vx2Final, vy1Final, vy2Final : Double;
-  vx1Rotated,vx2Rotated, vy1Rotated, vy2Rotated : Double;
-  circleVecVel : Tvector2_double;
+  vx1Final, vx2Final, vy1Final, vy2Final: double;
+  vx1Rotated, vx2Rotated, vy1Rotated, vy2Rotated: double;
+  circleVecVel: Tvector2_double;
 begin
   // calculate distance between 2 circles
-  deltaX := ACircle.CenterX - dX;
-  deltaY := ACircle.CenterY - DY;
+  deltaX := Dx- ACircle.CenterX;
+  deltaY := Dy -ACircle.CenterY;
+
+  LogMessage(Format('dist between circle centrers %f',[Sqrt(sqR(deltaX) + Sqr(deltaY))]));
 
   // Calculate collision angle
   dAngle := arctan2(deltaY, deltaX);
+
+  // calculate the angle of the puck
+
+  dPuckAngle := AVector.Angle;
+  dAngleDifference:= dPuckAngle - dAngle;
+  LogMessage(Format('Difference in collision angle %f',[dAngleDifference]));
+
 
   dSin := Sin(dAngle);
   dCos := Cos(dAngle);
@@ -439,16 +449,18 @@ begin
   circleVecVel.init_zero; // TODO change for moving circle
 
   // Rotate the velocities so that we can calculate the new velocities
-  vx1 := vecVel.data[0] * dCos + vecVel.data[1] * dSin;
-  vy1 := vecVel.data[1] * dCos - vecVel.data[0] * dSin;
+  vx1 := vecVel.Data[0] * dCos + vecVel.Data[1] * dSin;
+  vy1 := vecVel.Data[1] * dCos - vecVel.Data[0] * dSin;
   vx2 := circleVecVel.Data[0] * dCos + circleVecVel.Data[1] * dSin;
   vy2 := circleVecVel.Data[1] * dCos - circleVecVel.Data[0] * dSin;
 
   // Calculate the new velocities after the collision
-  vx1Final := ((PUCK_RADIUS - Acircle.Radius) * vx1 + (2 * Acircle.Radius) * vx2) / (PUCK_RADIUS + Acircle.Radius);
-  vx2Final := ((Acircle.Radius - PUCK_RADIUS) * vx2 + (2 * PUCK_RADIUS) * vx1) / (PUCK_RADIUS + Acircle.Radius);
-  vy1Final := vy1 - DECELERATION;
-  vy2Final := vy2 - DECELERATION;
+  vx1Final := ((PUCK_RADIUS - Acircle.Radius) * vx1 + (2 * Acircle.Radius) * vx2) /
+    (PUCK_RADIUS + Acircle.Radius);
+  vx2Final := ((Acircle.Radius - PUCK_RADIUS) * vx2 + (2 * PUCK_RADIUS) * vx1) /
+    (PUCK_RADIUS + Acircle.Radius);
+  vy1Final := vy1- DECELERATION;
+  vy2Final := vy2;// - DECELERATION;
 
   // Rotate the velocities back again
   vx1Rotated := vx1Final * dCos - vy1Final * dSin;
@@ -456,15 +468,15 @@ begin
   vx2Rotated := vx2Final * dCos - vy2Final * dSin;
   vy2Rotated := vy2Final * dCos + vx2Final * dSin;
 
-  RESULT.Vector1.init(vx1Rotated, vy1Rotated);
-    Format('This vel after collision = XVEL: %f, YVEL: %f',
-    [RESULT.Vector1.Data[0], RESULT.Vector1.Data[1]]);
+  Result.Vector1.init(vx1Rotated, vy1Rotated);
+  Format('This vel after collision = XVEL: %f, YVEL: %f',
+    [Result.Vector1.Data[0], Result.Vector1.Data[1]]);
   // Calculate v2', the new movement vector of circle2
   // v2' = v2 + optimizedP * m1 * n
-  RESULT.Vector2.init(vx2Rotated, vy2Rotated);
+  Result.Vector2.init(vx2Rotated, vy2Rotated);
   LogMessage(
     Format('Other vel after collision = XVEL: %f, YVEL: %f',
-    [RESULT.Vector2.Data[0], RESULT.Vector2.Data[1]]));
+    [Result.Vector2.Data[0], Result.Vector2.Data[1]]));
 
   // todo.. move check into later stage (May have hit another circle first)
   ACircle.Stationary := False;

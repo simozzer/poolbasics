@@ -33,11 +33,11 @@ type
 
   { TMovingCircle }
 
-  TMovingCircle= class(TCircle)
-  Private
-    FVector : T2DVector;
+  TMovingCircle = class(TCircle)
+  private
+    FVector: T2DVector;
   public
-    property Vector : T2DVector read FVector;
+    property Vector: T2DVector read FVector;
     constructor Create(const dCenterX, dCenterY, dRadius: double); override;
     destructor Destroy; override;
 
@@ -52,7 +52,7 @@ implementation
 constructor TMovingCircle.Create(const dCenterX, dCenterY, dRadius: double);
 begin
   inherited Create(dCenterX, dCenterY, dRadius);
-  FVector:= T2DVector.Create(0,0);
+  FVector := T2DVector.Create(0, 0);
 end;
 
 destructor TMovingCircle.Destroy;
