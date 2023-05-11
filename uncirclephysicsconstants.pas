@@ -12,6 +12,9 @@ const
   PUCK_RADIUS = 9;
 
 const
+  PUCK_MASS = 1;
+
+const
   POCKET_RADIUS = 20;
 
 const
@@ -22,9 +25,6 @@ const
 
 const
   DECELERATION = -0.00025;
-
-const
-  TARGET_RADIUS = 8;
 
 const
   ANGLE_MICRO_CHANGE = 0.003;

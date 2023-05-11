@@ -90,6 +90,20 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unGameBoard"/>
       </Unit>
+      <Unit>
+        <Filename Value="unballsinmotion.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unBallsInMotion"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uncollisiontypes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uncollisiondetection.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unCollisionDetection"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

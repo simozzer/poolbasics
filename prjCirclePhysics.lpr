@@ -12,7 +12,8 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, tachartlazaruspkg, frmCirclePhysicsMain, unCirclePhysics,
   unTrajectoryPaths, uncirclephysicsconstants, unHelperInterfaces,
-  unOtherCircles, unAngleSelectorControl, unBoardRenderer, unGameBoard;
+  unOtherCircles, unAngleSelectorControl, unBoardRenderer, unGameBoard,
+  unBallsInMotion, unCollisionTypes, unCollisionDetection;
 
 {$R *.res}
 

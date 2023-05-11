@@ -5,13 +5,13 @@ unit unCirclePhysics;
 interface
 
 uses
-  Classes, SysUtils, matrix, unHelperInterfaces;
+  Classes, SysUtils, matrix, unHelperInterfaces, types;
 
 type
 
   { T2DVector }
   // A simple class for storing vectors and doing simple vector calculations
-  T2DVector = class(TInterfacedObject,I2DVector)
+  T2DVector = class(TInterfacedObject, I2DVector)
   private
     FVector: Tvector2_double;
     function GetMagnitude: double;
@@ -36,8 +36,7 @@ type
   TBasicVector = class(TInterfacedObject, IBasicVector)
   private
     FdInitialVelocity: double;
-    FdOriginX: double;
-    FdOriginY: double;
+    FptOrigin: TPointF;
     FdAngle: double;
     FdEndTime: double;
     FdStartTime: double;
@@ -46,15 +45,14 @@ type
     procedure SetAngle(AValue: double);
     function GetInitialVelocity: double;
     procedure SetInitialVelocity(const AValue: double);
-    function GetOriginX: double;
-    function GetOriginY: double;
-    procedure SetOriginX(const dX: double);
-    procedure SetOriginY(const dY: double);
+    function GetOrigin: TPointF;
+    procedure SetOrigin(const ptOrigin : TPointF);
     function GetEndTime: double;
     procedure SetEndTime(const dTime: double);
     function GetStartTime: double;
+    function clone: IBasicVector;
   public
-    constructor Create(const dOriginX, dOriginY, dVelocity, dAngle, dStartTime: double);
+    constructor Create(const ptOrigin : TPointF; const dVelocity, dAngle, dStartTime: double);
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
     function GetTimeToXDeplacement(const dDeplacement: double): double;
@@ -65,10 +63,10 @@ type
     procedure ReverseX();
     procedure ReverseY();
     function GetVelocityVectorAtTime(const dTime: double): Tvector2_double;
+    function GetVelocityAtTime(const dTime: double): double;
     function ToString(): string; override;
     property InitialVelocity: double read FdInitialVelocity write SetInitialVelocity;
-    property OriginX: double read GetOriginX write SetOriginX;
-    property OriginY: double read GetOriginY write SetOriginY;
+    property Origin: TPointF read GetOrigin;
     property Angle: double read GetAngle write SetAngle;
     property EndTime: double read GetEndTime write SetEndTime;
     property StartTime: double read GetStartTime;
@@ -163,17 +161,6 @@ begin
   Result := T2DVector.Create(Vec.Data[0], Vec.Data[1]);
 end;
 
-{ TBasicMotion }
-
-class function TBasicMotion.RadToDeg(const dRadians: double): double;
-begin
-  Result := (180 / pi) * dRadians;
-end;
-
-class function TBasicMotion.DegToRad(const dDegrees: double): double;
-begin
-  Result := (pi / 180) * dDegrees;
-end;
 
 { TBasicVector }
 
@@ -184,24 +171,14 @@ begin
   FdInitialVelocity := AValue;
 end;
 
-function TBasicVector.GetOriginX: double;
+function TBasicVector.GetOrigin: TPointF;
 begin
-  Result := FdOriginX;
+  Result := FptOrigin;
 end;
 
-function TBasicVector.GetOriginY: double;
+procedure TBasicVector.SetOrigin(const ptOrigin: TPointF);
 begin
-  Result := FdOriginY;
-end;
-
-procedure TBasicVector.SetOriginX(const dX: double);
-begin
-  FdOriginX := dX;
-end;
-
-procedure TBasicVector.SetOriginY(const dY: double);
-begin
-  FdOriginY := dY;
+  FptOrigin := ptOrigin;
 end;
 
 function TBasicVector.GetEndTime: double;
@@ -217,6 +194,15 @@ end;
 function TBasicVector.GetStartTime: double;
 begin
   Result := FdStartTime;
+end;
+
+function TBasicVector.clone: IBasicVector;
+var
+  AVector: TBasicVector;
+begin
+  AVector := TBasicVector.Create(Origin, InitialVelocity, Angle, StartTime);
+  AVector.EndTime := EndTime;
+  Result := AVector;
 end;
 
 procedure TBasicVector.SetAngle(AValue: double);
@@ -248,11 +234,11 @@ begin
   Result := FdAngle;
 end;
 
-constructor TBasicVector.Create(const dOriginX, dOriginY, dVelocity,
-  dAngle, dStartTime: double);
+constructor TBasicVector.Create(const ptOrigin : TPointF;
+  const dVelocity, dAngle, dStartTime: double);
 begin
-  FdOriginX := dOriginX;
-  FdOriginY := dOriginY;
+  FptOrigin.X := ptOrigin.X;
+  FptOrigin.Y := ptOrigin.Y;
   FdInitialVelocity := dVelocity;
   FdAngle := dAngle;
   FdStartTime := dStartTime;
@@ -261,13 +247,13 @@ end;
 
 function TBasicVector.GetXAtTime(const dTime: double): double;
 begin
-  Result := FdOriginX + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
+  Result := FptOrigin.X + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
     cos(FdAngle));
 end;
 
 function TBasicVector.GetYAtTime(const dTime: double): double;
 begin
-  Result := FdOriginY + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
+  Result := FptOrigin.Y + (TBasicMotion.GetDistanceAtTime(FdInitialVelocity, dTime) *
     sin(FdAngle));
 end;
 
@@ -329,14 +315,19 @@ begin
   Result.init(dVel * Cos(FdAngle), dVel * Sin(FdAngle));
 end;
 
+function TBasicVector.GetVelocityAtTime(const dTime: double): double;
+begin
+  Result := TBasicMotion.GetVelocityAtTime(FdInitialVelocity, dTime);
+end;
+
 function TBasicVector.ToString: string;
 begin
-  Result := Format('%F X:%F, Y:%F, V:%F, A:%F (%F)',
-    [StartTime, OriginX, OriginY, InitialVelocity, Angle, TBasicMotion.RadToDeg(Angle)]);
+  Result := Format('Time:%F, (%F, %F), V:%F, A:%F (%F)',
+    [StartTime, FptOrigin.X, FptOrigin.Y, InitialVelocity, Angle, TBasicMotion.RadToDeg(Angle)]);
 end;
 
 
-{ TBasicPhysics }
+{ TBasicMotion }
 
 class function TBasicMotion.GetTimeToStop(const dVelocity: double): double;
   // From V = U + AT
@@ -397,6 +388,17 @@ begin
   Result := Abs((dVelocity - TBasicMotion.GetVelocityAtDistance(dVelocity, dDistance)) /
     DECELERATION);
 end;
+
+class function TBasicMotion.RadToDeg(const dRadians: double): double;
+begin
+  Result := (180 / pi) * dRadians;
+end;
+
+class function TBasicMotion.DegToRad(const dDegrees: double): double;
+begin
+  Result := (pi / 180) * dDegrees;
+end;
+
 
 
 
