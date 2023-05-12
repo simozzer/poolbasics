@@ -13,7 +13,8 @@ uses
   Forms, tachartlazaruspkg, frmCirclePhysicsMain, unCirclePhysics,
   unTrajectoryPaths, uncirclephysicsconstants, unHelperInterfaces,
   unOtherCircles, unAngleSelectorControl, unBoardRenderer, unGameBoard,
-  unBallsInMotion, unCollisionTypes, unCollisionDetection;
+  unBallsInMotion, unCollisionTypes, unCollisionDetection,
+unPathPartImplementation, unTimesliceImpl;
 
 {$R *.res}
 

@@ -104,6 +104,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCollisionDetection"/>
       </Unit>
+      <Unit>
+        <Filename Value="unpathpartimplementation.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unPathPartImplementation"/>
+      </Unit>
+      <Unit>
+        <Filename Value="untimesliceimpl.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unTimesliceImpl"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -200,9 +200,7 @@ function TBasicVector.clone: IBasicVector;
 var
   AVector: TBasicVector;
 begin
-  AVector := TBasicVector.Create(Origin, InitialVelocity, Angle, StartTime);
-  AVector.EndTime := EndTime;
-  Result := AVector;
+  RESULT := TBasicVector.Create(TPOintF.Create(Origin.X, Origin.Y), InitialVelocity, Angle, StartTime);
 end;
 
 procedure TBasicVector.SetAngle(AValue: double);
@@ -299,7 +297,7 @@ end;
 
 procedure TBasicVector.ReverseX;
 begin
-  Angle := pi - Angle;
+  FdAngle := pi - FdAngle;
 end;
 
 procedure TBasicVector.ReverseY;

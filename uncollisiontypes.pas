@@ -16,6 +16,7 @@ type
   TEdgeHitDetail = record
     EdgeHit: TEdgeHit;
     HitTime: double;
+    iPathPartId : Integer;
     intfDetails: IInterface;
     // Used to store result (which circle or circle collision results)
   end;
@@ -25,6 +26,7 @@ type
     Vector1: Tvector2_double;
     Vector2: Tvector2_double;
   end;
+
 
 function EdgeHitToStr(const EdgeHit: TEdgeHit): string;
 

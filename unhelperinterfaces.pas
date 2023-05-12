@@ -146,7 +146,24 @@ type
     ['{DE55D489-919F-42D2-B121-BA6955147E96}']
     function GetBasicVector: IBasicVector;
     property Vector: IBasicVector read GetBasicVector;
-    function Clone: ICircle;
+    function Clone: IUnknown;
+  end;
+
+  IPathPart = interface['{8AA65907-3C7B-4141-BCF2-8FFF3EC44204}']
+    function GetCircle : ICircle;
+    function GetVector : IBasicVector;
+    function ToString: String;
+    property Circle : ICircle read GetCircle;
+    property Vector : IBasicVector read GetVector;
+  end;
+
+  IPathPartList = interface['{E99CFD3E-400C-4098-8F57-4C0D0472E306}']
+    function getItem(const iIndex: Integer):IPathPart;
+    function GetCount:Cardinal;
+    procedure Clear;
+    procedure Add(const intfPathPart : IPathPart);
+    property Count: Cardinal read GetCount;
+    property Item[const iIndex: Integer]: IPathPart read GetItem; default;
   end;
 
   IIdentity = interface ['{50E4CB90-4B85-4C51-9676-50A5F5A44F6F}']
@@ -202,13 +219,12 @@ type
   ITimeslice = interface['{DFA80F2A-1162-416C-BFE2-DB184174C724}']
     function GetStartTime: Double;
     function GetEndTime: Double;
-    function GetCircles : ICirclesList;
+    function GetPathParts : IPathPartList;
     procedure SetStartTime(const dStartTime : Double);
     procedure SetEndTime(const dEndTime: Double);
     property StartTime : Double read GetStartTime write SetStartTime;
     property EndTime : Double read GetEndTime write SetEndTime;
-    property Circles : ICirclesList read GetCircles;
-
+    property PathParts : IPathPartList read GetPathParts;
     function ToString: String;
   end;
 
@@ -227,6 +243,7 @@ type
     procedure AddCircle(const ACircle: ICircle);
     procedure Clear;
     procedure GainThePlot;
+    function GetThePlotAtTime(const dTime: Double) : ICirclesList;
     property Timeslices: ITimesliceList read GetTimeslices;
   end;
 

@@ -7,20 +7,12 @@ object Form1: TForm1
   ClientHeight = 804
   ClientWidth = 1180
   LCLVersion = '2.2.4.0'
-  object lstEvents: TListBox
-    Left = 816
-    Height = 758
-    Top = 10
-    Width = 356
-    ItemHeight = 0
-    TabOrder = 0
-  end
   object edtTime: TEdit
     Left = 728
     Height = 23
     Top = 456
     Width = 80
-    TabOrder = 1
+    TabOrder = 0
     Text = '557.0'
   end
   object btnRenderFrame: TButton
@@ -30,7 +22,7 @@ object Form1: TForm1
     Width = 104
     Caption = 'Render Frame'
     OnClick = btnRenderFrameClick
-    TabOrder = 2
+    TabOrder = 1
   end
   object lblFrameTime: TLabel
     Left = 656
@@ -55,7 +47,7 @@ object Form1: TForm1
     Height = 23
     Top = 489
     Width = 80
-    TabOrder = 3
+    TabOrder = 2
     Text = '20.0'
   end
   object btnTimeAdd: TButton
@@ -65,7 +57,7 @@ object Form1: TForm1
     Width = 32
     Caption = '&+'
     OnClick = btnTimeAddClick
-    TabOrder = 4
+    TabOrder = 3
   end
   object btnTimeSubtract: TButton
     Left = 752
@@ -74,7 +66,7 @@ object Form1: TForm1
     Width = 32
     Caption = '&-'
     OnClick = btnTimeSubtractClick
-    TabOrder = 5
+    TabOrder = 4
   end
   object Label1: TLabel
     Left = 632
@@ -90,7 +82,7 @@ object Form1: TForm1
     Width = 75
     Caption = '&Clear'
     OnClick = btnClearLogClick
-    TabOrder = 6
+    TabOrder = 5
   end
   object grpTakeShot: TGroupBox
     Left = 664
@@ -100,7 +92,7 @@ object Form1: TForm1
     Caption = 'Take &Shot'
     ClientHeight = 413
     ClientWidth = 133
-    TabOrder = 7
+    TabOrder = 6
     object lblAngle: TLabel
       Left = 32
       Height = 15
@@ -182,7 +174,7 @@ object Form1: TForm1
     Width = 104
     Caption = 'Draw Trajectory'
     OnClick = btnDrawTrajectoryClick
-    TabOrder = 8
+    TabOrder = 7
   end
   object lblCos: TLabel
     Left = 684
@@ -199,6 +191,16 @@ object Form1: TForm1
     Width = 29
     Caption = 'lblSin'
     ParentColor = False
+  end
+  object lstEvents: TMemo
+    Left = 816
+    Height = 762
+    Top = 8
+    Width = 360
+    Lines.Strings = (
+      'lstEvents'
+    )
+    TabOrder = 8
   end
   object ActionList1: TActionList
     Images = ImageList1

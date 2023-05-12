@@ -188,7 +188,7 @@ begin
   ACircle2Vector := ACircle2VectorAccess.Vector;
 
   // check if we travel far enough to hit circle
-  //TODO: DISTANCE dDistanceBetween2Centers := ACircle2.Distance(ACircle1.CenterX, ACircle1.CenterY);
+  dDistanceBetween2Centers := ACircle2Vector.Origin.Distance(ACircle1Vector.Origin);
   dSumRadii := ACircle1.Radius + ACircle2.Radius;
   dDistanceBewteen2Circles := dDistanceBetween2Centers - dSumRadii;
   if (dDistanceBewteen2Circles < TBasicMotion.GetDistanceToStop(

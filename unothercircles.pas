@@ -18,6 +18,7 @@ type
     FclrBrush: TColor;
     FclrPen: TColor;
     FbStationary: boolean;
+    FiID : Cardinal;
   protected
     function GetRadius: double;
     function GetBrushColor: TColor;
@@ -39,7 +40,7 @@ type
   private
      FBasicVector: IBasicVector;
      function GetBasicVector : IBasicVector;
-     function Clone: ICircle;
+     function Clone: IUnknown;
   public
     property Vector : IBasicVector read GetBasicVector;
     constructor Create(const ptOrigin: TPointF; const dRadius, dMass: double);
@@ -64,12 +65,35 @@ type
     destructor Destroy; override;
   end;
 
+  { TCircleInterfaceAccess }
+
+  TCircleInterfaceAccess = class
+    public class function GetVectorFromCircle(const intfCircle: ICircle): IBasicVector;
+  end;
+
 
 implementation
 
 type
     // Contains a list of ICircle
   TInternalCirclesList = specialize TFPGInterfacedObjectList<ICircle>;
+
+var
+  miCircleIdSequence: Cardinal;
+
+{ TCircleInterfaceAccess }
+
+class function TCircleInterfaceAccess.GetVectorFromCircle(const intfCircle : ICircle): IBasicVector;
+var
+  intfVectorAccess : IObjectWithVector;
+begin
+  RESULT := nil;
+  if not supports(intfCircle, IObjectWithVector, intfVectorAccess) then
+    raise Exception.Create('Could not obtain IObjectWithVector')
+  else
+    RESULT := intfVectorAccess.Vector;
+end;
+
 
 { TCirclesList }
 
@@ -111,7 +135,7 @@ begin
   RESULT := FBasicVector;
 end;
 
-function TMovingCircle.Clone: ICircle;
+function TMovingCircle.Clone: IUnknown;
 var
   Acircle : TMovingCircle;
 begin
@@ -179,14 +203,13 @@ end;
 
 function TBaseCircle.GetId: Cardinal;
 begin
-  RESULT := Cardinal(@Self);
+  RESULT := FiId;
 end;
 
 function TBaseCircle.ToString: ansistring;
 begin
   Result:=Format('Radius: %f, Mass: %f',[FdRadius, FdMass]);
 end;
-
 
 constructor TBaseCircle.Create(const dRadius, dMass: double);
 begin
@@ -195,6 +218,8 @@ begin
   FclrPen := clBlack;
   FdMass:= dMass;
   FbStationary := True;
+  miCircleIdSequence:= miCircleIdSequence + 1;
+  FiID:= miCircleIdSequence;
 end;
 
 {
@@ -213,5 +238,8 @@ begin
     Round(FdCenterX + FdRadius), Round(FdCenterY + FdRadius));
 end;
 }
+
+initialization
+  miCircleIdSequence := 1;
 
 end.
