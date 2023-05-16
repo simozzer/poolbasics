@@ -12,24 +12,24 @@ type
 
   { TCircleCollisionResult }
 
-  TCircleCollisionResult = class(TInterfacedObject,ICircleCollisionResult)
+  TCircleCollisionResult = class(TInterfacedObject, ICircleCollisionResult)
   private
-    FCircleId1, FCircleId2: Integer;
+    FCircleId1, FCircleId2: integer;
     FdCircle1XAtHit: double;
     FdCircle1YAtHit: double;
     FdCircle2XAtHit: double;
     FdCircle2YAtHit: double;
     FdHitTime: double;
-    function GetCircleId1: Integer;
-    function GetCircleId2: Integer;
+    function GetCircleId1: integer;
+    function GetCircleId2: integer;
     function GetHitTime: double;
     function GetCircle1XAtHit: double;
     function GetCircle1YAtHit: double;
     function GetCircle2XAtHit: double;
     function GetCircle2YAtHit: double;
   public
-    constructor Create(const iCircleID1, iCircleID2: Integer; const dHitTime: double;
-      const dX1AtHit, dY1AtHit, dX2AtHit, dY2AtHit: double);
+    constructor Create(const iCircleID1, iCircleID2: integer;
+      const dHitTime: double; const dX1AtHit, dY1AtHit, dX2AtHit, dY2AtHit: double);
 
   end;
 
@@ -41,9 +41,9 @@ type
     class function DetectStationaryCircleHit(const APathPart1: IPathPart;
       const APathPart2: IPathPart): ICircleCollisionResult;
 
-    class function CalculateBounceAfterHittingCircle(
-      const APathPart: IPathPart; const dX, dY: double; const ATargetPathPart: IPathPart;
-        const dHitTime: double): TBounceResult;
+    class function CalculateBounceAfterHittingCircle(const APathPart: IPathPart;
+      const dX, dY: double; const ATargetPathPart: IPathPart;
+      const dHitTime: double): TBounceResult;
   end;
 
 { TCircleCollisionResult }
@@ -57,12 +57,12 @@ uses
 
 { TCircleCollisionResult }
 
-function TCircleCollisionResult.GetCircleId1: Integer;
+function TCircleCollisionResult.GetCircleId1: integer;
 begin
   Result := FCircleId1;
 end;
 
-function TCircleCollisionResult.GetCircleId2: Integer;
+function TCircleCollisionResult.GetCircleId2: integer;
 begin
   Result := FCircleId2;
 end;
@@ -92,7 +92,7 @@ begin
   Result := FdCircle2YAtHit;
 end;
 
-constructor TCircleCollisionResult.Create(const iCircleId1, iCircleId2: Integer;
+constructor TCircleCollisionResult.Create(const iCircleId1, iCircleId2: integer;
   const dHitTime: double; const dX1AtHit, dY1AtHit, dX2AtHit, dY2AtHit: double);
 begin
   FCircleId1 := iCircleId1;
@@ -171,8 +171,8 @@ var
   AThisVector, AVectorBetween2Centers: I2DVector;
   NormalizedVector_N: I2DVector;
   dXCircleHit, dYCircleHit: double;
-  ACircle1, aCircle2 : ICircle;
-  iCircleId1, iCircleId2 : Integer;
+  ACircle1, aCircle2: ICircle;
+  iCircleId1, iCircleId2: integer;
 begin
   Result := nil;
 
@@ -200,8 +200,8 @@ begin
 
     // Get the vector between the 2 ball centers
     AVectorBetween2Centers :=
-          T2DVector.Create(ACircle2Vector.Origin.X - ACircle1Vector.Origin.X,
-            ACircle2Vector.Origin.Y - ACircle1Vector.Origin.Y);
+      T2DVector.Create(ACircle2Vector.Origin.X - ACircle1Vector.Origin.X,
+      ACircle2Vector.Origin.Y - ACircle1Vector.Origin.Y);
 
     //dDotProduct := AVectorBetween2Centers.Magnitude * cos(-AVectorBetween2Centers.Angle);
     dDotProduct_D := AVectorBetween2Centers.GetDotProduct(NormalizedVector_N);
@@ -244,7 +244,9 @@ begin
               ACircle1Vector.InitialVelocity, dActualDistanceToCollision);
 
             Result := TCircleCollisionResult.Create(iCircleId1, iCircleId2,
-              dHitTime, dXCircleHit + ACircle1Vector.Origin.X, dYCircleHit + ACircle1Vector.Origin.Y, ACircle2Vector.Origin.X, ACircle2Vector.Origin.Y);
+              dHitTime, dXCircleHit + ACircle1Vector.Origin.X,
+              dYCircleHit + ACircle1Vector.Origin.Y, ACircle2Vector.Origin.X,
+              ACircle2Vector.Origin.Y);
           end;
         end;
       end;
@@ -256,11 +258,11 @@ class function TCollisionDetection.CalculateBounceAfterHittingCircle(
   const APathPart: IPathPart; const dX, dY: double; const ATargetPathPart: IPathPart;
   const dHitTime: double): TBounceResult;
 var
-  AVector, intfTargetCircleVector : IBasicVector;
+  AVector, intfTargetCircleVector: IBasicVector;
 
-  n,v1,v2,finalv1, finalv2 : Tvector2_double;
-  a1, a2, optimizedP : Double;
-  dFactor :Double;
+  n, v1, v2, finalv1, finalv2: Tvector2_double;
+  a1, a2, optimizedP: double;
+  dFactor: double;
 begin
 
   AVector := APathPart.Vector;
@@ -269,14 +271,12 @@ begin
   v1 := AVector.GetVelocityVectorAtTime(dHitTime);
   v2 := intfTargetCircleVector.GetVelocityVectorAtTime(dHitTime);
 
-    // First, find the normalized vector n from the center of
+  // First, find the normalized vector n from the center of
   // circle1 to the center of circle2
-  n.init(DX- intfTargetCircleVector.Origin.X, DY-intfTargetCircleVector.Origin.Y);
+  n.init(DX - intfTargetCircleVector.Origin.X, DY - intfTargetCircleVector.Origin.Y);
   n.init(
-                            n.Data[0] /
-                            n.length,
-                            n.Data[1] /
-                            n.length);
+    n.Data[0] / n.length,
+    n.Data[1] / n.length);
   // Find the length of the component of each of the movement
   // vectors along n.
   // a1 = v1 . n
@@ -288,21 +288,22 @@ begin
   // optimizedP =  2(a1 - a2)
   //              -----------
   //                m1 + m2
-  optimizedP := (2.0 * (a1 - a2)) / (APathPart.Circle.mass + ATargetPathPart.Circle.mass);
+  optimizedP := (2.0 * (a1 - a2)) / (APathPart.Circle.mass +
+    ATargetPathPart.Circle.mass);
 
   // Calculate v1', the new movement vector of circle1
   // v1' = v1 - optimizedP * m2 * n
   dFactor := optimizedP * ATargetPathPart.Circle.Mass;
-  finalv1.init(v1.data[0] - (n.data[0] * dFactor),
-       v1.data[1] - (n.data[1] * dFactor));
+  finalv1.init(v1.Data[0] - (n.Data[0] * dFactor),
+    v1.Data[1] - (n.Data[1] * dFactor));
 
   // Calculate v1', the new movement vector of circle1
   // v2' = v2 + optimizedP * m1 * n
-    dFactor := optimizedP * APathPart.Circle.Mass;
-   finalv2.init(v2.data[0] + (n.data[0] * dFactor),
-       v2.data[1] + (n.data[1] * dFactor));
+  dFactor := optimizedP * APathPart.Circle.Mass;
+  finalv2.init(v2.Data[0] + (n.Data[0] * dFactor),
+    v2.Data[1] + (n.Data[1] * dFactor));
 
-  RESULT.Vector1 := finalv1;
+  Result.Vector1 := finalv1;
   Result.Vector2 := finalv2;
 end;
 

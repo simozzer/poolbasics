@@ -16,7 +16,7 @@ type
     class function GetPathPartForCircleID(const intfList: IPathPartList;
       const iCircleID: integer): IPathPart;
 
-    class function GetCircleId(const intfCircle : ICircle): Integer;
+    class function GetCircleId(const intfCircle: ICircle): integer;
 
   end;
 
@@ -41,14 +41,14 @@ begin
 
 end;
 
-class function TCircleUtils.GetCircleId(const intfCircle: ICircle): Integer;
+class function TCircleUtils.GetCircleId(const intfCircle: ICircle): integer;
 var
-  intfIdentity : IIdentity;
+  intfIdentity: IIdentity;
 begin
   if supports(intfCircle, IIdentity, intfIdentity) then
-    RESULT := intfIdentity.Id
+    Result := intfIdentity.Id
   else
-    Raise Exception.Create('Could not obtain ICircle');
+    raise Exception.Create('Could not obtain ICircle');
 end;
 
 end.

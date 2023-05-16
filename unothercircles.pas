@@ -14,11 +14,11 @@ type
   TBaseCircle = class(TInterfacedObject, ICircle, IIdentity)
   private
     FdRadius: double;
-    FdMass: Double;
+    FdMass: double;
     FclrBrush: TColor;
     FclrPen: TColor;
     FbStationary: boolean;
-    FiID : Cardinal;
+    FiID: cardinal;
   protected
     function GetRadius: double;
     function GetBrushColor: TColor;
@@ -26,9 +26,9 @@ type
     function GetPenColor: TColor;
     procedure SetPenColor(const clr: TColor);
     function GetStationary: boolean;
-    function GetMass : Double;
+    function GetMass: double;
     procedure SetStationary(const bStationary: boolean);
-    function GetId :Cardinal;
+    function GetId: cardinal;
     function ToString: ansistring; override;
   public
     constructor Create(const dRadius, dMass: double);
@@ -38,11 +38,11 @@ type
 
   TMovingCircle = class(TBaseCircle, IObjectWithVector)
   private
-     FBasicVector: IBasicVector;
-     function GetBasicVector : IBasicVector;
-     function Clone: IUnknown;
+    FBasicVector: IBasicVector;
+    function GetBasicVector: IBasicVector;
+    function Clone: IUnknown;
   public
-    property Vector : IBasicVector read GetBasicVector;
+    property Vector: IBasicVector read GetBasicVector;
     constructor Create(const ptOrigin: TPointF; const dRadius, dMass: double);
     destructor Destroy; override;
   end;
@@ -52,15 +52,15 @@ type
 
   TCirclesList = class(TInterfacedObject, ICirclesList)
   private
-    FList : TObject;
+    FList: TObject;
   protected
-    function GetItem(const iIndex : Integer): ICircle;
-    function GetCount:Cardinal;
+    function GetItem(const iIndex: integer): ICircle;
+    function GetCount: cardinal;
     procedure Clear;
-    procedure Add(const intfCircle : ICircle);
+    procedure Add(const intfCircle: ICircle);
   public
-    property Count: Cardinal read GetCount;
-    property Item[const iIndex: Integer]: ICircle read GetItem; default;
+    property Count: cardinal read GetCount;
+    property Item[const iIndex: integer]: ICircle read GetItem; default;
     constructor Create;
     destructor Destroy; override;
   end;
@@ -68,43 +68,45 @@ type
   { TCircleInterfaceAccess }
 
   TCircleInterfaceAccess = class
-    public class function GetVectorFromCircle(const intfCircle: ICircle): IBasicVector;
+  public
+    class function GetVectorFromCircle(const intfCircle: ICircle): IBasicVector;
   end;
 
 
 implementation
 
 type
-    // Contains a list of ICircle
+  // Contains a list of ICircle
   TInternalCirclesList = specialize TFPGInterfacedObjectList<ICircle>;
 
 var
-  miCircleIdSequence: Cardinal;
+  miCircleIdSequence: cardinal;
 
 { TCircleInterfaceAccess }
 
-class function TCircleInterfaceAccess.GetVectorFromCircle(const intfCircle : ICircle): IBasicVector;
+class function TCircleInterfaceAccess.GetVectorFromCircle(
+  const intfCircle: ICircle): IBasicVector;
 var
-  intfVectorAccess : IObjectWithVector;
+  intfVectorAccess: IObjectWithVector;
 begin
-  RESULT := nil;
+  Result := nil;
   if not supports(intfCircle, IObjectWithVector, intfVectorAccess) then
     raise Exception.Create('Could not obtain IObjectWithVector')
   else
-    RESULT := intfVectorAccess.Vector;
+    Result := intfVectorAccess.Vector;
 end;
 
 
 { TCirclesList }
 
-function TCirclesList.GetItem(const iIndex: Integer): ICircle;
+function TCirclesList.GetItem(const iIndex: integer): ICircle;
 begin
-  RESULT := TInternalCirclesList(FList)[iIndex];
+  Result := TInternalCirclesList(FList)[iIndex];
 end;
 
-function TCirclesList.GetCount: Cardinal;
+function TCirclesList.GetCount: cardinal;
 begin
-  RESULT := TInternalCirclesList(FList).Count;
+  Result := TInternalCirclesList(FList).Count;
 end;
 
 procedure TCirclesList.Clear;
@@ -132,14 +134,14 @@ end;
 
 function TMovingCircle.GetBasicVector: IBasicVector;
 begin
-  RESULT := FBasicVector;
+  Result := FBasicVector;
 end;
 
 function TMovingCircle.Clone: IUnknown;
 var
-  Acircle : TMovingCircle;
+  Acircle: TMovingCircle;
 begin
-  Acircle := TMovingCircle.Create(FBasicVector.Origin,GetRadius, GetMass);
+  Acircle := TMovingCircle.Create(FBasicVector.Origin, GetRadius, GetMass);
   Acircle.SetBrushColor(GetBrushColor);
   Acircle.SetPenColor(GetPenColor);
   Acircle.FBasicVector := GetBasicVector.Clone;
@@ -149,7 +151,7 @@ end;
 constructor TMovingCircle.Create(const ptOrigin: TPointF; const dRadius, dMass: double);
 begin
   inherited Create(dRadius, dMass);
-  FBasicVector := TBasicVector.Create(ptOrigin,0,0,0);
+  FBasicVector := TBasicVector.Create(ptOrigin, 0, 0, 0);
 end;
 
 destructor TMovingCircle.Destroy;
@@ -191,9 +193,9 @@ begin
   Result := FbStationary;
 end;
 
-function TBaseCircle.GetMass: Double;
+function TBaseCircle.GetMass: double;
 begin
-  RESULT := FdMass;
+  Result := FdMass;
 end;
 
 procedure TBaseCircle.SetStationary(const bStationary: boolean);
@@ -201,14 +203,14 @@ begin
   FbStationary := bStationary;
 end;
 
-function TBaseCircle.GetId: Cardinal;
+function TBaseCircle.GetId: cardinal;
 begin
-  RESULT := FiId;
+  Result := FiId;
 end;
 
 function TBaseCircle.ToString: ansistring;
 begin
-  Result:=Format('Radius: %f, Mass: %f',[FdRadius, FdMass]);
+  Result := Format('Radius: %f, Mass: %f', [FdRadius, FdMass]);
 end;
 
 constructor TBaseCircle.Create(const dRadius, dMass: double);
@@ -216,28 +218,12 @@ begin
   FdRadius := dRadius;
   FclrBrush := clWhite;
   FclrPen := clBlack;
-  FdMass:= dMass;
+  FdMass := dMass;
   FbStationary := True;
-  miCircleIdSequence:= miCircleIdSequence + 1;
-  FiID:= miCircleIdSequence;
+  miCircleIdSequence := miCircleIdSequence + 1;
+  FiID := miCircleIdSequence;
 end;
 
-{
-function TBaseCircle.Distance(const dOtherCenterX, dOtherCenterY: double): double;
-begin
-  Result := Sqrt(Sqr(dOtherCenterX - FdCenterX) + Sqr(dOtherCenterY - FdCenterY));
-end;
-}
-
-{
-procedure TBaseCircle.Render(const ACanvas: TCanvas);
-begin
-  ACanvas.Brush.color := FclrBrush;
-  ACanvas.Pen.Color := FclrPen;
-  ACanvas.Ellipse(Round(FdCenterX - FdRadius), Round(FdCenterY - FdRadius),
-    Round(FdCenterX + FdRadius), Round(FdCenterY + FdRadius));
-end;
-}
 
 initialization
   miCircleIdSequence := 1;

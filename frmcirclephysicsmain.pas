@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, StdCtrls,
   MaskEdit, ExtCtrls, ComCtrls, unGameBoard,
-  unCirclePhysics, unTrajectoryPaths, BGRABitmap, unHelperInterfaces,
+  unCirclePhysics, BGRABitmap, unHelperInterfaces,
   unOtherCircles, unAngleSelectorControl, unBallsInMotion;
 
 type
@@ -276,7 +276,7 @@ var
   dBallCenterX, dBallCenterY: double;
   lstTimeslices: ITimesliceList;
   timeslice: ITimeslice;
-  lstPathParts : IPathPartList;
+  lstPathParts: IPathPartList;
   intfPathPart: IPathPart;
   intfVector: IBasicVector;
   dStartTime, dEndTime, dDuration: double;
@@ -294,7 +294,7 @@ begin
   for i := 0 to pred(FlstCircles.Count) do
   begin
     RenderCircle(BoardCanvas, FlstCircles[i]);
-   // FlstCircles[i].Stationary := True;
+    // FlstCircles[i].Stationary := True;
   end;
 
 
@@ -311,14 +311,16 @@ begin
       intfPathPart := lstPathParts[j];
       BoardCanvas.Pen.Color := intfPathPart.Circle.PenColor;
       BoardCanvas.Brush.Color := intfPathPart.Circle.BrushColor;
-      BoardCanvas.Ellipse(Round(intfPathPart.Vector.Origin.X - intfPathPart.Circle.Radius),
-      Round(intfPathPart.Vector.Origin.Y - intfPathPart.Circle.Radius),
-      Round(intfPathPart.Vector.Origin.X + intfPathPart.Circle.Radius),
-      Round(intfPathPart.Vector.Origin.Y + intfPathPart.Circle.Radius)
-      );
+      BoardCanvas.Ellipse(Round(intfPathPart.Vector.Origin.X -
+        intfPathPart.Circle.Radius),
+        Round(intfPathPart.Vector.Origin.Y - intfPathPart.Circle.Radius),
+        Round(intfPathPart.Vector.Origin.X + intfPathPart.Circle.Radius),
+        Round(intfPathPart.Vector.Origin.Y + intfPathPart.Circle.Radius)
+        );
 
       BoardCanvas.Pen.Color := intfPathPart.Circle.BrushColor;
-      BoardCanvas.MoveTo(round(intfPathPart.Vector.Origin.X), round(intfPathPart.Vector.Origin.Y));
+      BoardCanvas.MoveTo(round(intfPathPart.Vector.Origin.X),
+        round(intfPathPart.Vector.Origin.Y));
       BoardCanvas.LineTo(Round(intfPathPart.Vector.GetXAtTime(dDuration)),
         Round(intfPathPart.Vector.GetYAtTime(dDuration)));
 
@@ -350,7 +352,7 @@ begin
   intfVector.Angle := FAngleControl.Angle;
   intfVector.InitialVelocity := (100 - (trkVelocity.Position / 100)) / 100;
   actRenderExecute(Self, 0);
-    DrawTrajectoryPaths;
+  DrawTrajectoryPaths;
 end;
 
 // Move the position of the puck when the left mouse button is held
@@ -363,7 +365,7 @@ begin
   intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
   intfVector.Origin := TPointF.Create(x, y);
   actRenderExecute(Self, 0);
-    DrawTrajectoryPaths;
+  DrawTrajectoryPaths;
 
 end;
 
@@ -427,8 +429,8 @@ begin
 
   FlstCircles := TCirclesList.Create;
   ACircle := TMovingCircle.Create(TPointF.Create(300, 300), PUCK_RADIUS, PUCK_MASS);
-  ACircle.BrushColor:= clAqua;
-  ACircle.PenColor:= clBlue;
+  ACircle.BrushColor := clAqua;
+  ACircle.PenColor := clBlue;
   FlstCircles.Add(ACircle);
   FPuck := TMovingCircle.Create(TPointF.Create(200, 518), PUCK_RADIUS, PUCK_MASS);
   FPuck.BrushColor := clRed;

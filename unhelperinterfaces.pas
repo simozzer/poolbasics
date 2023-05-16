@@ -95,8 +95,8 @@ type
     procedure SetAngle(AValue: double);
     function GetInitialVelocity: double;
     procedure SetInitialVelocity(const AValue: double);
-    function GetOrigin : TPointF;
-    procedure SetOrigin(Const ptOrigin:TPointF);
+    function GetOrigin: TPointF;
+    procedure SetOrigin(const ptOrigin: TPointF);
     function GetEndTime: double;
     procedure SetEndTime(const dTime: double);
     function GetStartTime: double;
@@ -112,9 +112,9 @@ type
     function GetVelocityAtTime(const dTime: double): double;
     function GetVelocityVectorAtTime(const dTime: double): Tvector2_double;
     function ToString(): string; override;
-    function Clone : IBasicVector;
+    function Clone: IBasicVector;
     property InitialVelocity: double read GetInitialVelocity write SetInitialVelocity;
-    property Origin : TPointF read GetOrigin write SetOrigin;
+    property Origin: TPointF read GetOrigin write SetOrigin;
     property Angle: double read GetAngle write SetAngle;
     property EndTime: double read GetEndTime write SetEndTime;
     property StartTime: double read GetStartTime;
@@ -138,7 +138,7 @@ type
     property BrushColor: TColor read GetBrushColor write SetBrushColor;
     property PenColor: TColor read GetPenColor write SetPenColor;
     property Stationary: boolean read GetStationary write SetStationary;
-    function ToString(): String;
+    function ToString(): string;
   end;
 
 
@@ -149,35 +149,39 @@ type
     function Clone: IUnknown;
   end;
 
-  IPathPart = interface['{8AA65907-3C7B-4141-BCF2-8FFF3EC44204}']
-    function GetCircle : ICircle;
-    function GetVector : IBasicVector;
-    function ToString: String;
-    property Circle : ICircle read GetCircle;
-    property Vector : IBasicVector read GetVector;
+  IPathPart = interface
+    ['{8AA65907-3C7B-4141-BCF2-8FFF3EC44204}']
+    function GetCircle: ICircle;
+    function GetVector: IBasicVector;
+    function ToString: string;
+    property Circle: ICircle read GetCircle;
+    property Vector: IBasicVector read GetVector;
   end;
 
-  IPathPartList = interface['{E99CFD3E-400C-4098-8F57-4C0D0472E306}']
-    function getItem(const iIndex: Integer):IPathPart;
-    function GetCount:Cardinal;
+  IPathPartList = interface
+    ['{E99CFD3E-400C-4098-8F57-4C0D0472E306}']
+    function getItem(const iIndex: integer): IPathPart;
+    function GetCount: cardinal;
     procedure Clear;
-    procedure Add(const intfPathPart : IPathPart);
-    property Count: Cardinal read GetCount;
-    property Item[const iIndex: Integer]: IPathPart read GetItem; default;
+    procedure Add(const intfPathPart: IPathPart);
+    property Count: cardinal read GetCount;
+    property Item[const iIndex: integer]: IPathPart read GetItem; default;
   end;
 
-  IIdentity = interface ['{50E4CB90-4B85-4C51-9676-50A5F5A44F6F}']
-    function GetId: Cardinal;
-    property Id : Cardinal read GetId;
+  IIdentity = interface
+    ['{50E4CB90-4B85-4C51-9676-50A5F5A44F6F}']
+    function GetId: cardinal;
+    property Id: cardinal read GetId;
   end;
 
-  ICirclesList = interface['{E99CFD3E-400C-4098-8F57-4C0D0472E306}']
-    function getItem(const iIndex: Integer):ICircle;
-    function GetCount:Cardinal;
+  ICirclesList = interface
+    ['{E99CFD3E-400C-4098-8F57-4C0D0472E306}']
+    function getItem(const iIndex: integer): ICircle;
+    function GetCount: cardinal;
     procedure Clear;
-    procedure Add(const intfCircle : ICircle);
-    property Count: Cardinal read GetCount;
-    property Item[const iIndex: Integer]: ICircle read GetItem; default;
+    procedure Add(const intfCircle: ICircle);
+    property Count: cardinal read GetCount;
+    property Item[const iIndex: integer]: ICircle read GetItem; default;
   end;
 
   ICircleCollisionResult = interface
@@ -216,34 +220,37 @@ type
     procedure CalculateTrajectories;
   end;
 
-  ITimeslice = interface['{DFA80F2A-1162-416C-BFE2-DB184174C724}']
-    function GetStartTime: Double;
-    function GetEndTime: Double;
-    function GetPathParts : IPathPartList;
-    procedure SetStartTime(const dStartTime : Double);
-    procedure SetEndTime(const dEndTime: Double);
-    property StartTime : Double read GetStartTime write SetStartTime;
-    property EndTime : Double read GetEndTime write SetEndTime;
-    property PathParts : IPathPartList read GetPathParts;
-    function ToString: String;
+  ITimeslice = interface
+    ['{DFA80F2A-1162-416C-BFE2-DB184174C724}']
+    function GetStartTime: double;
+    function GetEndTime: double;
+    function GetPathParts: IPathPartList;
+    procedure SetStartTime(const dStartTime: double);
+    procedure SetEndTime(const dEndTime: double);
+    property StartTime: double read GetStartTime write SetStartTime;
+    property EndTime: double read GetEndTime write SetEndTime;
+    property PathParts: IPathPartList read GetPathParts;
+    function ToString: string;
   end;
 
-  ITimesliceList = interface['{600F53EB-6DAD-41F1-865A-227196461EC4}']
-    function getItem(const iIndex: Integer):ITimeslice;
-    function GetCount:Cardinal;
+  ITimesliceList = interface
+    ['{600F53EB-6DAD-41F1-865A-227196461EC4}']
+    function getItem(const iIndex: integer): ITimeslice;
+    function GetCount: cardinal;
     procedure Clear;
-    procedure Add(const intfTimeslice : ITimeslice);
-    property Count: Cardinal read GetCount;
-    property Item[const iIndex: Integer]: ITimeslice read GetItem; default;
+    procedure Add(const intfTimeslice: ITimeslice);
+    property Count: cardinal read GetCount;
+    property Item[const iIndex: integer]: ITimeslice read GetItem; default;
   end;
 
 
-  IPathPlotter = interface['{146574A6-3ED5-4123-84FD-B1810CF7C96C}']
-    function GetTimeslices : ITimesliceList;
+  IPathPlotter = interface
+    ['{146574A6-3ED5-4123-84FD-B1810CF7C96C}']
+    function GetTimeslices: ITimesliceList;
     procedure AddCircle(const ACircle: ICircle);
     procedure Clear;
     procedure GainThePlot;
-    function GetThePlotAtTime(const dTime: Double) : ICirclesList;
+    function GetThePlotAtTime(const dTime: double): ICirclesList;
     property Timeslices: ITimesliceList read GetTimeslices;
   end;
 

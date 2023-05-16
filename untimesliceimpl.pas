@@ -10,46 +10,46 @@ uses
 { TTimeslice }
 type
 
-TTimeslice = class(TInterfacedObject, ITimeslice)
-private
-  FdStartTime: double;
-  FdEndTime: double;
-  FlstPathParts: IPathPartList;
-protected
-  function GetStartTime: double;
-  function GetEndTime: double;
-  function GetPathParts: IPathPartList;
-  procedure SetStartTime(const dStartTime: double);
-  procedure SetEndTime(const dEndTime: double);
-  property StartTime: double read GetStartTime write SetStartTime;
-  property EndTime: double read GetEndTime write SetEndTime;
-  property PathParts: IPathPartList read GetPathParts;
+  TTimeslice = class(TInterfacedObject, ITimeslice)
+  private
+    FdStartTime: double;
+    FdEndTime: double;
+    FlstPathParts: IPathPartList;
+  protected
+    function GetStartTime: double;
+    function GetEndTime: double;
+    function GetPathParts: IPathPartList;
+    procedure SetStartTime(const dStartTime: double);
+    procedure SetEndTime(const dEndTime: double);
+    property StartTime: double read GetStartTime write SetStartTime;
+    property EndTime: double read GetEndTime write SetEndTime;
+    property PathParts: IPathPartList read GetPathParts;
 
-  function ToString(): string; override;
-public
-  constructor Create(const APathParts: IPathPartList);
-  destructor Destroy; override;
-end;
-
-
+    function ToString(): string; override;
+  public
+    constructor Create(const APathParts: IPathPartList);
+    destructor Destroy; override;
+  end;
 
 
-{ TTimesliceList }
 
-TTimesliceList = class(TInterfacedObject, ITimesliceList)
-private
-  FList: TObject;
-protected
-  function getItem(const iIndex: integer): ITimeslice;
-  function GetCount: cardinal;
-  procedure Clear;
-  procedure Add(const intfTimeslice: ITimeslice);
-  property Count: cardinal read GetCount;
-  property Item[const iIndex: integer]: ITimeslice read GetItem; default;
-public
-  constructor Create;
-  destructor Destroy; override;
-end;
+
+  { TTimesliceList }
+
+  TTimesliceList = class(TInterfacedObject, ITimesliceList)
+  private
+    FList: TObject;
+  protected
+    function getItem(const iIndex: integer): ITimeslice;
+    function GetCount: cardinal;
+    procedure Clear;
+    procedure Add(const intfTimeslice: ITimeslice);
+    property Count: cardinal read GetCount;
+    property Item[const iIndex: integer]: ITimeslice read GetItem; default;
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
 
 implementation
 
@@ -151,4 +151,3 @@ begin
 end;
 
 end.
-

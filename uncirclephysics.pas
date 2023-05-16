@@ -46,13 +46,14 @@ type
     function GetInitialVelocity: double;
     procedure SetInitialVelocity(const AValue: double);
     function GetOrigin: TPointF;
-    procedure SetOrigin(const ptOrigin : TPointF);
+    procedure SetOrigin(const ptOrigin: TPointF);
     function GetEndTime: double;
     procedure SetEndTime(const dTime: double);
     function GetStartTime: double;
     function clone: IBasicVector;
   public
-    constructor Create(const ptOrigin : TPointF; const dVelocity, dAngle, dStartTime: double);
+    constructor Create(const ptOrigin: TPointF;
+      const dVelocity, dAngle, dStartTime: double);
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
     function GetTimeToXDeplacement(const dDeplacement: double): double;
@@ -200,7 +201,8 @@ function TBasicVector.clone: IBasicVector;
 var
   AVector: TBasicVector;
 begin
-  RESULT := TBasicVector.Create(TPOintF.Create(Origin.X, Origin.Y), InitialVelocity, Angle, StartTime);
+  Result := TBasicVector.Create(TPOintF.Create(Origin.X, Origin.Y),
+    InitialVelocity, Angle, StartTime);
 end;
 
 procedure TBasicVector.SetAngle(AValue: double);
@@ -232,7 +234,7 @@ begin
   Result := FdAngle;
 end;
 
-constructor TBasicVector.Create(const ptOrigin : TPointF;
+constructor TBasicVector.Create(const ptOrigin: TPointF;
   const dVelocity, dAngle, dStartTime: double);
 begin
   FptOrigin.X := ptOrigin.X;
@@ -321,7 +323,8 @@ end;
 function TBasicVector.ToString: string;
 begin
   Result := Format('Time:%F, (%F, %F), V:%F, A:%F (%F)',
-    [StartTime, FptOrigin.X, FptOrigin.Y, InitialVelocity, Angle, TBasicMotion.RadToDeg(Angle)]);
+    [StartTime, FptOrigin.X, FptOrigin.Y, InitialVelocity, Angle,
+    TBasicMotion.RadToDeg(Angle)]);
 end;
 
 

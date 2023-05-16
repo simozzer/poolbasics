@@ -20,8 +20,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmCirclePhysicsMain"/>
-        <TopLine Value="449"/>
-        <CursorPos X="58" Y="460"/>
+        <TopLine Value="169"/>
+        <CursorPos X="57" Y="383"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -31,26 +31,24 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCirclePhysics"/>
         <EditorIndex Value="6"/>
-        <TopLine Value="360"/>
-        <CursorPos X="54" Y="366"/>
+        <TopLine Value="368"/>
+        <CursorPos X="74" Y="376"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="untrajectorypaths.pas"/>
-        <IsPartOfProject Value="True"/>
         <UnitName Value="unTrajectoryPaths"/>
-        <EditorIndex Value="10"/>
-        <TopLine Value="109"/>
-        <CursorPos X="29" Y="122"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="100"/>
+        <CursorPos Y="118"/>
         <UsageCount Value="224"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="uncirclephysicsconstants.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="17"/>
-        <CursorPos X="17" Y="15"/>
+        <EditorIndex Value="16"/>
+        <CursorPos X="93" Y="17"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -58,9 +56,9 @@
         <Filename Value="unhelperinterfaces.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unHelperInterfaces"/>
-        <EditorIndex Value="18"/>
-        <TopLine Value="95"/>
-        <CursorPos X="29" Y="113"/>
+        <EditorIndex Value="17"/>
+        <TopLine Value="220"/>
+        <CursorPos X="47" Y="248"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -68,9 +66,9 @@
         <Filename Value="unothercircles.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unOtherCircles"/>
-        <EditorIndex Value="20"/>
-        <TopLine Value="219"/>
-        <CursorPos X="3" Y="216"/>
+        <EditorIndex Value="19"/>
+        <TopLine Value="193"/>
+        <CursorPos X="82" Y="212"/>
         <UsageCount Value="219"/>
         <Loaded Value="True"/>
       </Unit>
@@ -78,7 +76,7 @@
         <Filename Value="Controls\unangleselectorcontrol.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unAngleSelectorControl"/>
-        <EditorIndex Value="24"/>
+        <EditorIndex Value="23"/>
         <TopLine Value="150"/>
         <CursorPos X="21" Y="168"/>
         <UsageCount Value="233"/>
@@ -88,7 +86,7 @@
         <Filename Value="Controls\unboardrenderer.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unBoardRenderer"/>
-        <EditorIndex Value="23"/>
+        <EditorIndex Value="22"/>
         <TopLine Value="8"/>
         <CursorPos X="70" Y="20"/>
         <UsageCount Value="232"/>
@@ -108,18 +106,17 @@
         <Filename Value="unballsinmotion.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unBallsInMotion"/>
-        <EditorIndex Value="15"/>
-        <TopLine Value="347"/>
-        <CursorPos X="69" Y="369"/>
+        <EditorIndex Value="14"/>
+        <TopLine Value="341"/>
+        <CursorPos X="69" Y="314"/>
         <UsageCount Value="210"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="uncollisiontypes.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="13"/>
-        <TopLine Value="6"/>
-        <CursorPos X="34" Y="43"/>
+        <EditorIndex Value="12"/>
+        <CursorPos X="26" Y="19"/>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
       </Unit>
@@ -127,10 +124,9 @@
         <Filename Value="uncollisiondetection.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCollisionDetection"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="11"/>
-        <TopLine Value="213"/>
-        <CursorPos X="101" Y="247"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="40"/>
+        <CursorPos X="71" Y="70"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -138,29 +134,29 @@
         <Filename Value="unpathpartimplementation.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unPathPartImplementation"/>
-        <EditorIndex Value="19"/>
-        <TopLine Value="74"/>
-        <CursorPos Y="87"/>
-        <UsageCount Value="114"/>
+        <EditorIndex Value="18"/>
+        <TopLine Value="72"/>
+        <CursorPos X="33" Y="21"/>
+        <UsageCount Value="115"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="untimesliceimpl.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unTimesliceImpl"/>
-        <EditorIndex Value="14"/>
-        <TopLine Value="32"/>
-        <CursorPos Y="108"/>
-        <UsageCount Value="104"/>
+        <EditorIndex Value="13"/>
+        <CursorPos X="82" Y="138"/>
+        <UsageCount Value="105"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="uncircleutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCircleUtils"/>
-        <EditorIndex Value="16"/>
-        <CursorPos Y="31"/>
-        <UsageCount Value="65"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="15"/>
+        <CursorPos X="82" Y="18"/>
+        <UsageCount Value="66"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -180,7 +176,7 @@
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\fgl.pp"/>
-        <EditorIndex Value="22"/>
+        <EditorIndex Value="21"/>
         <TopLine Value="1181"/>
         <CursorPos Y="1203"/>
         <UsageCount Value="102"/>
@@ -196,7 +192,7 @@
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\rtl-extra\src\inc\matrix.pp"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="76"/>
         <CursorPos X="25" Y="75"/>
         <UsageCount Value="92"/>
@@ -228,7 +224,7 @@
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\fcl-image\src\fpcanvas.inc"/>
-        <EditorIndex Value="25"/>
+        <EditorIndex Value="24"/>
         <TopLine Value="4"/>
         <CursorPos X="15" Y="23"/>
         <UsageCount Value="115"/>
@@ -262,7 +258,7 @@
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\types.pp"/>
         <UnitName Value="Types"/>
-        <EditorIndex Value="21"/>
+        <EditorIndex Value="20"/>
         <TopLine Value="105"/>
         <CursorPos X="3" Y="107"/>
         <UsageCount Value="62"/>
@@ -279,22 +275,6 @@
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="341" TopLine="322"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="342" TopLine="322"/>
-      </Position>
-      <Position>
-        <Filename Value="uncollisiondetection.pas"/>
-        <Caret Line="76" TopLine="68"/>
-      </Position>
-      <Position>
-        <Filename Value="uncollisiondetection.pas"/>
-        <Caret Line="77" TopLine="68"/>
-      </Position>
       <Position>
         <Filename Value="uncollisiondetection.pas"/>
         <Caret Line="78" TopLine="68"/>
@@ -399,6 +379,22 @@
         <Filename Value="uncirclephysics.pas"/>
         <Caret Line="85" Column="33" TopLine="66"/>
       </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="247" Column="101" TopLine="55"/>
+      </Position>
+      <Position>
+        <Filename Value="frmcirclephysicsmain.pas"/>
+        <Caret Line="10" Column="20" TopLine="127"/>
+      </Position>
+      <Position>
+        <Filename Value="unballsinmotion.pas"/>
+        <Caret Line="344" Column="47" TopLine="273"/>
+      </Position>
+      <Position>
+        <Filename Value="unballsinmotion.pas"/>
+        <Caret Line="20" Column="24"/>
+      </Position>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -438,7 +434,7 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="frmcirclephysicsmain.pas"/>
-        <Line Value="331"/>
+        <Line Value="333"/>
       </Item>
       <Item>
         <Kind Value="bpkSource"/>

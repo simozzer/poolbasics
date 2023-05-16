@@ -323,7 +323,8 @@ begin
       // adjust the angle of the item(s) affected
       if (AHitDetail.EdgeHit <> ehCircle) then
       begin
-        APathPart := TCircleUtils.GetPathPartForCircleID(APathPartList, AHitDetail.iPathPartId);
+        APathPart := TCircleUtils.GetPathPartForCircleID(APathPartList,
+          AHitDetail.iPathPartId);
         case AHitDetail.EdgeHit of
           ehLeft, ehRight: APathPart.Vector.ReverseX;
           ehTop, ehBottom: APathPart.Vector.ReverseY;
@@ -331,25 +332,20 @@ begin
       end
       else
       begin
-        // TODO.. handle circle hit
-        if not supports(AHitDetail.intfDetails, ICircleCollisionResult, intfCircleCollisionResult) then
+        // handle circle hit
+        if not supports(AHitDetail.intfDetails, ICircleCollisionResult,
+          intfCircleCollisionResult) then
           raise Exception.Create('Failed to obtain ICircleCollisionResult');
 
-        APathPart :=  TCircleUtils.GetPathPartForCircleID(APathPartList, intfCircleCollisionResult.CircleId1);
-        APathPart2 := TCircleUtils.GetPathPartForCircleID(APathPartList, intfCircleCollisionResult.CircleId2);
+        APathPart := TCircleUtils.GetPathPartForCircleID(APathPartList,
+          intfCircleCollisionResult.CircleId1);
+        APathPart2 := TCircleUtils.GetPathPartForCircleID(APathPartList,
+          intfCircleCollisionResult.CircleId2);
 
-        BounceResult := TCollisionDetection.CalculateBounceAfterHittingCircle(APathPart,
-              intfCircleCollisionResult.Circle1XAtHit,
-              intfCircleCollisionResult.Circle1YAtHit,
-              APathPart2, AHitDetail.HitTime);
-
-
-              APathPartList := GetPathPartsStateAtTime(intfTimeslice.PathParts,
-        AHitDetail.HitTime);
-                      APathPart :=  TCircleUtils.GetPathPartForCircleID(APathPartList, intfCircleCollisionResult.CircleId1);
-        APathPart2 := TCircleUtils.GetPathPartForCircleID(APathPartList, intfCircleCollisionResult.CircleId2);
-
-
+        BounceResult := TCollisionDetection.CalculateBounceAfterHittingCircle(
+          APathPart, intfCircleCollisionResult.Circle1XAtHit,
+          intfCircleCollisionResult.Circle1YAtHit, APathPart2,
+          AHitDetail.HitTime);
 
 
         APathPart.Vector.InitialVelocity :=
@@ -358,8 +354,7 @@ begin
         APathPart.Vector.Angle :=
           ArcTan2(BounceResult.Vector1.Data[1], BounceResult.Vector1.Data[0]);
         APathPart.Vector.EndTime :=
-          TBasicMotion.GetTimeToStop(
-          APathPart.Vector.InitialVelocity);
+          TBasicMotion.GetTimeToStop(APathPart.Vector.InitialVelocity);
 
 
         APathPart2.Vector.InitialVelocity :=
@@ -368,11 +363,7 @@ begin
         APathPart2.Vector.Angle :=
           ArcTan2(BounceResult.Vector2.Data[1], BounceResult.Vector2.Data[0]);
         APathPart2.Vector.EndTime :=
-           TBasicMotion.GetTimeToStop(
-          APathPart2.Vector.InitialVelocity);
-
-       //AHitDetail.EdgeHit := ehNone;  // exit for debug
-
+          TBasicMotion.GetTimeToStop(APathPart2.Vector.InitialVelocity);
       end;
 
       dLastDuration := AHitDetail.HitTime;
