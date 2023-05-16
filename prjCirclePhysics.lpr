@@ -11,8 +11,10 @@ uses
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, tachartlazaruspkg, frmCirclePhysicsMain, unCirclePhysics,
-  unTrajectoryPaths, uncirclephysicsconstants, unHelperInterfaces,
-  unOtherCircles, unAngleSelectorControl, unBoardRenderer, unGameBoard;
+  uncirclephysicsconstants, unHelperInterfaces,
+  unOtherCircles, unAngleSelectorControl, unBoardRenderer, unGameBoard,
+  unBallsInMotion, unCollisionTypes, unCollisionDetection,
+unPathPartImplementation, unTimesliceImpl, unCircleUtils;
 
 {$R *.res}
 

@@ -57,11 +57,6 @@
         <UnitName Value="unCirclePhysics"/>
       </Unit>
       <Unit>
-        <Filename Value="untrajectorypaths.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="unTrajectoryPaths"/>
-      </Unit>
-      <Unit>
         <Filename Value="uncirclephysicsconstants.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -89,6 +84,35 @@
         <Filename Value="Controls\ungameboard.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unGameBoard"/>
+      </Unit>
+      <Unit>
+        <Filename Value="unballsinmotion.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unBallsInMotion"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uncollisiontypes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uncollisiondetection.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unCollisionDetection"/>
+      </Unit>
+      <Unit>
+        <Filename Value="unpathpartimplementation.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unPathPartImplementation"/>
+      </Unit>
+      <Unit>
+        <Filename Value="untimesliceimpl.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unTimesliceImpl"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uncircleutils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unCircleUtils"/>
       </Unit>
     </Units>
   </ProjectOptions>
