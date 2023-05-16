@@ -48,26 +48,8 @@ implementation
 
 uses
   unCollisionDetection, ComObj, unOtherCircles, unCirclePhysics, Types,
-  unPathPartImplementation, unTimesliceImpl;
+  unPathPartImplementation, unTimesliceImpl, Math, unCircleUtils;
 
-function GetPathPartForCircleID(const intfList: IPathPartList; const iCircleID:  Integer): IPathPart;
-var
-  i : Integer;
-  intfIdentity : IIdentity;
-begin
-  RESULT := nil;
-  i := 0;
-  while (i < intfList.Count) do
-  begin
-    if supports(intfList[i].Circle,IIdentity, intfIdentity) and (intfIdentity.Id = iCircleID) then
-    begin
-      RESULT := intfList[i];
-      exit;
-    end;
-    inc(i);
-  end;
-
-end;
 
 { TCirclePathCalculator }
 
@@ -97,7 +79,6 @@ function TCirclePathCalculator.GetMaxTimeFromPathPartList(
 var
   dTime: double;
   i: integer;
-  intfObjectWithVector: IObjectWithVector;
 begin
   Result := 0;
   for i := 0 to pred(lstPathParts.Count) do
@@ -130,8 +111,7 @@ begin
 
     dAngle := ASourcePathPart.Vector.Angle;
 
-    ATargetVector := TBasicVector.Create(APointAtTime,
-      dVelocityAtTime, dAngle, 0);
+    ATargetVector := TBasicVector.Create(APointAtTime, dVelocityAtTime, dAngle, 0);
 
     ATargetPathPart := TPathPart.Create(ASourcePathPart.Circle, ATargetVector);
 
@@ -157,7 +137,6 @@ function TCirclePathCalculator.GetStationaryPartsAtTime(
   const lstPathParts: IPathPartList; const dTime: double): IPathPartList;
 var
   i: integer;
-  intfObjectWithVector: IObjectWithVector;
 begin
   Result := TPathPartList.Create;
   for i := 0 to pred(lstPathParts.Count) do
@@ -176,13 +155,11 @@ var
   dEarliestHitTime: double;
   dEdgeHitTime: double;
   intfPathPart: IPathPart;
-  intfObjectWithVector: IObjectWithVector;
   AEdgeHit: TEdgeHit;
   intfEdgeHitPathPart: IPathPart;
   intfCircleCollisionResult: ICircleCollisionResult;
   intfStoreCircleCollisionResult: ICircleCollisionResult;
   iPathPartIndex: integer;
-  intfIdentity : IIdentity;
 begin
   Result.EdgeHit := ehNone;
   Result.HitTime := 0;
@@ -208,28 +185,26 @@ begin
     begin
       intfEdgeHitPathPart := intfPathPart;
       dEarliestHitTime := dEdgeHitTime;
-      if supports(intfPathPart.Circle, IIdentity, intfIdentity) then
-        iPathPartIndex := intfIdentity.Id;
+      iPathPartIndex := TCircleUtils.GetCircleId(intfPathPart.Circle);
     end;
 
-    // Test if circle hits a stationary circle
-      {*
-      for j := 0 to pred(intfStationaryPathParts.Count) do
+
+    for j := 0 to pred(intfStationaryPathParts.Count) do
+    begin
+      intfCircleCollisionResult :=
+        TCollisionDetection.DetectStationaryCircleHit(intfPathPart,
+        intfStationaryPathParts[j]);
+      if supports(intfCircleCollisionResult, ICircleCollisionResult) and
+        ((intfCircleCollisionResult.HitTime < dEarliestHitTime) or
+        (dEarliestHitTime < 0)) then
       begin
-        intfCircleCollisionResult :=
-          TCollisionDetection.DetectStationaryCircleHit(intfCircle,
-          intfStationaryPathParts[j]);
-        if supports(intfCircleCollisionResult, ICircleCollisionResult) and
-          ((intfCircleCollisionResult.HitTime < dEarliestHitTime) or
-          (dEarliestHitTime < 0)) then
-        begin
-          // store circle collision result
-          AEdgeHit := ehCircle;
-          intfStoreCircleCollisionResult := intfCircleCollisionResult;
-          dEarliestHitTime := intfCircleCollisionResult.HitTime;
-        end;
+        // store circle collision result
+        AEdgeHit := ehCircle;
+        intfStoreCircleCollisionResult := intfCircleCollisionResult;
+        dEarliestHitTime := intfCircleCollisionResult.HitTime;
       end;
-      *}
+    end;
+
   end;
 
   if AEdgeHit = ehCircle then
@@ -312,11 +287,10 @@ var
   dLastDuration, dLastEndTime, dMaxSliceTime: double;
   AHitDetail: TEdgeHitDetail;
   APathPartList: IPathPartList;
-  APathPart: IPathPart;
+  APathPart, APathPart2: IPathPart;
   intfTimeslice: ITimeslice;
-  intfPathPart: IPathPart;
   intfCircleCollisionResult: ICircleCollisionResult;
-  intfCopy: IUnknown;
+  BounceResult: TBounceResult;
 begin
   FlstTimeslices.Clear;
 
@@ -324,14 +298,14 @@ begin
   APathPartList := GetPathPartsFromCircles(FlstCircles);
 
   dLastEndTime := 0;
-  dLastDuration:= 0;
+  dLastDuration := 0;
 
   repeat
     AHitDetail.EdgeHit := ehNone;
     dMaxSliceTime := GetMaxTimeFromPathPartList(APathPartList);
     intfTimeslice := TTimeslice.Create(APathPartList);
     intfTimeslice.StartTime := dLastEndTime;
-    intfTimeslice.EndTime:= dLastEndTime + dMaxSliceTime;
+    intfTimeslice.EndTime := dLastEndTime + dMaxSliceTime;
 
 
     AHitDetail := GetNextCollisionFromTime(intfTimeslice.PathParts, 0);
@@ -342,24 +316,66 @@ begin
       FlstTimeslices.add(intfTimeslice);
       LogMessage(intfTimeslice.ToString);
 
-
       //Copy the path parts from the previous timeslice to a new timeslice (with positions and velocities adjusted)
-     APathPartList := GetPathPartsStateAtTime(intfTimeslice.PathParts,
-       AHitDetail.HitTime);
-
-      LogMessage('PRE: ' + intfTimeslice.ToString());
+      APathPartList := GetPathPartsStateAtTime(intfTimeslice.PathParts,
+        AHitDetail.HitTime);
 
       // adjust the angle of the item(s) affected
-      APathPart := GetPathPartForCircleID(APathPartList, AHitDetail.iPathPartId);
-      LogMessage(Format('Start: %f',[APathPart.Vector.Angle]));
-      case AHitDetail.EdgeHit of
-        ehLeft, ehRight: APathPart.Vector.ReverseX;
-        ehTop, ehBottom: APathPart.Vector.ReverseY;
-      end;
-      LogMessage(Format('End: %f',[APathPart.Vector.Angle]));
+      if (AHitDetail.EdgeHit <> ehCircle) then
+      begin
+        APathPart := TCircleUtils.GetPathPartForCircleID(APathPartList, AHitDetail.iPathPartId);
+        case AHitDetail.EdgeHit of
+          ehLeft, ehRight: APathPart.Vector.ReverseX;
+          ehTop, ehBottom: APathPart.Vector.ReverseY;
+        end;
+      end
+      else
+      begin
+        // TODO.. handle circle hit
+        if not supports(AHitDetail.intfDetails, ICircleCollisionResult, intfCircleCollisionResult) then
+          raise Exception.Create('Failed to obtain ICircleCollisionResult');
 
-            LogMessage('POST: ' + intfTimeslice.ToString());
-            dLastDuration:= AHitDetail.HitTime;
+        APathPart :=  TCircleUtils.GetPathPartForCircleID(APathPartList, intfCircleCollisionResult.CircleId1);
+        APathPart2 := TCircleUtils.GetPathPartForCircleID(APathPartList, intfCircleCollisionResult.CircleId2);
+
+        BounceResult := TCollisionDetection.CalculateBounceAfterHittingCircle(APathPart,
+              intfCircleCollisionResult.Circle1XAtHit,
+              intfCircleCollisionResult.Circle1YAtHit,
+              APathPart2, AHitDetail.HitTime);
+
+
+              APathPartList := GetPathPartsStateAtTime(intfTimeslice.PathParts,
+        AHitDetail.HitTime);
+                      APathPart :=  TCircleUtils.GetPathPartForCircleID(APathPartList, intfCircleCollisionResult.CircleId1);
+        APathPart2 := TCircleUtils.GetPathPartForCircleID(APathPartList, intfCircleCollisionResult.CircleId2);
+
+
+
+
+        APathPart.Vector.InitialVelocity :=
+          Sqrt(Sqr(BounceResult.Vector1.Data[0]) +
+          sqr(BounceResult.Vector1.Data[1]));
+        APathPart.Vector.Angle :=
+          ArcTan2(BounceResult.Vector1.Data[1], BounceResult.Vector1.Data[0]);
+        APathPart.Vector.EndTime :=
+          TBasicMotion.GetTimeToStop(
+          APathPart.Vector.InitialVelocity);
+
+
+        APathPart2.Vector.InitialVelocity :=
+          Sqrt(Sqr(BounceResult.Vector2.Data[0]) +
+          sqr(BounceResult.Vector2.Data[1]));
+        APathPart2.Vector.Angle :=
+          ArcTan2(BounceResult.Vector2.Data[1], BounceResult.Vector2.Data[0]);
+        APathPart2.Vector.EndTime :=
+           TBasicMotion.GetTimeToStop(
+          APathPart2.Vector.InitialVelocity);
+
+       //AHitDetail.EdgeHit := ehNone;  // exit for debug
+
+      end;
+
+      dLastDuration := AHitDetail.HitTime;
     end;
 
   until AHitDetail.EdgeHit = ehNone;

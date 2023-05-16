@@ -114,6 +114,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unTimesliceImpl"/>
       </Unit>
+      <Unit>
+        <Filename Value="uncircleutils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="unCircleUtils"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -363,7 +363,7 @@ begin
   if (dTime > GetTimeToStop(dVelocity)) then
     Result := 0.0
   else
-    Result := dVelocity + (DECELERATION * dTime);
+    Result := ABS(dVelocity + (DECELERATION * dTime));
 end;
 
 class function TBasicMotion.GetVelocityAtDistance(const dVelocity: double;

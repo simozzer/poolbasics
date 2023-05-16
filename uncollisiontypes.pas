@@ -41,7 +41,6 @@ begin
     ehRight: Result := 'Right';
     ehBottom: Result := 'Bottom';
     ehCircle: Result := 'Circle';
-
   end;
 end;
 

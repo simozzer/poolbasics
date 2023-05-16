@@ -309,15 +309,15 @@ begin
     for j := 0 to pred(lstPathParts.Count) do
     begin
       intfPathPart := lstPathParts[j];
-      BoardCanvas.Pen.Color := clLime;
-      BoardCanvas.Brush.Color := clYellow;
+      BoardCanvas.Pen.Color := intfPathPart.Circle.PenColor;
+      BoardCanvas.Brush.Color := intfPathPart.Circle.BrushColor;
       BoardCanvas.Ellipse(Round(intfPathPart.Vector.Origin.X - intfPathPart.Circle.Radius),
       Round(intfPathPart.Vector.Origin.Y - intfPathPart.Circle.Radius),
       Round(intfPathPart.Vector.Origin.X + intfPathPart.Circle.Radius),
       Round(intfPathPart.Vector.Origin.Y + intfPathPart.Circle.Radius)
       );
 
-      BoardCanvas.Pen.Color := clRed;
+      BoardCanvas.Pen.Color := intfPathPart.Circle.BrushColor;
       BoardCanvas.MoveTo(round(intfPathPart.Vector.Origin.X), round(intfPathPart.Vector.Origin.Y));
       BoardCanvas.LineTo(Round(intfPathPart.Vector.GetXAtTime(dDuration)),
         Round(intfPathPart.Vector.GetYAtTime(dDuration)));
@@ -348,9 +348,9 @@ begin
   intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
   intfVector.Origin := TPointF.Create(x, y);
   intfVector.Angle := FAngleControl.Angle;
-  intfVector.InitialVelocity := 100 - (trkVelocity.Position / 100);
+  intfVector.InitialVelocity := (100 - (trkVelocity.Position / 100)) / 100;
   actRenderExecute(Self, 0);
-  //  DrawTrajectoryPaths;
+    DrawTrajectoryPaths;
 end;
 
 // Move the position of the puck when the left mouse button is held
@@ -363,7 +363,7 @@ begin
   intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
   intfVector.Origin := TPointF.Create(x, y);
   actRenderExecute(Self, 0);
-  //  DrawTrajectoryPaths;
+    DrawTrajectoryPaths;
 
 end;
 
@@ -425,13 +425,14 @@ begin
   FBoard.OnMouseUp := @HandleBoardMouseUp;
 
 
-
-
   FlstCircles := TCirclesList.Create;
   ACircle := TMovingCircle.Create(TPointF.Create(300, 300), PUCK_RADIUS, PUCK_MASS);
+  ACircle.BrushColor:= clAqua;
+  ACircle.PenColor:= clBlue;
   FlstCircles.Add(ACircle);
   FPuck := TMovingCircle.Create(TPointF.Create(200, 518), PUCK_RADIUS, PUCK_MASS);
   FPuck.BrushColor := clRed;
+  FPuck.PenColor := clYellow;
   FlstCircles.Add(FPuck);
 
   FAngleControl := TAngleControl.Create(Self);
@@ -442,7 +443,7 @@ begin
   FAngleControl.Angle := 0;
 
   intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
-  intfVector.Angle := 0;
+  intfVector.Angle := pi;
   intfVector.InitialVelocity := 0.5;
 
   FbDraggingBall := False;

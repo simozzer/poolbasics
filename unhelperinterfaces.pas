@@ -182,15 +182,15 @@ type
 
   ICircleCollisionResult = interface
     ['{5427548A-15C0-4A9C-B0C5-8E646F02DD2A}']
-    function GetCircle1: ICircle;
-    function GetCircle2: ICircle;
+    function GetCircleID1: integer;
+    function GetCircleID2: integer;
     function GetHitTime: double;
     function GetCircle1XAtHit: double;
     function GetCircle1YAtHit: double;
     function GetCircle2XAtHit: double;
     function GetCircle2YAtHit: double;
-    property Circle1: ICircle read GetCircle1;
-    property Circle2: ICircle read GetCircle2;
+    property CircleId1: integer read GetCircleID1;
+    property CircleId2: integer read GetCircleID2;
     property Circle1XAtHit: double read GetCircle1XAtHit;
     property Circle1YAtHit: double read GetCircle1YAtHit;
     property Circle2XAtHit: double read GetCircle2XAtHit;
