@@ -275,7 +275,7 @@ begin
         pt.X := intfVector.GetXAtTime(dTime - intfTimeslice.StartTime);
         pt.Y := intfVector.GetYAtTime(dTime - intfTimeslice.StartTime);
 
-        intfScreenCircle := TScreenCircle.Create(pt, intfCircle.Radius, intfCircle.BrushColor, intfCircle.PenColor);
+        intfScreenCircle := TScreenCircle.Create(pt, intfCircle.Radius, intfCircle.BrushColor, intfCircle.PenColor, intfVector.GetVelocityAtTime(dTime -intfTimeslice.StartTime));
         RESULT.Add(intfScreenCircle);
       end;
       exit;

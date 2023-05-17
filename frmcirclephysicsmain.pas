@@ -169,16 +169,28 @@ procedure TForm1.AnimationTimerTimer(Sender: TObject);
 var
   cTimeSinceStart: cardinal;
   AVector: IBasicVector;
+  dTotalVelocity : Double;
+  lstCircles : IScreenCirclesList;
+  i : Integer;
 begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
-   {
-  AVector := FTrajectories.GetVectorForTime(cTimeSinceStart);
-  if (AVector = nil) then
+
+  lstCircles := FPathCalculator.GetThePlotAtTime(cTimeSinceStart);
+
+  dTotalVelocity := 0;
+  if supports(lstCircles, IScreenCirclesList) then
+    for i := 0 to pred(lstCircles.Count) do
+        dTotalVelocity += lstCircles[i].Velocity;
+
+
+  if (dTotalVelocity = 0) then
   begin
 
     AnimationTimer.Enabled := False;
+    actTrigger.Enabled:=true;
 
 
+    {
     if (FTrajectories.Count > 0) then
     begin
       AVector := FTrajectories.getItem(Pred(FTrajectories.GetCount));
@@ -189,10 +201,10 @@ begin
         FBallVector.GetyAtTime(AVector.EndTime));
       end;
     end;
+    }
 
   end
   else
-  }
   begin
     actRenderExecute(Self, cTimeSinceStart);
   end;

@@ -141,11 +141,13 @@ type
     function GetBrushColor: TColor;
     function GetPenColor: TColor;
     function GetPosition: TPointF;
+    function GetVelocity : Double;
     procedure Render(Const ACanvas : TCanvas);
     property Radius: double read GetRadius;
     property BrushColor: TColor read GetBrushColor;
     property PenColor: TColor read GetPenColor;
     property Position: TPointF read GetPosition;
+    property Velocity : Double read GetVelocity;
   end;
 
   IScreenCirclesList = interface

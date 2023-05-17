@@ -17,16 +17,18 @@ type
     FdRadius: double;
     FclrBrush: TColor;
     FClrPen: TColor;
+    FdVelocity: Double;
 
   protected
     function GetRadius: double;
     function GetBrushColor: TColor;
     function GetPenColor: TColor;
     function GetPosition: TPointF;
+    function GetVelocity : Double;
     procedure Render(const ACanvas: TCanvas);
   public
     constructor Create(const APosition: TPOintF; const dRadius: double;
-      clrBrush: TColor; clrPen: TColor);
+      clrBrush: TColor; clrPen: TColor; const dVelocity : Double);
   end;
 
   { TScreenCirclesList }
@@ -108,6 +110,11 @@ begin
   Result := FPosition;
 end;
 
+function TScreenCircle.GetVelocity: Double;
+begin
+  RESULT := FdVelocity;
+end;
+
 procedure TScreenCircle.Render(const ACanvas: TCanvas);
 begin
   ACanvas.Brush.Color := FclrBrush;
@@ -120,12 +127,13 @@ end;
 
 
 constructor TScreenCircle.Create(const APosition: TPOintF; const dRadius: double;
-  clrBrush: TColor; clrPen: TColor);
+  clrBrush: TColor; clrPen: TColor; const dVelocity : Double);
 begin
   FPosition := APosition;
   FdRadius := dRadius;
   FclrBrush := clrBrush;
   FClrPen := clrPen;
+  FdVelocity:= dVelocity;
 end;
 
 end.
