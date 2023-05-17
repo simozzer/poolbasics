@@ -5,7 +5,7 @@ unit uncollisiontypes;
 interface
 
 uses
-  Classes, SysUtils, Matrix, unHelperInterfaces;
+  Classes, SysUtils, Matrix;
 
 type
   // Enumeration for describing which objects were hit

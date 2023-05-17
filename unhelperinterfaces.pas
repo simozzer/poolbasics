@@ -2,10 +2,12 @@ unit unHelperInterfaces;
 
 {$mode ObjFPC}{$H+}
 
+{$DEFINE DEBUG}
+
 interface
 
 uses
-  Classes, SysUtils, Matrix, Graphics, FGL, types;
+  Classes, SysUtils, Matrix, Graphics, types;
 
 type
   IBasicLogger = interface
@@ -83,12 +85,19 @@ type
     function GetBrushColor: TColor;
     procedure SetBrushColor(const clr: TColor);
     function GetPenColor: TColor;
+    {$IFDEF DEBUG}
+    function GetLabel: string;
+    procedure SetLabel(const sLabel: string);
+    {$ENDIF}
     procedure SetPenColor(const clr: TColor);
     property Radius: double read GetRadius;
     property Mass: double read GetMass;
     property BrushColor: TColor read GetBrushColor write SetBrushColor;
     property PenColor: TColor read GetPenColor write SetPenColor;
     function ToString(): string;
+    {$IFDEF DEBUG}
+    property Text: string read GetLabel write SetLabel;
+    {$ENDIF}
   end;
 
   IPathPart = interface
@@ -172,7 +181,7 @@ type
   IPathPlotter = interface
     ['{146574A6-3ED5-4123-84FD-B1810CF7C96C}']
     function GetTimeslices: ITimesliceList;
-    procedure AddCircleWithPosition(const ACircle: ICircle; const Position : TPointF);
+    procedure AddCircleWithPosition(const ACircle: ICircle; const Position: TPointF);
     procedure Clear;
     procedure GainThePlot;
     procedure Reinitialize;

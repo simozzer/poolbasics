@@ -198,8 +198,6 @@ begin
 end;
 
 function TBasicVector.clone: IBasicVector;
-var
-  AVector: TBasicVector;
 begin
   Result := TBasicVector.Create(TPOintF.Create(Origin.X, Origin.Y),
     InitialVelocity, Angle, StartTime);

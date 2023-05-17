@@ -2,6 +2,8 @@ program prjCirclePhysics;
 
 {$mode objfpc}{$H+}
 
+{$DEFINE DEBUG}
+
 uses
   {$IFDEF UNIX}
   cthreads,
