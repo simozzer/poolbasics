@@ -259,23 +259,20 @@ var
   dDuration : Double;
 
 begin
-  {
+
   intfLastTimeslice := FlstTimeslices[pred(FlstTimeslices.Count)];
+  FlstTimeslices.Clear;
   dDuration:= intfLastTimeslice.EndTime - intfLastTimeslice.StartTime;
   //FlstCircles.Clear;
   for i := 0 to pred(intfLastTimeslice.PathParts.Count) do
   begin
     intfCircle := intfLastTimeslice.PathParts[i].Circle;
-    intfVector := TCircleInterfaceAccess.GetVectorFromCircle(intfCircle);
+    intfVector := TCircleUtils.GetPathPartForCircleID(intfLastTimeSlice.PathParts,TCircleUtils.GetCircleId(intfCircle)).Vector;
     pt.X := intfVector.GetXAtTime(dDuration);
     pt.Y := intfVector.GetYAtTime(dDuration);
-    intfVector.InitialVelocity:= 0;
     intfVector.Origin := pt;
-    FlstCircles.Add(intfCircle);
+    AddCircleWithPosition(intfCircle,pt);
   end;
-  FlstTimeslices.Clear;
-
-  }
 
 end;
 
