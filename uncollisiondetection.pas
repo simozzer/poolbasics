@@ -53,7 +53,7 @@ type
 implementation
 
 uses
-  uncirclephysicsconstants, unCirclePhysics, Matrix, Math, unCircleUtils;
+  uncirclephysicsconstants, unCirclePhysics, Matrix, unCircleUtils;
 
 { TCircleCollisionResult }
 
@@ -111,11 +111,11 @@ class procedure TCollisionDetection.DetectEdgeHits(const APathPart: IPathPart;
   var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 var
   dXAtStop, dYAtStop, dDeplacement, dHitTime: double;
-  AVector : IBasicVector;
-  dRadius : Double;
+  AVector: IBasicVector;
+  dRadius: double;
 begin
   AVector := APathPart.Vector;
-  dRadius:= APathPart.Circle.Radius;
+  dRadius := APathPart.Circle.Radius;
   dXAtStop := AVector.GetXAtStop;
   dYAtStop := AVector.GetYAtStop;
 

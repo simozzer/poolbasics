@@ -2,10 +2,12 @@ unit unOtherCircles;
 
 {$mode ObjFPC}{$H+}
 
+{$DEFINE DEBUG}
+
 interface
 
 uses
-  Classes, SysUtils, Graphics, Fgl, unCirclePhysics, unHelperInterfaces, types;
+  Classes, SysUtils, Graphics, Fgl, unHelperInterfaces;
 
 type
 
@@ -18,6 +20,10 @@ type
     FclrBrush: TColor;
     FclrPen: TColor;
     FiID: cardinal;
+
+    {$IFDEF DEBUG}
+    FsLabel: string;
+    {$ENDIF}
   protected
     function GetRadius: double;
     function GetBrushColor: TColor;
@@ -27,6 +33,11 @@ type
     function GetMass: double;
     function GetId: cardinal;
     function ToString: ansistring; override;
+
+    {$IFDEF DEBUG}
+    function GetLabel: string;
+    procedure SetLabel(const sLabel: string);
+    {$ENDIF}
   public
     constructor Create(const dRadius, dMass: double);
   end;
@@ -135,8 +146,25 @@ end;
 
 function TBaseCircle.ToString: ansistring;
 begin
+  {$IFDEF DEBUG}
+  Result := Format('%s, Radius: %f, Mass: %f', [FsLabel, FdRadius, FdMass]);
+  {$ELSE}
   Result := Format('Radius: %f, Mass: %f', [FdRadius, FdMass]);
+  {$ENDIF}
 end;
+
+{$IFDEF DEBUG}
+function TBaseCircle.GetLabel: string;
+begin
+  Result := FsLabel;
+end;
+
+procedure TBaseCircle.SetLabel(const sLabel: string);
+begin
+  FsLabel := sLabel;
+end;
+
+{$ENDIF}
 
 constructor TBaseCircle.Create(const dRadius, dMass: double);
 begin
@@ -146,6 +174,10 @@ begin
   FdMass := dMass;
   miCircleIdSequence := miCircleIdSequence + 1;
   FiID := miCircleIdSequence;
+
+  {$IFDEF DEBUG}
+  FsLabel := '';
+  {$ENDIF}
 end;
 
 
