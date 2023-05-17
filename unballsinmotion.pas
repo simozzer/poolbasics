@@ -144,6 +144,8 @@ begin
   Result.iCircleId := -1;
   AEdgeHit := ehNone;
 
+  LogMessage('-----------------------------------');
+
   // for each moving circle find the next edge hit and return the detail from the 1st collision
   intfMovingPathParts := GetMovingPathPartsAtTime(lstPathParts, dTime);
   intfStationaryPathParts := GetStationaryPartsAtTime(lstPathParts, dTime);
@@ -163,6 +165,9 @@ begin
       intfEdgeHitPathPart := intfPathPart;
       dEarliestHitTime := dEdgeHitTime;
       iCircleId := TCircleUtils.GetCircleId(intfPathPart.Circle);
+
+      LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
+        EdgeHitToStr(AEdgeHit), dEdgeHitTime]));
     end;
 
 
@@ -179,6 +184,9 @@ begin
         AEdgeHit := ehCircle;
         intfStoreCircleCollisionResult := intfCircleCollisionResult;
         dEarliestHitTime := intfCircleCollisionResult.HitTime;
+
+        LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
+          'Circle', dEarliestHitTime]));
       end;
     end;
 
@@ -203,6 +211,8 @@ begin
     Result.HitTime := -1;
     Result.intfDetails := nil;
   end;
+
+  LogMessage('-----------------------------------');
 end;
 
 

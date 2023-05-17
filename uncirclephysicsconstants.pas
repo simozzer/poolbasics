@@ -30,7 +30,7 @@ const
   BOARD_HEIGHT = 600;
 
 const
-  DECELERATION = -0.00015;
+  DECELERATION = -0.00065;
 
 const
   ANGLE_MICRO_CHANGE = 0.003;

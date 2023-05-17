@@ -243,8 +243,7 @@ var
   intfVector: IBasicVector;
   dVelocity: double;
 begin
-  dVelocity := (100 - trkVelocity.Position) / 100;
-  lblVel.Caption := Format('Vel: %f', [dVelocity]);
+  dVelocity := GetVelocity;
 
   intfVector := TCircleUtils.GetPathPartForCircleID(
     FPathCalculator.Timeslices[0].PathParts, FiPuckID).Vector;
@@ -273,14 +272,6 @@ begin
   BoardCanvas := FBoard.BoardCanvas;
   BoardCanvas.Brush.Color := clGray;
   BoardCanvas.Pen.Color := clBlack;
-
-  {
-  for i := 0 to pred(FlstCircles.Count) do
-  begin
-    RenderCircle(BoardCanvas, FlstCircles[i]);
-  end;
-  }
-
 
   lstTimeslices := FPathCalculator.GetTimeslices;
   for i := 0 to pred(lstTimeslices.Count) do
@@ -418,7 +409,7 @@ end;
 
 function TForm1.GetVelocity: double;
 begin
-  Result := (100 - trkVelocity.Position) / 100;
+  Result := (100 - trkVelocity.Position) / 50;
 end;
 
 // Called when the user changes the selected angle
