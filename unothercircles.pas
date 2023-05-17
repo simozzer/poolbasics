@@ -17,7 +17,6 @@ type
     FdMass: double;
     FclrBrush: TColor;
     FclrPen: TColor;
-    FbStationary: boolean;
     FiID: cardinal;
   protected
     function GetRadius: double;
@@ -25,9 +24,7 @@ type
     procedure SetBrushColor(const clr: TColor);
     function GetPenColor: TColor;
     procedure SetPenColor(const clr: TColor);
-    function GetStationary: boolean;
     function GetMass: double;
-    procedure SetStationary(const bStationary: boolean);
     function GetId: cardinal;
     function ToString: ansistring; override;
   public
@@ -188,20 +185,12 @@ begin
   FclrPen := clr;
 end;
 
-function TBaseCircle.GetStationary: boolean;
-begin
-  Result := FbStationary;
-end;
 
 function TBaseCircle.GetMass: double;
 begin
   Result := FdMass;
 end;
 
-procedure TBaseCircle.SetStationary(const bStationary: boolean);
-begin
-  FbStationary := bStationary;
-end;
 
 function TBaseCircle.GetId: cardinal;
 begin
@@ -219,7 +208,6 @@ begin
   FclrBrush := clWhite;
   FclrPen := clBlack;
   FdMass := dMass;
-  FbStationary := True;
   miCircleIdSequence := miCircleIdSequence + 1;
   FiID := miCircleIdSequence;
 end;

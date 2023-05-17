@@ -65,8 +65,6 @@ type
     procedure SetFillColor(const clr: TColor);
     function GetLineColor: TColor;
     procedure SetLineColor(const clr: TColor);
-    function GetStationary: boolean;
-    procedure SetStationary(const bStationary: boolean);
     function GetDistance(const ACircle: IGameCircle): double;
     procedure ReverseX();
     procedure ReverseY();
@@ -83,7 +81,6 @@ type
     property Radius: double read GetRadius;
     property FillColor: TColor read GetFillColor write SetFillColor;
     property LineColor: TColor read GetLineColor write SetLineColor;
-    property Stationary: boolean read GetStationary write SetStationary;
   end;
 
   { IBasicVector }
@@ -131,16 +128,35 @@ type
     procedure SetBrushColor(const clr: TColor);
     function GetPenColor: TColor;
     procedure SetPenColor(const clr: TColor);
-    function GetStationary: boolean;
-    procedure SetStationary(const bStationary: boolean);
     property Radius: double read GetRadius;
     property Mass: double read GetMass;
     property BrushColor: TColor read GetBrushColor write SetBrushColor;
     property PenColor: TColor read GetPenColor write SetPenColor;
-    property Stationary: boolean read GetStationary write SetStationary;
     function ToString(): string;
   end;
 
+  IScreenCircle = interface
+    ['{E425C1C9-95A4-4D33-ADA2-7605A449E924}']
+    function GetRadius: double;
+    function GetBrushColor: TColor;
+    function GetPenColor: TColor;
+    function GetPosition: TPointF;
+    procedure Render(Const ACanvas : TCanvas);
+    property Radius: double read GetRadius;
+    property BrushColor: TColor read GetBrushColor;
+    property PenColor: TColor read GetPenColor;
+    property Position: TPointF read GetPosition;
+  end;
+
+  IScreenCirclesList = interface
+    ['{E11BC469-2F3F-49C1-9EE0-D0713DFD0808}']
+    function getItem(const iIndex: integer): IScreenCircle;
+    function GetCount: cardinal;
+    procedure Clear;
+    procedure Add(const intfCircle: IScreenCircle);
+    property Count: cardinal read GetCount;
+    property Item[const iIndex: integer]: IScreenCircle read GetItem; default;
+  end;
 
   IObjectWithVector = interface
     ['{DE55D489-919F-42D2-B121-BA6955147E96}']
@@ -202,23 +218,6 @@ type
     property HitTime: double read GetHitTime;
   end;
 
-  // Path information for 1 object, which can be queried by time
-  ITrajectoryPaths = interface
-    ['{98B877F0-13F2-4B85-AFFE-4E395428FF99}']
-    function GetCount: cardinal;
-    function GetItems: TInterfaceList;
-    function getItem(const iIndex: cardinal): IBasicVector;
-    function GetCircles: ICirclesList;
-    procedure SetCircles(const lstCircles: ICirclesList);
-    property Items: TInterfaceList read GetItems;
-    property Item[const iIndex: cardinal]: IBasicVector read GetItem;
-    property Count: cardinal read GetCount;
-    property OtherCircles: ICirclesList read GetCircles write SetCircles;
-    function GetXAtTime(const dTime: double): double;
-    function GetYAtTime(const dTime: double): double;
-    function GetVectorForTime(const dTime: double): IBasicVector;
-    procedure CalculateTrajectories;
-  end;
 
   ITimeslice = interface
     ['{DFA80F2A-1162-416C-BFE2-DB184174C724}']
@@ -250,7 +249,7 @@ type
     procedure AddCircle(const ACircle: ICircle);
     procedure Clear;
     procedure GainThePlot;
-    function GetThePlotAtTime(const dTime: double): ICirclesList;
+    function GetThePlotAtTime(const dTime: double): IScreenCirclesList;
     property Timeslices: ITimesliceList read GetTimeslices;
   end;
 

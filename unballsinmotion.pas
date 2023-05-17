@@ -34,7 +34,7 @@ type
     function GetTimeslices: ITimesliceList;
     procedure LogMessage(const sMessage: string);
     procedure SetLogger(const intfLogger: IBasicLogger);
-    function GetThePlotAtTime(const dTime: double): ICirclesList;
+    function GetThePlotAtTime(const dTime: double): IScreenCirclesList;
   public
     constructor Create;
     destructor Destroy; override;
@@ -48,7 +48,7 @@ implementation
 
 uses
   unCollisionDetection, ComObj, unOtherCircles, unCirclePhysics, Types,
-  unPathPartImplementation, unTimesliceImpl, Math, unCircleUtils;
+  unPathPartImplementation, unTimesliceImpl, Math, unCircleUtils, unScreenCircles;
 
 
 { TCirclePathCalculator }
@@ -245,16 +245,47 @@ begin
   FintfLogger := intfLogger;
 end;
 
-function TCirclePathCalculator.GetThePlotAtTime(const dTime: double): ICirclesList;
+function TCirclePathCalculator.GetThePlotAtTime(const dTime: double): IScreenCirclesList;
 var
-  i: integer;
+  i,j: integer;
   intfTimeslice: ITimeslice;
+  intfPathParts : IPathPartList;
+  intfPathPart : IPathPart;
+  intfCircle : ICircle;
+  intfVector : IBasicVector;
+  pt : TPointF;
+  intfScreenCircle : IScreenCircle;
 begin
   i := 0;
-  Result := nil;
-  //TODO
+  Result := TScreenCirclesList.Create;
 
-  if (Result = nil) then Result := FlstCircles;
+  //TODO
+  while (i < FlstTimeslices.Count)  do
+  begin
+    intfTimeslice := FlstTimeslices[i];
+    if (intfTimeslice.StartTime <= dTime) and ((intfTimeslice.EndTime >= dTime) or (i = pred(FlstTimeslices.Count))) then
+    begin
+      // This is the time slice
+     // Create a list of the positions, sizes and colors of all circles
+      intfPathParts := intfTimeslice.PathParts;
+      for j := 0 to pred(intfPathParts.Count) do
+      begin
+        intfPathPart := intfPathParts[j];
+        intfCircle := intfPathPart.Circle;
+        intfVector := intfPathPart.Vector;
+        pt.X := intfVector.GetXAtTime(dTime - intfTimeslice.StartTime);
+        pt.Y := intfVector.GetYAtTime(dTime - intfTimeslice.StartTime);
+
+        intfScreenCircle := TScreenCircle.Create(pt, intfCircle.Radius, intfCircle.BrushColor, intfCircle.PenColor);
+        RESULT.Add(intfScreenCircle);
+      end;
+      exit;
+
+    end
+    else
+      inc(i);
+  end;
+
 end;
 
 constructor TCirclePathCalculator.Create;

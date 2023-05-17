@@ -67,6 +67,8 @@ type
 
     FPathCalculator: IPathPlotter;
 
+    FlstTimeslices: ITimesliceList;
+
     procedure DrawTrajectoryPaths;
 
     procedure LogMessage(const sMessage: string);
@@ -125,7 +127,7 @@ var
   BoardCanvas: TCanvas;
   dBallCenterX, dBallCenterY, dRadius: double;
   i: integer;
-  lstCircles: ICirclesList;
+  lstCircles: IScreenCirclesList;
 begin
   FBoard.Render;
   BoardCanvas := FBoard.BoardCanvas;
@@ -133,22 +135,14 @@ begin
   BoardCanvas.Brush.Color := clGray;
   BoardCanvas.Pen.Color := clBlack;
 
+
   lstCircles := FPathCalculator.GetThePlotAtTime(dTime);
 
-
-  {
-  dBallCenterX := FTrajectories.GetXAtTime(dTime);
-  dBallCenterY := FTrajectories.GetYAtTime(dTime);
-  BoardCanvas.Ellipse(Round(dBallCenterX - PUCK_RADIUS),
-    Round(dBallCenterY - PUCK_RADIUS),
-    round(dBallCenterX + PUCK_RADIUS),
-    ROUND(dBallCenterY + PUCK_RADIUS));
-    }
-
-  if supports(lstCircles, ICirclesList) then
+  if supports(lstCircles, IScreenCirclesList) then
     for i := 0 to pred(lstCircles.Count) do
     begin
-      RenderCircle(BoardCanvas, lstCircles[i]);
+      lstCircles[i].Render(BoardCanvas);
+//      RenderCircle(BoardCanvas, lstCircles[i]);
     end;
 
   FBoard.Invalidate;
@@ -161,11 +155,11 @@ var
 begin
   actTrigger.Enabled := False;
 
-  for i := 0 to pred(FlstCircles.Count) do
-    ICircle(FlstCircles[i]).Stationary := True;
 
-
+     FPathCalculator.GainThePlot;
+     FlstTimeslices := FPathCalculator.GetTimeslices;
   FcStartAnimationTime := GetTickCount64;
+
   AnimationTimer.Enabled := True;
 end;
 
@@ -294,7 +288,6 @@ begin
   for i := 0 to pred(FlstCircles.Count) do
   begin
     RenderCircle(BoardCanvas, FlstCircles[i]);
-    // FlstCircles[i].Stationary := True;
   end;
 
 
@@ -378,8 +371,8 @@ begin
   if not FbDraggingBall then exit;
   intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
   intfVector.Origin := TPointF.Create(x, y);
-  actRenderExecute(Self, 0);
-  //  DrawTrajectoryPaths;
+  //actRenderExecute(Self, 0);
+    DrawTrajectoryPaths;
   FbDraggingBall := False;
 end;
 
@@ -428,7 +421,7 @@ begin
 
 
   FlstCircles := TCirclesList.Create;
-  ACircle := TMovingCircle.Create(TPointF.Create(300, 300), PUCK_RADIUS, PUCK_MASS);
+  ACircle := TMovingCircle.Create(TPointF.Create(300, 300), PUCK_RADIUS-2, PUCK_MASS-0.2);
   ACircle.BrushColor := clAqua;
   ACircle.PenColor := clBlue;
   FlstCircles.Add(ACircle);

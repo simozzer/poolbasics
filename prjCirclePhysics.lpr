@@ -14,7 +14,7 @@ uses
   uncirclephysicsconstants, unHelperInterfaces,
   unOtherCircles, unAngleSelectorControl, unBoardRenderer, unGameBoard,
   unBallsInMotion, unCollisionTypes, unCollisionDetection,
-unPathPartImplementation, unTimesliceImpl, unCircleUtils;
+unPathPartImplementation, unTimesliceImpl, unCircleUtils, unScreenCircles;
 
 {$R *.res}
 
