@@ -8,7 +8,7 @@ Developed using Free Pascal and Lazarus
 
 Planned next tasks:
 
-Basic collision detection loop:
+Fix basic collision detection loop: Ensure that collisions are ordered correctly for objects which start moving after the initial puck movement (as a result of collision)
 
 For each moving object:
   Calculate which object has a collision first.
