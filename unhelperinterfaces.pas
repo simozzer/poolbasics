@@ -101,8 +101,8 @@ type
     function GetYAtTime(const dTime: double): double;
     function GetTimeToXDeplacement(const dDeplacement: double): double;
     function GetTimeToYDeplacement(const dDeplacement: double): double;
-    function GetDisplacementXAtStop: double;
-    function GetDisplacementYAtStop: double;
+    function GetXAtStop: double;
+    function GetYAtStop: double;
     function GetTimeToStop: double;
     procedure ReverseX();
     procedure ReverseY();

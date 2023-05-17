@@ -178,8 +178,7 @@ begin
     // Test if circle hits edge of game board
     dEdgeHitTime := dEarliestHitTime;
     AEdgeHit := ehNone;
-    TCollisionDetection.DetectEdgeHits(intfPathPart.Vector,
-      intfPathPart.Circle.Radius, dEdgeHitTime, AEdgeHit);
+    TCollisionDetection.DetectEdgeHits(intfPathPart,dEdgeHitTime, AEdgeHit);
     if (AEdgeHit <> ehNone) and ((dEarliestHitTime < 0) or
       (dEdgeHitTime < dEarliestHitTime)) then
     begin

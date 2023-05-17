@@ -58,8 +58,8 @@ type
     function GetYAtTime(const dTime: double): double;
     function GetTimeToXDeplacement(const dDeplacement: double): double;
     function GetTimeToYDeplacement(const dDeplacement: double): double;
-    function GetDisplacementXAtStop: double;
-    function GetDisplacementYAtStop: double;
+    function GetXAtStop: double;
+    function GetYAtStop: double;
     function GetTimeToStop: double;
     procedure ReverseX();
     procedure ReverseY();
@@ -282,12 +282,12 @@ begin
     FdInitialVelocity, dVectorDeplacement)) / DECELERATION);
 end;
 
-function TBasicVector.GetDisplacementXAtStop: double;
+function TBasicVector.GetXAtStop: double;
 begin
   Result := GetXAtTime(GetTimeToStop);
 end;
 
-function TBasicVector.GetDisplacementYAtStop: double;
+function TBasicVector.GetYAtStop: double;
 begin
   Result := GetYAtTime(GetTimeToStop);
 end;
