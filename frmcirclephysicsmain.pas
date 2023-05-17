@@ -58,22 +58,19 @@ type
     FBoard: TCaromGameBoard;
 
     FcStartAnimationTime: cardinal;
-    FlstCircles: ICirclesList;
+
     FbDraggingBall: boolean;
 
     FAngleControl: TAngleControl;
 
-    FPuck: ICircle;
+    FiPuckID : Integer;
 
     FPathCalculator: IPathPlotter;
-
-    FlstTimeslices: ITimesliceList;
 
     procedure DrawTrajectoryPaths;
 
     procedure LogMessage(const sMessage: string);
 
-    procedure RenderCircle(const ACanvas: TCanvas; const intfCircle: ICircle);
 
     procedure HandleBoardMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
@@ -81,6 +78,8 @@ type
       X, Y: integer);
     procedure HandleBoardMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
+
+    function GetPuck: ICircle;
 
   public
     procedure DoAngleChanged(Sender: TObject);
@@ -95,54 +94,45 @@ implementation
 
 
 uses
-  uncirclephysicsconstants, types;
+  uncirclephysicsconstants, types, unCircleUtils;
 
 {$R *.lfm}
 
 
 { TForm1 }
 
-procedure TForm1.RenderCircle(const ACanvas: TCanvas; const intfCircle: ICircle);
-var
-  intfVectorAccess: IObjectWithVector;
-  intfVector: IBasicVector;
-  dRadius: double;
-begin
-  if not supports(intfCircle, IObjectWithVector, intfVectorAccess) then
-    raise Exception.Create('Could not obtain IObjectWithVector')
-  else
-    intfVector := intfVectorAccess.GetBasicVector;
-
-  ACanvas.Brush.color := intfCircle.BrushColor;
-  ACanvas.Pen.Color := intfCircle.PenColor;
-  dRadius := intfCircle.Radius;
-  ACanvas.Ellipse(Round(intfVector.Origin.X - dRadius),
-    Round(intfVector.Origin.Y - dRadius),
-    Round(intfVector.Origin.X + dRadius), Round(intfVector.Origin.Y + dRadius));
-end;
 
 // Render the positions of all the circles for a given point in time
 procedure TForm1.actRenderExecute(Sender: TObject; const dTime: double);
 var
   BoardCanvas: TCanvas;
-  dBallCenterX, dBallCenterY, dRadius: double;
   i: integer;
-  lstCircles: IScreenCirclesList;
+  intfTimeslice: ITimeslice;
+  intfPathPart: IPathPart;
+  ptPosition: TPointF;
+  dRadius: double;
 begin
   FBoard.Render;
   BoardCanvas := FBoard.BoardCanvas;
 
-  BoardCanvas.Brush.Color := clGray;
-  BoardCanvas.Pen.Color := clBlack;
+  intfTimeslice := FPathCalculator.GetThePlotAtTime(dTime);
 
-
-  lstCircles := FPathCalculator.GetThePlotAtTime(dTime);
-
-  if supports(lstCircles, IScreenCirclesList) then
-    for i := 0 to pred(lstCircles.Count) do
+  if supports(intfTimeslice, ITimeslice) then
+    for i := 0 to pred(intfTimeslice.PathParts.Count) do
     begin
-      lstCircles[i].Render(BoardCanvas);
-//      RenderCircle(BoardCanvas, lstCircles[i]);
+      intfPathPart := intfTimeslice.PathParts[i];
+
+
+      ptPosition.X := intfPathPart.Vector.GetXAtTime(dTime - intfTimeslice.StartTime);
+      ptPosition.Y := intfPathPart.Vector.GetYAtTime(dTime - intfTimeslice.StartTime);
+      BoardCanvas.Pen.Color := intfPathPart.Circle.GetPenColor;
+      BoardCanvas.Brush.Color := intfPathPart.Circle.GetBrushColor;
+      dRadius := intfPathPart.Circle.Radius;
+      BoardCanvas.Ellipse(round(ptPosition.X - dRadius),
+        round(ptPosition.Y - dRadius),
+        round(ptPosition.X + dRadius),
+        round(ptPosition.Y + dRadius));
+
     end;
 
   FBoard.Invalidate;
@@ -156,8 +146,7 @@ begin
   actTrigger.Enabled := False;
 
 
-     FPathCalculator.GainThePlot;
-     FlstTimeslices := FPathCalculator.GetTimeslices;
+  FPathCalculator.GainThePlot;
   FcStartAnimationTime := GetTickCount64;
 
   AnimationTimer.Enabled := True;
@@ -169,39 +158,34 @@ procedure TForm1.AnimationTimerTimer(Sender: TObject);
 var
   cTimeSinceStart: cardinal;
   AVector: IBasicVector;
-  dTotalVelocity : Double;
-  lstCircles : IScreenCirclesList;
-  i : Integer;
+  dTotalVelocity: double;
+  i: integer;
+  intfCircle: ICircle;
+  intfTimeslice: ITimeslice;
+  lstCirclesAtStop: ICirclesList;
+  intfPathPart: IPathPart;
+  ptStop: TPointF;
 begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
 
-  lstCircles := FPathCalculator.GetThePlotAtTime(cTimeSinceStart);
+  intfTimeslice := FPathCalculator.GetThePlotAtTime(cTimeSinceStart);
 
   dTotalVelocity := 0;
-  if supports(lstCircles, IScreenCirclesList) then
-    for i := 0 to pred(lstCircles.Count) do
-        dTotalVelocity += lstCircles[i].Velocity;
+  if supports(intfTimeslice, ITimeslice) then
+    for i := 0 to pred(intfTimeslice.PathParts.Count) do
+      dTotalVelocity += intfTimeslice.PathParts[i].Vector.GetVelocityAtTime(
+        cTimeSinceStart - intfTimeslice.StartTime);
 
 
   if (dTotalVelocity = 0) then
   begin
 
     AnimationTimer.Enabled := False;
-    actTrigger.Enabled:=true;
+    actTrigger.Enabled := True;
 
 
-    {
-    if (FTrajectories.Count > 0) then
-    begin
-      AVector := FTrajectories.getItem(Pred(FTrajectories.GetCount));
-      if (AVector <> nil) then
-      begin
-        edtTime.Text := FloatToStr(AVector.EndTime);
-        FBallVector.Origin := TPointF.Create(FBallVector.GetXAtTime(AVector.EndTime),
-        FBallVector.GetyAtTime(AVector.EndTime));
-      end;
-    end;
-    }
+    // TODO:: reduse origional circles (clone last
+    FPathCalculator.Reinitialize;
 
   end
   else
@@ -267,7 +251,7 @@ begin
   dVelocity := (100 - trkVelocity.Position) / 100;
   lblVel.Caption := Format('Vel: %f', [dVelocity]);
 
-  intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
+  intfVector := TCircleUtils.GetPathPartForCircleID(FPathCalculator.Timeslices[0].PathParts,FiPuckID).Vector;
   intfVector.InitialVelocity := dVelocity;
 
   DrawTrajectoryPaths;
@@ -297,10 +281,12 @@ begin
   BoardCanvas.Brush.Color := clGray;
   BoardCanvas.Pen.Color := clBlack;
 
+  {
   for i := 0 to pred(FlstCircles.Count) do
   begin
     RenderCircle(BoardCanvas, FlstCircles[i]);
   end;
+  }
 
 
   lstTimeslices := FPathCalculator.GetTimeslices;
@@ -350,14 +336,18 @@ var
   intfVector: IBasicVector;
 begin
   if AnimationTimer.Enabled then exit;
-  FbDraggingBall := True;
-  actTrigger.Enabled := True;
-  intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
-  intfVector.Origin := TPointF.Create(x, y);
-  intfVector.Angle := FAngleControl.Angle;
-  intfVector.InitialVelocity := (100 - (trkVelocity.Position / 100)) / 100;
-  actRenderExecute(Self, 0);
-  DrawTrajectoryPaths;
+
+  if (Button = mbLeft) then
+  begin
+    FbDraggingBall := True;
+    actTrigger.Enabled := True;
+    intfVector := TCircleUtils.GetPathPartForCircleID(FPathCalculator.Timeslices[0].PathParts,FiPuckID).Vector;
+    intfVector.Origin := TPointF.Create(x, y);
+    intfVector.Angle := FAngleControl.Angle + pi;
+    intfVector.InitialVelocity := (100 - (trkVelocity.Position / 100)) / 100;
+
+    DrawTrajectoryPaths;
+  end;
 end;
 
 // Move the position of the puck when the left mouse button is held
@@ -366,11 +356,13 @@ procedure TForm1.HandleBoardMouseMove(Sender: TObject; Shift: TShiftState;
 var
   intfVector: IBasicVector;
 begin
-  if not FbDraggingBall then exit;
-  intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
-  intfVector.Origin := TPointF.Create(x, y);
-  actRenderExecute(Self, 0);
-  DrawTrajectoryPaths;
+  if  FbDraggingBall then
+  begin
+    intfVector := TCircleUtils.GetPathPartForCircleID(FPathCalculator.Timeslices[0].PathParts,FiPuckID).Vector;
+    intfVector.Origin := TPointF.Create(x, y);
+
+      DrawTrajectoryPaths;
+  end;
 
 end;
 
@@ -381,11 +373,16 @@ var
   intfVector: IBasicVector;
 begin
   if not FbDraggingBall then exit;
-  intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
+  intfVector := TCircleUtils.GetPathPartForCircleID(FPathCalculator.Timeslices[0].PathParts,FiPuckID).Vector;
   intfVector.Origin := TPointF.Create(x, y);
-  //actRenderExecute(Self, 0);
-    DrawTrajectoryPaths;
+
+  DrawTrajectoryPaths;
   FbDraggingBall := False;
+end;
+
+function TForm1.GetPuck: ICircle;
+begin
+  RESULT := TCircleUtils.GetCircleFromPathParts(FPathCalculator.Timeslices[0].PathParts,FiPuckID);
 end;
 
 // Called when the user changes the selected angle
@@ -401,7 +398,7 @@ begin
 
   lblSin.Caption := Format('Sin: %f', [Sin(dAngle)]);
 
-  intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
+  intfVector := TCircleUtils.GetPathPartForCircleID(FPathCalculator.Timeslices[0].PathParts,FiPuckID).Vector;
   intfVector.Angle := dAngle;
 
   dAngle := TBasicMotion.RadToDeg(dAngle);
@@ -421,6 +418,9 @@ var
   ACircle: ICircle;
   intfVector: IBasicVector;
   i: integer;
+  pt, pt1 : TPointF;
+
+  lstCircles : ICirclesList;
 begin
   inherited Create(AOwner);
   FBoard := TCaromGameBoard.Create(Self);
@@ -432,15 +432,21 @@ begin
   FBoard.OnMouseUp := @HandleBoardMouseUp;
 
 
-  FlstCircles := TCirclesList.Create;
-  ACircle := TMovingCircle.Create(TPointF.Create(300, 300), PUCK_RADIUS-2, PUCK_MASS-0.2);
-  ACircle.BrushColor := clAqua;
-  ACircle.PenColor := clBlue;
-  FlstCircles.Add(ACircle);
-  FPuck := TMovingCircle.Create(TPointF.Create(200, 518), PUCK_RADIUS, PUCK_MASS);
-  FPuck.BrushColor := clRed;
-  FPuck.PenColor := clYellow;
-  FlstCircles.Add(FPuck);
+  FPathCalculator := TCirclePathCalculator.Create;
+
+  ACircle := TBaseCircle.Create(TARGET_RADIUS, TARGET_MASS);
+  ACircle.BrushColor:= clAqua;
+  ACircle.PenColor:= clBlue;
+
+  FPathCalculator.AddCircleWithPosition(ACircle, TPointF.Create(300,300));
+
+  ACircle := TBaseCircle.Create(PUCK_RADIUS, PUCK_MASS);
+  ACircle.BrushColor:= clGray;
+  ACircle.PenColor := clBlack;
+
+  FiPuckId := TCircleUtils.GetCircleId(ACircle);
+  FPathCalculator.AddCircleWithPosition(ACircle, TPointF.Create(200,518));
+
 
   FAngleControl := TAngleControl.Create(Self);
   grpTakeShot.InsertControl(FAngleControl);
@@ -449,17 +455,12 @@ begin
   FAngleControl.OnChange := @Self.DoAngleChanged;
   FAngleControl.Angle := 0;
 
-  intfVector := TCircleInterfaceAccess.GetVectorFromCircle(FPuck);
+  intfVector := TCircleUtils.GetPathPartForCircleID(FPathCalculator.Timeslices[0].PathParts,FiPuckID).Vector;
   intfVector.Angle := pi;
   intfVector.InitialVelocity := 0.5;
 
   FbDraggingBall := False;
 
-  FPathCalculator := TCirclePathCalculator.Create;
-  for i := 0 to pred(FlstCircles.Count) do
-  begin
-    FPathCalculator.AddCircle(FlstCircles[i]);
-  end;
   (FPathCalculator as IBasicLoggerClient).SetLogger(Self);
 
 end;
@@ -469,8 +470,7 @@ begin
   RemoveControl(FBoard);
   FBoard.Free;
 
-  FlstCircles.Clear;
-  FlstCircles := nil;
+
   grpTakeShot.RemoveControl(FAngleControl);
   FAngleControl.Free;
 

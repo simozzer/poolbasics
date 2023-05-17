@@ -31,20 +31,6 @@ type
     constructor Create(const dRadius, dMass: double);
   end;
 
-  { TMovingCircle }
-
-  TMovingCircle = class(TBaseCircle, IObjectWithVector)
-  private
-    FBasicVector: IBasicVector;
-    function GetBasicVector: IBasicVector;
-    function Clone: IUnknown;
-  public
-    property Vector: IBasicVector read GetBasicVector;
-    constructor Create(const ptOrigin: TPointF; const dRadius, dMass: double);
-    destructor Destroy; override;
-  end;
-
-
   { TCirclesList }
 
   TCirclesList = class(TInterfacedObject, ICirclesList)
@@ -62,12 +48,6 @@ type
     destructor Destroy; override;
   end;
 
-  { TCircleInterfaceAccess }
-
-  TCircleInterfaceAccess = class
-  public
-    class function GetVectorFromCircle(const intfCircle: ICircle): IBasicVector;
-  end;
 
 
 implementation
@@ -79,19 +59,6 @@ type
 var
   miCircleIdSequence: cardinal;
 
-{ TCircleInterfaceAccess }
-
-class function TCircleInterfaceAccess.GetVectorFromCircle(
-  const intfCircle: ICircle): IBasicVector;
-var
-  intfVectorAccess: IObjectWithVector;
-begin
-  Result := nil;
-  if not supports(intfCircle, IObjectWithVector, intfVectorAccess) then
-    raise Exception.Create('Could not obtain IObjectWithVector')
-  else
-    Result := intfVectorAccess.Vector;
-end;
 
 
 { TCirclesList }
@@ -126,37 +93,6 @@ begin
   FList.Free;
   inherited Destroy;
 end;
-
-{ TMovingCircle }
-
-function TMovingCircle.GetBasicVector: IBasicVector;
-begin
-  Result := FBasicVector;
-end;
-
-function TMovingCircle.Clone: IUnknown;
-var
-  Acircle: TMovingCircle;
-begin
-  Acircle := TMovingCircle.Create(FBasicVector.Origin, GetRadius, GetMass);
-  Acircle.SetBrushColor(GetBrushColor);
-  Acircle.SetPenColor(GetPenColor);
-  Acircle.FBasicVector := GetBasicVector.Clone;
-  Result := Acircle;
-end;
-
-constructor TMovingCircle.Create(const ptOrigin: TPointF; const dRadius, dMass: double);
-begin
-  inherited Create(dRadius, dMass);
-  FBasicVector := TBasicVector.Create(ptOrigin, 0, 0, 0);
-end;
-
-destructor TMovingCircle.Destroy;
-begin
-  FBasicVector := nil;
-  inherited Destroy;
-end;
-
 
 { TBaseCircle }
 

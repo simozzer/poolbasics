@@ -39,50 +39,6 @@ type
   end;
 
 
-  IGameCircle = interface
-    ['{B8C03731-DE0F-4808-B4B8-8A7C9E2ACFE2}']
-    function GetXAtTime(const dTime: double): double;
-    function GetYAtTime(const dTime: double): double;
-    function GetTimeToXDeplacement(const dDeplacement: double): double;
-    function GetTimeToYDeplacement(const dDeplacement: double): double;
-    function GetDisplacementXAtStop: double;
-    function GetDisplacementYAtStop: double;
-    function GetTimeToStop: double;
-    function GetInitialVelocity: double;
-    procedure SetInitialVelocity(const dVel: double);
-    function GetEndTime: double;
-    procedure SetEndTime(const dTime: double);
-    function GetOriginX: double;
-    procedure SetOriginX(const dX: double);
-    function GetOriginY: double;
-    procedure SetOriginY(const dY: double);
-    function GetAngle: double;
-    procedure SetAngle(const dAngle: double);
-    function GetStartTime: double;
-    function GetVector: TVector2_Double;
-    function GetRadius: double;
-    function GetFillColor: TColor;
-    procedure SetFillColor(const clr: TColor);
-    function GetLineColor: TColor;
-    procedure SetLineColor(const clr: TColor);
-    function GetDistance(const ACircle: IGameCircle): double;
-    procedure ReverseX();
-    procedure ReverseY();
-    function GetVelocityVectorAtTime(const dTime: double): Tvector2_double;
-    function ToString(): string;
-    procedure Render(const ACanvas: TCanvas; const dTime: double);
-    property InitialVelocity: double read GetInitialVelocity write SetInitialVelocity;
-    property OriginX: double read GetOriginX write SetOriginX;
-    property OriginY: double read GetOriginY write SetOriginY;
-    property Angle: double read GetAngle write SetAngle;
-    property EndTime: double read GetEndTime write SetEndTime;
-    property StartTime: double read GetStartTime;
-    property Vector: Tvector2_double read GetVector;
-    property Radius: double read GetRadius;
-    property FillColor: TColor read GetFillColor write SetFillColor;
-    property LineColor: TColor read GetLineColor write SetLineColor;
-  end;
-
   { IBasicVector }
 
   IBasicVector = interface
@@ -133,38 +89,6 @@ type
     property BrushColor: TColor read GetBrushColor write SetBrushColor;
     property PenColor: TColor read GetPenColor write SetPenColor;
     function ToString(): string;
-  end;
-
-  IScreenCircle = interface
-    ['{E425C1C9-95A4-4D33-ADA2-7605A449E924}']
-    function GetRadius: double;
-    function GetBrushColor: TColor;
-    function GetPenColor: TColor;
-    function GetPosition: TPointF;
-    function GetVelocity : Double;
-    procedure Render(Const ACanvas : TCanvas);
-    property Radius: double read GetRadius;
-    property BrushColor: TColor read GetBrushColor;
-    property PenColor: TColor read GetPenColor;
-    property Position: TPointF read GetPosition;
-    property Velocity : Double read GetVelocity;
-  end;
-
-  IScreenCirclesList = interface
-    ['{E11BC469-2F3F-49C1-9EE0-D0713DFD0808}']
-    function getItem(const iIndex: integer): IScreenCircle;
-    function GetCount: cardinal;
-    procedure Clear;
-    procedure Add(const intfCircle: IScreenCircle);
-    property Count: cardinal read GetCount;
-    property Item[const iIndex: integer]: IScreenCircle read GetItem; default;
-  end;
-
-  IObjectWithVector = interface
-    ['{DE55D489-919F-42D2-B121-BA6955147E96}']
-    function GetBasicVector: IBasicVector;
-    property Vector: IBasicVector read GetBasicVector;
-    function Clone: IUnknown;
   end;
 
   IPathPart = interface
@@ -248,10 +172,11 @@ type
   IPathPlotter = interface
     ['{146574A6-3ED5-4123-84FD-B1810CF7C96C}']
     function GetTimeslices: ITimesliceList;
-    procedure AddCircle(const ACircle: ICircle);
+    procedure AddCircleWithPosition(const ACircle: ICircle; const Position : TPointF);
     procedure Clear;
     procedure GainThePlot;
-    function GetThePlotAtTime(const dTime: double): IScreenCirclesList;
+    procedure Reinitialize;
+    function GetThePlotAtTime(const dTime: double): ITimeslice;
     property Timeslices: ITimesliceList read GetTimeslices;
   end;
 

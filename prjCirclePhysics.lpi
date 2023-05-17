@@ -114,11 +114,6 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCircleUtils"/>
       </Unit>
-      <Unit>
-        <Filename Value="unscreencircles.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="unScreenCircles"/>
-      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
