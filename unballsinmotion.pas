@@ -5,7 +5,7 @@ unit unBallsInMotion;
 interface
 
 uses
-  Classes, SysUtils, unHelperInterfaces, uncollisiontypes, fgl, Graphics;
+  Classes, SysUtils, unHelperInterfaces, uncollisiontypes, fgl, Graphics, Types;
 
 type
 
@@ -13,11 +13,9 @@ type
 
   TCirclePathCalculator = class(TInterfacedObject, IPathPlotter, IBasicLoggerClient)
   private
-    FlstCircles: ICirclesList;
     FintfLogger: IBasicLogger;
 
     FlstTimeslices: ITimesliceList;
-    function GetPathPartsFromCircles(const lstCircles: ICirclesList): IPathPartList;
 
     function GetMaxTimeFromPathPartList(const lstPathParts: IPathPartList): double;
 
@@ -34,11 +32,12 @@ type
     function GetTimeslices: ITimesliceList;
     procedure LogMessage(const sMessage: string);
     procedure SetLogger(const intfLogger: IBasicLogger);
-    function GetThePlotAtTime(const dTime: double): ICirclesList;
+    function GetThePlotAtTime(const dTime: double): ITimeslice;
+    procedure Reinitialize;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure AddCircle(const ACircle: ICircle);
+    procedure AddCircleWithPosition(const ACircle: ICircle; const Position : TPointF);
     procedure Clear;
     procedure GainThePlot;
     property Timeslices: ITimesliceList read GetTimeslices;
@@ -47,32 +46,11 @@ type
 implementation
 
 uses
-  unCollisionDetection, ComObj, unOtherCircles, unCirclePhysics, Types,
+  unCollisionDetection, ComObj, unOtherCircles, unCirclePhysics,
   unPathPartImplementation, unTimesliceImpl, Math, unCircleUtils;
 
 
 { TCirclePathCalculator }
-
-function TCirclePathCalculator.GetPathPartsFromCircles(
-  const lstCircles: ICirclesList): IPathPartList;
-var
-  i: integer;
-  intfObjectWithVector: IObjectWithVector;
-  intfPathPart: IPathPart;
-begin
-  Result := TPathPartList.Create;
-  for i := 0 to pred(lstCircles.Count) do
-  begin
-    if supports(lstCircles[i], IObjectWithVector, intfObjectWithVector) then
-    begin
-      intfPathPart := TPathPart.Create(lstCircles[i], intfObjectWithVector.Vector);
-      Result.add(intfPathPart);
-    end
-    else
-      raise Exception.Create('Could not obtain IObjectWithVector');
-  end;
-
-end;
 
 function TCirclePathCalculator.GetMaxTimeFromPathPartList(
   const lstPathParts: IPathPartList): double;
@@ -159,11 +137,11 @@ var
   intfEdgeHitPathPart: IPathPart;
   intfCircleCollisionResult: ICircleCollisionResult;
   intfStoreCircleCollisionResult: ICircleCollisionResult;
-  iPathPartIndex: integer;
+  iCircleId: integer;
 begin
   Result.EdgeHit := ehNone;
   Result.HitTime := 0;
-  Result.iPathPartId := -1;
+  Result.iCircleId := -1;
   AEdgeHit := ehNone;
 
   // for each moving circle find the next edge hit and return the detail from the 1st collision
@@ -178,14 +156,13 @@ begin
     // Test if circle hits edge of game board
     dEdgeHitTime := dEarliestHitTime;
     AEdgeHit := ehNone;
-    TCollisionDetection.DetectEdgeHits(intfPathPart.Vector,
-      intfPathPart.Circle.Radius, dEdgeHitTime, AEdgeHit);
+    TCollisionDetection.DetectEdgeHits(intfPathPart, dEdgeHitTime, AEdgeHit);
     if (AEdgeHit <> ehNone) and ((dEarliestHitTime < 0) or
       (dEdgeHitTime < dEarliestHitTime)) then
     begin
       intfEdgeHitPathPart := intfPathPart;
       dEarliestHitTime := dEdgeHitTime;
-      iPathPartIndex := TCircleUtils.GetCircleId(intfPathPart.Circle);
+      iCircleId := TCircleUtils.GetCircleId(intfPathPart.Circle);
     end;
 
 
@@ -217,7 +194,7 @@ begin
   begin
     Result.EdgeHit := AEdgeHit;
     Result.HitTime := dEarliestHitTime;
-    Result.iPathPartId := iPathPartIndex;
+    Result.iCircleId := iCircleId;
     Result.intfDetails := intfEdgeHitPathPart;
   end
   else
@@ -245,21 +222,63 @@ begin
   FintfLogger := intfLogger;
 end;
 
-function TCirclePathCalculator.GetThePlotAtTime(const dTime: double): ICirclesList;
+function TCirclePathCalculator.GetThePlotAtTime(const dTime: double): ITimeslice;
 var
   i: integer;
   intfTimeslice: ITimeslice;
+
 begin
   i := 0;
   Result := nil;
-  //TODO
 
-  if (Result = nil) then Result := FlstCircles;
+  while (i < FlstTimeslices.Count) do
+  begin
+    intfTimeslice := FlstTimeslices[i];
+    if (intfTimeslice.StartTime <= dTime) and
+      ((intfTimeslice.EndTime >= dTime) or (i = pred(FlstTimeslices.Count))) then
+    begin
+      // This is the time slice
+      // Create a list of the positions, sizes and colors of all circles
+      Result := intfTimeslice;
+      exit;
+
+    end
+    else
+      Inc(i);
+  end;
+
+end;
+
+procedure TCirclePathCalculator.Reinitialize;
+var
+  intfLastTimeslice : ITimeslice;
+  i : Integer;
+  intfCircle : ICircle;
+  intfVector :IBasicVector;
+  pt : TPointF;
+  dDuration : Double;
+
+begin
+
+  intfLastTimeslice := FlstTimeslices[pred(FlstTimeslices.Count)];
+  FlstTimeslices.Clear;
+  dDuration:= intfLastTimeslice.EndTime - intfLastTimeslice.StartTime;
+  //FlstCircles.Clear;
+  for i := 0 to pred(intfLastTimeslice.PathParts.Count) do
+  begin
+    intfCircle := intfLastTimeslice.PathParts[i].Circle;
+    intfVector := TCircleUtils.GetPathPartForCircleID(intfLastTimeSlice.PathParts,TCircleUtils.GetCircleId(intfCircle)).Vector;
+    pt.X := intfVector.GetXAtTime(dDuration);
+    pt.Y := intfVector.GetYAtTime(dDuration);
+    intfVector.Origin := pt;
+    AddCircleWithPosition(intfCircle,pt);
+  end;
+
 end;
 
 constructor TCirclePathCalculator.Create;
 begin
-  FlstCircles := TCirclesList.Create;
+ // FlstCircles := TCirclesList.Create;
   FlstTimeslices := TTimesliceList.Create;
   FintfLogger := nil;
 end;
@@ -267,18 +286,40 @@ end;
 destructor TCirclePathCalculator.Destroy;
 begin
   FlstTimeslices := nil;
-  FlstCircles := nil;
+ // FlstCircles := nil;
   inherited Destroy;
 end;
 
-procedure TCirclePathCalculator.AddCircle(const ACircle: ICircle);
+procedure TCirclePathCalculator.AddCircleWithPosition(const ACircle: ICircle; const Position : TPointF);
+var
+  intfTimeSlice : ITimeslice;
+  intfPathParts : IPathPartList;
+  intfPathPart : IPathPart;
+  intfVector : IBasicVector;
 begin
-  FlstCircles.add(ACircle);
+  if (FlstTimeslices = nil) then
+    FlstTimeslices := TTimesliceList.Create;
+
+  if (FlstTimeslices.Count =0) then
+  begin
+    intfPathParts := TPathPartList.Create;
+    intfTimeSlice := TTimeslice.Create(intfPathParts);
+    intfTimeSlice.StartTime:=0;
+    FlstTimeslices.Add(intfTimeSlice);
+  end
+  else
+    intfPathParts := FlstTimeslices[0].PathParts;
+
+  intfVector := TBasicVector.Create(Position,0,0,0);
+  intfPathPart := TPathPart.Create(ACircle,intfVector);
+  intfPathParts.Add(intfPathPart);
+
 end;
 
 procedure TCirclePathCalculator.Clear;
 begin
-  FlstCircles.Clear;
+//  FlstCircles.Clear;
+  FlstTimeslices.Clear;
 end;
 
 
@@ -292,11 +333,12 @@ var
   intfCircleCollisionResult: ICircleCollisionResult;
   BounceResult: TBounceResult;
 begin
-  FlstTimeslices.Clear;
+ //
 
   // Record starting position
-  APathPartList := GetPathPartsFromCircles(FlstCircles);
+  APathPartList := FlstTimeslices[0].PathParts;
 
+   FlstTimeslices.Clear;
   dLastEndTime := 0;
   dLastDuration := 0;
 
@@ -324,7 +366,7 @@ begin
       if (AHitDetail.EdgeHit <> ehCircle) then
       begin
         APathPart := TCircleUtils.GetPathPartForCircleID(APathPartList,
-          AHitDetail.iPathPartId);
+          AHitDetail.iCircleId);
         case AHitDetail.EdgeHit of
           ehLeft, ehRight: APathPart.Vector.ReverseX;
           ehTop, ehBottom: APathPart.Vector.ReverseY;

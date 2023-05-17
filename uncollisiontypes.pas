@@ -16,7 +16,7 @@ type
   TEdgeHitDetail = record
     EdgeHit: TEdgeHit;
     HitTime: double;
-    iPathPartId: integer;
+    iCircleId: integer;
     intfDetails: IInterface;
     // Used to store result (which circle or circle collision results)
   end;

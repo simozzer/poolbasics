@@ -17,7 +17,6 @@ type
     FdMass: double;
     FclrBrush: TColor;
     FclrPen: TColor;
-    FbStationary: boolean;
     FiID: cardinal;
   protected
     function GetRadius: double;
@@ -25,28 +24,12 @@ type
     procedure SetBrushColor(const clr: TColor);
     function GetPenColor: TColor;
     procedure SetPenColor(const clr: TColor);
-    function GetStationary: boolean;
     function GetMass: double;
-    procedure SetStationary(const bStationary: boolean);
     function GetId: cardinal;
     function ToString: ansistring; override;
   public
     constructor Create(const dRadius, dMass: double);
   end;
-
-  { TMovingCircle }
-
-  TMovingCircle = class(TBaseCircle, IObjectWithVector)
-  private
-    FBasicVector: IBasicVector;
-    function GetBasicVector: IBasicVector;
-    function Clone: IUnknown;
-  public
-    property Vector: IBasicVector read GetBasicVector;
-    constructor Create(const ptOrigin: TPointF; const dRadius, dMass: double);
-    destructor Destroy; override;
-  end;
-
 
   { TCirclesList }
 
@@ -65,12 +48,6 @@ type
     destructor Destroy; override;
   end;
 
-  { TCircleInterfaceAccess }
-
-  TCircleInterfaceAccess = class
-  public
-    class function GetVectorFromCircle(const intfCircle: ICircle): IBasicVector;
-  end;
 
 
 implementation
@@ -82,19 +59,6 @@ type
 var
   miCircleIdSequence: cardinal;
 
-{ TCircleInterfaceAccess }
-
-class function TCircleInterfaceAccess.GetVectorFromCircle(
-  const intfCircle: ICircle): IBasicVector;
-var
-  intfVectorAccess: IObjectWithVector;
-begin
-  Result := nil;
-  if not supports(intfCircle, IObjectWithVector, intfVectorAccess) then
-    raise Exception.Create('Could not obtain IObjectWithVector')
-  else
-    Result := intfVectorAccess.Vector;
-end;
 
 
 { TCirclesList }
@@ -130,37 +94,6 @@ begin
   inherited Destroy;
 end;
 
-{ TMovingCircle }
-
-function TMovingCircle.GetBasicVector: IBasicVector;
-begin
-  Result := FBasicVector;
-end;
-
-function TMovingCircle.Clone: IUnknown;
-var
-  Acircle: TMovingCircle;
-begin
-  Acircle := TMovingCircle.Create(FBasicVector.Origin, GetRadius, GetMass);
-  Acircle.SetBrushColor(GetBrushColor);
-  Acircle.SetPenColor(GetPenColor);
-  Acircle.FBasicVector := GetBasicVector.Clone;
-  Result := Acircle;
-end;
-
-constructor TMovingCircle.Create(const ptOrigin: TPointF; const dRadius, dMass: double);
-begin
-  inherited Create(dRadius, dMass);
-  FBasicVector := TBasicVector.Create(ptOrigin, 0, 0, 0);
-end;
-
-destructor TMovingCircle.Destroy;
-begin
-  FBasicVector := nil;
-  inherited Destroy;
-end;
-
-
 { TBaseCircle }
 
 function TBaseCircle.GetRadius: double;
@@ -188,20 +121,12 @@ begin
   FclrPen := clr;
 end;
 
-function TBaseCircle.GetStationary: boolean;
-begin
-  Result := FbStationary;
-end;
 
 function TBaseCircle.GetMass: double;
 begin
   Result := FdMass;
 end;
 
-procedure TBaseCircle.SetStationary(const bStationary: boolean);
-begin
-  FbStationary := bStationary;
-end;
 
 function TBaseCircle.GetId: cardinal;
 begin
@@ -219,7 +144,6 @@ begin
   FclrBrush := clWhite;
   FclrPen := clBlack;
   FdMass := dMass;
-  FbStationary := True;
   miCircleIdSequence := miCircleIdSequence + 1;
   FiID := miCircleIdSequence;
 end;

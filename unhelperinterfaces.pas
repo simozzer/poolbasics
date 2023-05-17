@@ -39,53 +39,6 @@ type
   end;
 
 
-  IGameCircle = interface
-    ['{B8C03731-DE0F-4808-B4B8-8A7C9E2ACFE2}']
-    function GetXAtTime(const dTime: double): double;
-    function GetYAtTime(const dTime: double): double;
-    function GetTimeToXDeplacement(const dDeplacement: double): double;
-    function GetTimeToYDeplacement(const dDeplacement: double): double;
-    function GetDisplacementXAtStop: double;
-    function GetDisplacementYAtStop: double;
-    function GetTimeToStop: double;
-    function GetInitialVelocity: double;
-    procedure SetInitialVelocity(const dVel: double);
-    function GetEndTime: double;
-    procedure SetEndTime(const dTime: double);
-    function GetOriginX: double;
-    procedure SetOriginX(const dX: double);
-    function GetOriginY: double;
-    procedure SetOriginY(const dY: double);
-    function GetAngle: double;
-    procedure SetAngle(const dAngle: double);
-    function GetStartTime: double;
-    function GetVector: TVector2_Double;
-    function GetRadius: double;
-    function GetFillColor: TColor;
-    procedure SetFillColor(const clr: TColor);
-    function GetLineColor: TColor;
-    procedure SetLineColor(const clr: TColor);
-    function GetStationary: boolean;
-    procedure SetStationary(const bStationary: boolean);
-    function GetDistance(const ACircle: IGameCircle): double;
-    procedure ReverseX();
-    procedure ReverseY();
-    function GetVelocityVectorAtTime(const dTime: double): Tvector2_double;
-    function ToString(): string;
-    procedure Render(const ACanvas: TCanvas; const dTime: double);
-    property InitialVelocity: double read GetInitialVelocity write SetInitialVelocity;
-    property OriginX: double read GetOriginX write SetOriginX;
-    property OriginY: double read GetOriginY write SetOriginY;
-    property Angle: double read GetAngle write SetAngle;
-    property EndTime: double read GetEndTime write SetEndTime;
-    property StartTime: double read GetStartTime;
-    property Vector: Tvector2_double read GetVector;
-    property Radius: double read GetRadius;
-    property FillColor: TColor read GetFillColor write SetFillColor;
-    property LineColor: TColor read GetLineColor write SetLineColor;
-    property Stationary: boolean read GetStationary write SetStationary;
-  end;
-
   { IBasicVector }
 
   IBasicVector = interface
@@ -104,8 +57,8 @@ type
     function GetYAtTime(const dTime: double): double;
     function GetTimeToXDeplacement(const dDeplacement: double): double;
     function GetTimeToYDeplacement(const dDeplacement: double): double;
-    function GetDisplacementXAtStop: double;
-    function GetDisplacementYAtStop: double;
+    function GetXAtStop: double;
+    function GetYAtStop: double;
     function GetTimeToStop: double;
     procedure ReverseX();
     procedure ReverseY();
@@ -131,22 +84,11 @@ type
     procedure SetBrushColor(const clr: TColor);
     function GetPenColor: TColor;
     procedure SetPenColor(const clr: TColor);
-    function GetStationary: boolean;
-    procedure SetStationary(const bStationary: boolean);
     property Radius: double read GetRadius;
     property Mass: double read GetMass;
     property BrushColor: TColor read GetBrushColor write SetBrushColor;
     property PenColor: TColor read GetPenColor write SetPenColor;
-    property Stationary: boolean read GetStationary write SetStationary;
     function ToString(): string;
-  end;
-
-
-  IObjectWithVector = interface
-    ['{DE55D489-919F-42D2-B121-BA6955147E96}']
-    function GetBasicVector: IBasicVector;
-    property Vector: IBasicVector read GetBasicVector;
-    function Clone: IUnknown;
   end;
 
   IPathPart = interface
@@ -202,23 +144,6 @@ type
     property HitTime: double read GetHitTime;
   end;
 
-  // Path information for 1 object, which can be queried by time
-  ITrajectoryPaths = interface
-    ['{98B877F0-13F2-4B85-AFFE-4E395428FF99}']
-    function GetCount: cardinal;
-    function GetItems: TInterfaceList;
-    function getItem(const iIndex: cardinal): IBasicVector;
-    function GetCircles: ICirclesList;
-    procedure SetCircles(const lstCircles: ICirclesList);
-    property Items: TInterfaceList read GetItems;
-    property Item[const iIndex: cardinal]: IBasicVector read GetItem;
-    property Count: cardinal read GetCount;
-    property OtherCircles: ICirclesList read GetCircles write SetCircles;
-    function GetXAtTime(const dTime: double): double;
-    function GetYAtTime(const dTime: double): double;
-    function GetVectorForTime(const dTime: double): IBasicVector;
-    procedure CalculateTrajectories;
-  end;
 
   ITimeslice = interface
     ['{DFA80F2A-1162-416C-BFE2-DB184174C724}']
@@ -247,10 +172,11 @@ type
   IPathPlotter = interface
     ['{146574A6-3ED5-4123-84FD-B1810CF7C96C}']
     function GetTimeslices: ITimesliceList;
-    procedure AddCircle(const ACircle: ICircle);
+    procedure AddCircleWithPosition(const ACircle: ICircle; const Position : TPointF);
     procedure Clear;
     procedure GainThePlot;
-    function GetThePlotAtTime(const dTime: double): ICirclesList;
+    procedure Reinitialize;
+    function GetThePlotAtTime(const dTime: double): ITimeslice;
     property Timeslices: ITimesliceList read GetTimeslices;
   end;
 

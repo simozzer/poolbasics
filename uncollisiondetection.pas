@@ -35,8 +35,8 @@ type
 
   TCollisionDetection = class
   public
-    class procedure DetectEdgeHits(const AVector: IBasicVector;
-      const dRadius: double; var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
+    class procedure DetectEdgeHits(const APathPart: IPathPart;
+      var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 
     class function DetectStationaryCircleHit(const APathPart1: IPathPart;
       const APathPart2: IPathPart): ICircleCollisionResult;
@@ -107,16 +107,21 @@ end;
 
 { TCollisionDetection }
 
-class procedure TCollisionDetection.DetectEdgeHits(const AVector: IBasicVector;
-  const dRadius: double; var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
+class procedure TCollisionDetection.DetectEdgeHits(const APathPart: IPathPart;
+  var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
 var
-  dMaxDisplacmentXAtStop, dMaxDisplacmentYAtStop, dDeplacement, dHitTime: double;
+  dXAtStop, dYAtStop, dDeplacement, dHitTime: double;
+  AVector : IBasicVector;
+  dRadius : Double;
 begin
-  dMaxDisplacmentXAtStop := AVector.GetDisplacementXAtStop;
-  dMaxDisplacmentYAtStop := AVector.GetDisplacementYAtStop;
+  AVector := APathPart.Vector;
+  dRadius:= APathPart.Circle.Radius;
+  dXAtStop := AVector.GetXAtStop;
+  dYAtStop := AVector.GetYAtStop;
 
 
-  if (dMaxDisplacmentXAtStop <= dRadius) then
+
+  if (dXAtStop <= dRadius) then
   begin
     dDeplacement := AVector.Origin.X - dRadius;
     dHitTime := AVector.GetTimeToXDeplacement(dDeplacement);
@@ -127,7 +132,7 @@ begin
     end;
   end;
 
-  if (dMaxDisplacmentYAtStop <= dRadius) then
+  if (dYAtStop <= dRadius) then
   begin
     dDeplacement := AVector.Origin.Y - dRadius;
     dHitTime := AVector.GetTimeToYDeplacement(dDeplacement);
@@ -138,7 +143,7 @@ begin
     end;
   end;
 
-  if (dMaxDisplacmentXAtStop >= (BOARD_WIDTH - dRadius)) then
+  if (dXAtStop >= (BOARD_WIDTH - dRadius)) then
   begin
     dDeplacement := BOARD_WIDTH - dRadius - AVector.Origin.X;
     dHitTime := AVector.GetTimeToXDeplacement(dDeplacement);
@@ -149,7 +154,7 @@ begin
     end;
   end;
 
-  if (dMaxDisplacmentYAtStop >= (BOARD_HEIGHT - dRadius)) then
+  if (dYAtStop >= (BOARD_HEIGHT - dRadius)) then
   begin
     dDeplacement := BOARD_HEIGHT - dRadius - AVector.Origin.Y;
     dHitTime := AVector.GetTimeToYDeplacement(dDeplacement);
