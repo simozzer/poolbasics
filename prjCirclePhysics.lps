@@ -20,8 +20,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmCirclePhysicsMain"/>
-        <TopLine Value="295"/>
-        <CursorPos Y="314"/>
+        <TopLine Value="449"/>
+        <CursorPos X="66" Y="473"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -47,9 +47,10 @@
       <Unit>
         <Filename Value="uncirclephysicsconstants.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="18"/>
         <TopLine Value="6"/>
-        <CursorPos X="20" Y="18"/>
+        <CursorPos X="20" Y="15"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -106,8 +107,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unBallsInMotion"/>
         <EditorIndex Value="14"/>
-        <TopLine Value="353"/>
-        <CursorPos X="29" Y="357"/>
+        <TopLine Value="161"/>
+        <CursorPos X="53" Y="202"/>
         <UsageCount Value="210"/>
         <Loaded Value="True"/>
       </Unit>
@@ -153,9 +154,8 @@
         <Filename Value="uncircleutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCircleUtils"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="17"/>
-        <TopLine Value="34"/>
+        <TopLine Value="6"/>
         <CursorPos Y="45"/>
         <UsageCount Value="154"/>
         <Loaded Value="True"/>
@@ -286,7 +286,7 @@
         <EditorIndex Value="15"/>
         <TopLine Value="3"/>
         <CursorPos X="10" Y="19"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="19"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -294,15 +294,11 @@
         <EditorIndex Value="16"/>
         <TopLine Value="20"/>
         <CursorPos X="3" Y="22"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="19"/>
         <Loaded Value="True"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="153" TopLine="134"/>
-      </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
         <Caret Line="157" TopLine="134"/>
@@ -418,6 +414,10 @@
       <Position>
         <Filename Value="unballsinmotion.pas"/>
         <Caret Line="231" TopLine="214"/>
+      </Position>
+      <Position>
+        <Filename Value="frmcirclephysicsmain.pas"/>
+        <Caret Line="473" Column="66" TopLine="449"/>
       </Position>
     </JumpHistory>
     <RunParams>

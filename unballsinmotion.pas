@@ -199,7 +199,7 @@ begin
   if AEdgeHit = ehCircle then
   begin
     Result.EdgeHit := ehCircle;
-    Result.HitTime := intfCircleCollisionResult.HitTime;
+    Result.HitTime := intfStoreCircleCollisionResult.HitTime;
     Result.intfDetails := intfStoreCircleCollisionResult;
   end
   else if (AEdgeHit <> ehNone) then

@@ -310,7 +310,7 @@ end;
 // Add a message to the debug log
 procedure TForm1.LogMessage(const sMessage: string);
 begin
-  lstEvents.Lines.Add(sMessage);
+//  lstEvents.Lines.Add(sMessage);
 end;
 
 // Move the position of the puck when the game board is clicked
@@ -460,9 +460,17 @@ begin
   ACircle.BrushColor := clAqua;
   ACircle.PenColor := clBlue;
   {$IFDEF DEBUG}
-  ACircle.Text := 'Target';
+  ACircle.Text := 'Target1';
   {$ENDIF}
   FPathCalculator.AddCircleWithPosition(ACircle, TPointF.Create(300, 300));
+
+    ACircle := TBaseCircle.Create(TARGET_RADIUS, TARGET_MASS);
+  ACircle.BrushColor := clAqua;
+  ACircle.PenColor := clBlue;
+  {$IFDEF DEBUG}
+  ACircle.Text := 'Target1';
+  {$ENDIF}
+  FPathCalculator.AddCircleWithPosition(ACircle, TPointF.Create(200, 300));
 
 
   ACircle := TBaseCircle.Create(PUCK_RADIUS, PUCK_MASS);
