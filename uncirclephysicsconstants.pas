@@ -12,7 +12,7 @@ const
   PUCK_RADIUS = 9;
 
 const
-  TARGET_MASS = 0.6;
+  TARGET_MASS = 0.8;
 
 const
   TARGET_RADIUS = 7;

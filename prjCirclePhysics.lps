@@ -32,7 +32,7 @@
         <UnitName Value="unCirclePhysics"/>
         <EditorIndex Value="6"/>
         <TopLine Value="164"/>
-        <CursorPos X="79" Y="177"/>
+        <CursorPos X="73" Y="175"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -42,13 +42,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="100"/>
         <CursorPos Y="118"/>
-        <UsageCount Value="215"/>
+        <UsageCount Value="219"/>
       </Unit>
       <Unit>
         <Filename Value="uncirclephysicsconstants.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="18"/>
-        <CursorPos X="79" Y="15"/>
+        <EditorIndex Value="16"/>
+        <TopLine Value="13"/>
+        <CursorPos X="58" Y="25"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -56,8 +57,8 @@
         <Filename Value="unhelperinterfaces.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unHelperInterfaces"/>
-        <EditorIndex Value="19"/>
-        <CursorPos X="82" Y="13"/>
+        <EditorIndex Value="17"/>
+        <CursorPos X="60" Y="14"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -65,9 +66,9 @@
         <Filename Value="unothercircles.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unOtherCircles"/>
-        <EditorIndex Value="21"/>
-        <TopLine Value="146"/>
-        <CursorPos X="82" Y="155"/>
+        <EditorIndex Value="19"/>
+        <TopLine Value="4"/>
+        <CursorPos X="80" Y="18"/>
         <UsageCount Value="219"/>
         <Loaded Value="True"/>
       </Unit>
@@ -77,7 +78,7 @@
         <UnitName Value="unAngleSelectorControl"/>
         <EditorIndex Value="25"/>
         <TopLine Value="150"/>
-        <CursorPos X="57" Y="158"/>
+        <CursorPos X="60" Y="164"/>
         <UsageCount Value="233"/>
         <Loaded Value="True"/>
       </Unit>
@@ -87,7 +88,7 @@
         <UnitName Value="unBoardRenderer"/>
         <EditorIndex Value="24"/>
         <TopLine Value="23"/>
-        <CursorPos X="74" Y="43"/>
+        <CursorPos X="87" Y="33"/>
         <UsageCount Value="232"/>
         <Loaded Value="True"/>
       </Unit>
@@ -96,7 +97,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unGameBoard"/>
         <EditorIndex Value="7"/>
-        <CursorPos X="72" Y="14"/>
+        <CursorPos X="77" Y="15"/>
         <UsageCount Value="232"/>
         <Loaded Value="True"/>
       </Unit>
@@ -105,8 +106,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unBallsInMotion"/>
         <EditorIndex Value="14"/>
-        <TopLine Value="160"/>
-        <CursorPos X="80" Y="172"/>
+        <TopLine Value="85"/>
+        <CursorPos X="85" Y="100"/>
         <UsageCount Value="210"/>
         <Loaded Value="True"/>
       </Unit>
@@ -114,7 +115,7 @@
         <Filename Value="uncollisiontypes.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="12"/>
-        <CursorPos X="60" Y="15"/>
+        <CursorPos X="87" Y="13"/>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
       </Unit>
@@ -123,8 +124,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCollisionDetection"/>
         <EditorIndex Value="10"/>
-        <TopLine Value="76"/>
-        <CursorPos X="58" Y="89"/>
+        <TopLine Value="115"/>
+        <CursorPos X="72" Y="124"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -132,10 +133,10 @@
         <Filename Value="unpathpartimplementation.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unPathPartImplementation"/>
-        <EditorIndex Value="20"/>
-        <TopLine Value="43"/>
-        <CursorPos X="52" Y="54"/>
-        <UsageCount Value="202"/>
+        <EditorIndex Value="18"/>
+        <TopLine Value="48"/>
+        <CursorPos X="81" Y="63"/>
+        <UsageCount Value="161"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -153,10 +154,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCircleUtils"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="17"/>
-        <TopLine Value="42"/>
-        <CursorPos X="66" Y="19"/>
-        <UsageCount Value="154"/>
+        <EditorIndex Value="15"/>
+        <CursorPos X="82" Y="16"/>
+        <UsageCount Value="112"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -165,20 +165,20 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="39"/>
         <CursorPos X="15" Y="23"/>
-        <UsageCount Value="169"/>
+        <UsageCount Value="173"/>
       </Unit>
       <Unit>
         <Filename Value="unphysicsinterfaces.pas"/>
         <UnitName Value="unPhysicsInterfaces"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="15" Y="12"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="64"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\fgl.pp"/>
-        <EditorIndex Value="23"/>
-        <TopLine Value="1189"/>
-        <CursorPos Y="1203"/>
+        <EditorIndex Value="21"/>
+        <TopLine Value="1271"/>
+        <CursorPos X="18" Y="1283"/>
         <UsageCount Value="102"/>
         <Loaded Value="True"/>
       </Unit>
@@ -203,7 +203,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="90"/>
         <CursorPos X="5" Y="57"/>
-        <UsageCount Value="53"/>
+        <UsageCount Value="57"/>
       </Unit>
       <Unit>
         <Filename Value="unangleselectorcontrol.pas"/>
@@ -211,7 +211,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="67"/>
         <CursorPos X="28" Y="217"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="39"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\lcl\controls.pp"/>
@@ -261,7 +261,7 @@
         <EditorIndex Value="22"/>
         <TopLine Value="105"/>
         <CursorPos X="3" Y="107"/>
-        <UsageCount Value="106"/>
+        <UsageCount Value="85"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -270,7 +270,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="130"/>
         <CursorPos Y="150"/>
-        <UsageCount Value="104"/>
+        <UsageCount Value="83"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -299,124 +299,124 @@
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="157" TopLine="134"/>
+        <Filename Value="uncirclephysics.pas"/>
+        <Caret Line="178" TopLine="164"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="127" TopLine="109"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="128" TopLine="109"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="130" TopLine="110"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="131" TopLine="112"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="135" TopLine="121"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="146" TopLine="134"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="157" TopLine="137"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="116" TopLine="103"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="167" TopLine="156"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="160" TopLine="134"/>
+        <Caret Line="160" TopLine="148"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="161" TopLine="134"/>
+        <Caret Line="163" TopLine="148"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="162" TopLine="134"/>
+        <Caret Line="164" TopLine="148"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="163" TopLine="135"/>
+        <Caret Line="165" TopLine="148"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="166" TopLine="138"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="167" TopLine="139"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="168" TopLine="140"/>
+        <Caret Line="169" TopLine="149"/>
       </Position>
       <Position>
         <Filename Value="unpathpartimplementation.pas"/>
-        <Caret Line="88" TopLine="71"/>
+        <Caret Line="60" TopLine="48"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="168" TopLine="140"/>
+        <Caret Line="169" TopLine="149"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="33" Column="24" TopLine="16"/>
+        <Caret Line="173" TopLine="161"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="228" TopLine="221"/>
+        <Caret Line="172" TopLine="161"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="170" TopLine="154"/>
+        <Caret Line="174" TopLine="161"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="175" TopLine="154"/>
+        <Caret Line="175" TopLine="161"/>
       </Position>
       <Position>
-        <Filename Value="unpathpartimplementation.pas"/>
-        <Caret Line="60" TopLine="43"/>
-      </Position>
-      <Position>
-        <Filename Value="unpathpartimplementation.pas"/>
-        <Caret Line="61" TopLine="43"/>
-      </Position>
-      <Position>
-        <Filename Value="unpathpartimplementation.pas"/>
-        <Caret Line="62" TopLine="43"/>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="71" TopLine="58"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="153" TopLine="139"/>
+        <Caret Line="175" TopLine="161"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="157" TopLine="139"/>
+        <Caret Line="179" TopLine="161"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="160" TopLine="139"/>
+        <Caret Line="180" TopLine="161"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="161" TopLine="139"/>
+        <Caret Line="181" TopLine="161"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="71" TopLine="58"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="162" TopLine="139"/>
+        <Caret Line="181" TopLine="161"/>
+      </Position>
+      <Position>
+        <Filename Value="uncollisiondetection.pas"/>
+        <Caret Line="172" Column="45" TopLine="150"/>
       </Position>
       <Position>
         <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="163" TopLine="139"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="175" TopLine="158"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="153" TopLine="136"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="170" Column="31" TopLine="158"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="147" Column="4" TopLine="117"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="144" TopLine="117"/>
-      </Position>
-      <Position>
-        <Filename Value="unballsinmotion.pas"/>
-        <Caret Line="231" TopLine="214"/>
-      </Position>
-      <Position>
-        <Filename Value="frmcirclephysicsmain.pas"/>
-        <Caret Line="473" Column="66" TopLine="449"/>
+        <Caret Line="167" Column="114" TopLine="155"/>
       </Position>
     </JumpHistory>
     <RunParams>
