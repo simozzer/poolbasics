@@ -155,7 +155,6 @@ begin
   for i := 0 to pred(intfMovingPathParts.Count) do
   begin
 
-
     intfPathPart := intfMovingPathParts[i];
 
     // Test if circle hits edge of game board

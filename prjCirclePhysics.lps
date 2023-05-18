@@ -9,7 +9,7 @@
         <Filename Value="prjCirclePhysics.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="16" Y="5"/>
+        <CursorPos X="12" Y="12"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -21,7 +21,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmCirclePhysicsMain"/>
         <TopLine Value="449"/>
-        <CursorPos X="66" Y="473"/>
+        <CursorPos X="59" Y="461"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -32,7 +32,7 @@
         <UnitName Value="unCirclePhysics"/>
         <EditorIndex Value="6"/>
         <TopLine Value="164"/>
-        <CursorPos X="73" Y="175"/>
+        <CursorPos X="79" Y="177"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -47,10 +47,8 @@
       <Unit>
         <Filename Value="uncirclephysicsconstants.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="18"/>
-        <TopLine Value="6"/>
-        <CursorPos X="20" Y="15"/>
+        <CursorPos X="79" Y="15"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -59,7 +57,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unHelperInterfaces"/>
         <EditorIndex Value="19"/>
-        <CursorPos X="60" Y="14"/>
+        <CursorPos X="82" Y="13"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit>
@@ -69,7 +67,7 @@
         <UnitName Value="unOtherCircles"/>
         <EditorIndex Value="21"/>
         <TopLine Value="146"/>
-        <CursorPos Y="160"/>
+        <CursorPos X="82" Y="155"/>
         <UsageCount Value="219"/>
         <Loaded Value="True"/>
       </Unit>
@@ -79,7 +77,7 @@
         <UnitName Value="unAngleSelectorControl"/>
         <EditorIndex Value="25"/>
         <TopLine Value="150"/>
-        <CursorPos X="60" Y="164"/>
+        <CursorPos X="57" Y="158"/>
         <UsageCount Value="233"/>
         <Loaded Value="True"/>
       </Unit>
@@ -89,7 +87,7 @@
         <UnitName Value="unBoardRenderer"/>
         <EditorIndex Value="24"/>
         <TopLine Value="23"/>
-        <CursorPos X="87" Y="33"/>
+        <CursorPos X="74" Y="43"/>
         <UsageCount Value="232"/>
         <Loaded Value="True"/>
       </Unit>
@@ -98,7 +96,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unGameBoard"/>
         <EditorIndex Value="7"/>
-        <CursorPos X="77" Y="15"/>
+        <CursorPos X="72" Y="14"/>
         <UsageCount Value="232"/>
         <Loaded Value="True"/>
       </Unit>
@@ -107,8 +105,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unBallsInMotion"/>
         <EditorIndex Value="14"/>
-        <TopLine Value="161"/>
-        <CursorPos X="53" Y="202"/>
+        <TopLine Value="160"/>
+        <CursorPos X="80" Y="172"/>
         <UsageCount Value="210"/>
         <Loaded Value="True"/>
       </Unit>
@@ -116,7 +114,7 @@
         <Filename Value="uncollisiontypes.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="12"/>
-        <CursorPos X="87" Y="13"/>
+        <CursorPos X="60" Y="15"/>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
       </Unit>
@@ -126,7 +124,7 @@
         <UnitName Value="unCollisionDetection"/>
         <EditorIndex Value="10"/>
         <TopLine Value="76"/>
-        <CursorPos Y="251"/>
+        <CursorPos X="58" Y="89"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -136,7 +134,7 @@
         <UnitName Value="unPathPartImplementation"/>
         <EditorIndex Value="20"/>
         <TopLine Value="43"/>
-        <CursorPos Y="62"/>
+        <CursorPos X="52" Y="54"/>
         <UsageCount Value="202"/>
         <Loaded Value="True"/>
       </Unit>
@@ -146,7 +144,7 @@
         <UnitName Value="unTimesliceImpl"/>
         <EditorIndex Value="13"/>
         <TopLine Value="51"/>
-        <CursorPos X="75" Y="64"/>
+        <CursorPos X="83" Y="66"/>
         <UsageCount Value="193"/>
         <Loaded Value="True"/>
       </Unit>
@@ -154,9 +152,10 @@
         <Filename Value="uncircleutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCircleUtils"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="17"/>
-        <TopLine Value="6"/>
-        <CursorPos Y="45"/>
+        <TopLine Value="42"/>
+        <CursorPos X="66" Y="19"/>
         <UsageCount Value="154"/>
         <Loaded Value="True"/>
       </Unit>
