@@ -8,61 +8,61 @@ object Form1: TForm1
   ClientWidth = 1180
   LCLVersion = '2.2.4.0'
   object edtTime: TEdit
-    Left = 728
+    Left = 721
     Height = 23
-    Top = 456
+    Top = 656
     Width = 80
     TabOrder = 0
     Text = '557.0'
   end
   object btnRenderFrame: TButton
-    Left = 680
+    Left = 673
     Height = 25
-    Top = 528
+    Top = 728
     Width = 104
     Caption = 'Render Frame'
     OnClick = btnRenderFrameClick
     TabOrder = 1
   end
   object lblFrameTime: TLabel
-    Left = 656
+    Left = 649
     Height = 15
-    Top = 460
+    Top = 660
     Width = 62
     Caption = 'Frame &Time'
     FocusControl = edtTime
     ParentColor = False
   end
   object lblTimeIncrement: TLabel
-    Left = 656
+    Left = 649
     Height = 15
-    Top = 492
+    Top = 692
     Width = 45
     Caption = 'Time &Inc'
     FocusControl = edtTimeIncrement
     ParentColor = False
   end
   object edtTimeIncrement: TEdit
-    Left = 728
+    Left = 721
     Height = 23
-    Top = 489
+    Top = 689
     Width = 80
     TabOrder = 2
     Text = '20.0'
   end
   object btnTimeAdd: TButton
-    Left = 680
+    Left = 673
     Height = 25
-    Top = 563
+    Top = 763
     Width = 32
     Caption = '&+'
     OnClick = btnTimeAddClick
     TabOrder = 3
   end
   object btnTimeSubtract: TButton
-    Left = 752
+    Left = 745
     Height = 25
-    Top = 563
+    Top = 763
     Width = 32
     Caption = '&-'
     OnClick = btnTimeSubtractClick
@@ -86,11 +86,11 @@ object Form1: TForm1
   end
   object grpTakeShot: TGroupBox
     Left = 664
-    Height = 433
+    Height = 633
     Top = 8
     Width = 137
     Caption = 'Take &Shot'
-    ClientHeight = 413
+    ClientHeight = 613
     ClientWidth = 133
     TabOrder = 6
     object lblAngle: TLabel
@@ -102,9 +102,9 @@ object Form1: TForm1
       ParentColor = False
     end
     object chkUpdatePosition: TCheckBox
-      Left = 8
+      Left = 16
       Height = 19
-      Top = 392
+      Top = 592
       Width = 104
       Caption = '&Update Position'
       Checked = True
@@ -114,14 +114,14 @@ object Form1: TForm1
     object btnTrigger: TButton
       Left = 16
       Height = 25
-      Top = 368
+      Top = 560
       Width = 75
       Action = actTrigger
       TabOrder = 1
     end
     object trkVelocity: TTrackBar
       Left = 40
-      Height = 140
+      Height = 320
       Top = 224
       Width = 25
       Max = 100
@@ -167,31 +167,6 @@ object Form1: TForm1
     ParentColor = False
     ParentFont = False
   end
-  object btnDrawTrajectory: TButton
-    Left = 680
-    Height = 25
-    Top = 640
-    Width = 104
-    Caption = 'Draw Trajectory'
-    OnClick = btnDrawTrajectoryClick
-    TabOrder = 7
-  end
-  object lblCos: TLabel
-    Left = 684
-    Height = 15
-    Top = 695
-    Width = 33
-    Caption = 'lblCos'
-    ParentColor = False
-  end
-  object lblSin: TLabel
-    Left = 684
-    Height = 15
-    Top = 728
-    Width = 29
-    Caption = 'lblSin'
-    ParentColor = False
-  end
   object lstEvents: TMemo
     Left = 816
     Height = 762
@@ -200,7 +175,8 @@ object Form1: TForm1
     Lines.Strings = (
       'lstEvents'
     )
-    TabOrder = 8
+    ScrollBars = ssAutoBoth
+    TabOrder = 7
   end
   object ActionList1: TActionList
     Images = ImageList1

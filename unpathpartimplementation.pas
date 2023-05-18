@@ -96,9 +96,9 @@ end;
 
 function TPathPart.ToString: string;
 begin
-  Result := Format('Part: Origin: (%f,%f), Angle: %f, Velocity: %f',
+  Result := Format('Part: Origin: (%f,%f), Angle: %f, Velocity: %f, %s',
     [FintfVector.GetOrigin.x, FintfVector.GetOrigin.Y, FintfVector.Angle,
-    FintfVector.InitialVelocity]);
+    FintfVector.InitialVelocity, FintfCircle.ToString()]);
 end;
 
 constructor TPathPart.Create(const intfCircle: ICircle; const intfVector: IBasicVector);
