@@ -20,8 +20,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmCirclePhysicsMain"/>
-        <TopLine Value="398"/>
-        <CursorPos X="100" Y="406"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="308"/>
+        <CursorPos X="3" Y="313"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -35,14 +36,6 @@
         <CursorPos X="73" Y="175"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="untrajectorypaths.pas"/>
-        <UnitName Value="unTrajectoryPaths"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="100"/>
-        <CursorPos Y="118"/>
-        <UsageCount Value="219"/>
       </Unit>
       <Unit>
         <Filename Value="uncirclephysicsconstants.pas"/>
@@ -106,8 +99,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unBallsInMotion"/>
         <EditorIndex Value="14"/>
-        <TopLine Value="85"/>
-        <CursorPos X="85" Y="100"/>
+        <TopLine Value="176"/>
+        <CursorPos X="53" Y="201"/>
         <UsageCount Value="210"/>
         <Loaded Value="True"/>
       </Unit>
@@ -124,7 +117,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCollisionDetection"/>
         <EditorIndex Value="10"/>
-        <TopLine Value="115"/>
+        <TopLine Value="234"/>
         <CursorPos X="72" Y="124"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
@@ -136,7 +129,7 @@
         <EditorIndex Value="18"/>
         <TopLine Value="48"/>
         <CursorPos X="81" Y="63"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="162"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -146,18 +139,25 @@
         <EditorIndex Value="13"/>
         <TopLine Value="51"/>
         <CursorPos X="75" Y="64"/>
-        <UsageCount Value="151"/>
+        <UsageCount Value="152"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="uncircleutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unCircleUtils"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="15"/>
         <CursorPos X="82" Y="16"/>
-        <UsageCount Value="112"/>
+        <UsageCount Value="113"/>
         <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="untrajectorypaths.pas"/>
+        <UnitName Value="unTrajectoryPaths"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="100"/>
+        <CursorPos Y="118"/>
+        <UsageCount Value="219"/>
       </Unit>
       <Unit>
         <Filename Value="unboardrenderer.pas"/>
@@ -261,7 +261,7 @@
         <EditorIndex Value="20"/>
         <TopLine Value="105"/>
         <CursorPos X="3" Y="107"/>
-        <UsageCount Value="85"/>
+        <UsageCount Value="86"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -270,7 +270,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="130"/>
         <CursorPos Y="150"/>
-        <UsageCount Value="83"/>
+        <UsageCount Value="84"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -282,10 +282,6 @@
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="uncirclephysics.pas"/>
-        <Caret Line="178" TopLine="164"/>
-      </Position>
       <Position>
         <Filename Value="uncollisiondetection.pas"/>
         <Caret Line="127" TopLine="109"/>
@@ -401,6 +397,10 @@
       <Position>
         <Filename Value="unballsinmotion.pas"/>
         <Caret Line="167" Column="114" TopLine="155"/>
+      </Position>
+      <Position>
+        <Filename Value="frmcirclephysicsmain.pas"/>
+        <Caret Line="73" Column="45" TopLine="64"/>
       </Position>
     </JumpHistory>
     <RunParams>
