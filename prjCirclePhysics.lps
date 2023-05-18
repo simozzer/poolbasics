@@ -9,7 +9,7 @@
         <Filename Value="prjCirclePhysics.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="16" Y="5"/>
+        <CursorPos X="12" Y="12"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
       </Unit>
@@ -20,8 +20,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="frmCirclePhysicsMain"/>
-        <TopLine Value="398"/>
-        <CursorPos X="100" Y="406"/>
+        <TopLine Value="449"/>
+        <CursorPos X="59" Y="461"/>
         <UsageCount Value="224"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -76,7 +76,7 @@
         <Filename Value="Controls\unangleselectorcontrol.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unAngleSelectorControl"/>
-        <EditorIndex Value="23"/>
+        <EditorIndex Value="25"/>
         <TopLine Value="150"/>
         <CursorPos X="60" Y="164"/>
         <UsageCount Value="233"/>
@@ -86,7 +86,7 @@
         <Filename Value="Controls\unboardrenderer.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="unBoardRenderer"/>
-        <EditorIndex Value="22"/>
+        <EditorIndex Value="24"/>
         <TopLine Value="23"/>
         <CursorPos X="87" Y="33"/>
         <UsageCount Value="232"/>
@@ -145,8 +145,8 @@
         <UnitName Value="unTimesliceImpl"/>
         <EditorIndex Value="13"/>
         <TopLine Value="51"/>
-        <CursorPos X="75" Y="64"/>
-        <UsageCount Value="151"/>
+        <CursorPos X="83" Y="66"/>
+        <UsageCount Value="193"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -224,7 +224,7 @@
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\fcl-image\src\fpcanvas.inc"/>
-        <EditorIndex Value="24"/>
+        <EditorIndex Value="26"/>
         <TopLine Value="4"/>
         <CursorPos X="15" Y="23"/>
         <UsageCount Value="115"/>
@@ -258,7 +258,7 @@
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\types.pp"/>
         <UnitName Value="Types"/>
-        <EditorIndex Value="20"/>
+        <EditorIndex Value="22"/>
         <TopLine Value="105"/>
         <CursorPos X="3" Y="107"/>
         <UsageCount Value="85"/>
@@ -278,7 +278,23 @@
         <UnitName Value="unScreenCircles"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="44" Y="14"/>
-        <UsageCount Value="54"/>
+        <UsageCount Value="50"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\sysutils\intfh.inc"/>
+        <EditorIndex Value="15"/>
+        <TopLine Value="3"/>
+        <CursorPos X="10" Y="19"/>
+        <UsageCount Value="19"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\sysutils\sysuintf.inc"/>
+        <EditorIndex Value="16"/>
+        <TopLine Value="20"/>
+        <CursorPos X="3" Y="22"/>
+        <UsageCount Value="19"/>
+        <Loaded Value="True"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">

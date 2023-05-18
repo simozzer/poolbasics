@@ -133,7 +133,9 @@ var
   dEarliestHitTime: double;
   dEdgeHitTime: double;
   intfPathPart: IPathPart;
+  ATempEdgeHit: TEdgeHit;
   AEdgeHit: TEdgeHit;
+
   intfEdgeHitPathPart: IPathPart;
   intfCircleCollisionResult: ICircleCollisionResult;
   intfStoreCircleCollisionResult: ICircleCollisionResult;
@@ -157,14 +159,15 @@ begin
 
     // Test if circle hits edge of game board
     dEdgeHitTime := dEarliestHitTime;
-    AEdgeHit := ehNone;
-    TCollisionDetection.DetectEdgeHits(intfPathPart, dEdgeHitTime, AEdgeHit);
-    if (AEdgeHit <> ehNone) and ((dEarliestHitTime < 0) or
+    ATempEdgeHit := ehNone;
+    TCollisionDetection.DetectEdgeHits(intfPathPart, dEdgeHitTime, ATempEdgeHit);
+    if (ATempEdgeHit <> ehNone) and ((dEarliestHitTime < 0) or
       (dEdgeHitTime < dEarliestHitTime)) then
     begin
       intfEdgeHitPathPart := intfPathPart;
       dEarliestHitTime := dEdgeHitTime;
       iCircleId := TCircleUtils.GetCircleId(intfPathPart.Circle);
+      AEdgeHit := ATempEdgeHit;
 
       LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
         EdgeHitToStr(AEdgeHit), dEdgeHitTime]));
@@ -195,7 +198,7 @@ begin
   if AEdgeHit = ehCircle then
   begin
     Result.EdgeHit := ehCircle;
-    Result.HitTime := intfCircleCollisionResult.HitTime;
+    Result.HitTime := intfStoreCircleCollisionResult.HitTime;
     Result.intfDetails := intfStoreCircleCollisionResult;
   end
   else if (AEdgeHit <> ehNone) then
