@@ -51,6 +51,7 @@ type
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure trkVelocityChange(Sender: TObject);
 
 
@@ -160,6 +161,7 @@ var
   dTotalVelocity: double;
   i: integer;
   intfTimeslice: ITimeslice;
+  intfVector : IBasicVector;
 begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
 
@@ -181,6 +183,15 @@ begin
 
     // TODO:: reduse origional circles (clone last
     FPathCalculator.Reinitialize;
+
+
+    // RANDOM BIT
+    intfVector := TCircleUtils.GetPathPartForCircleID(
+      FPathCalculator.Timeslices[0].PathParts, FiPuckID).Vector;
+    intfVector.Angle := Random * (2 * pi);
+    intfVector.InitialVelocity := Random + 1.6;
+    actTrigger.Enabled:=true;
+    actTriggerExecute(Self);
 
   end
   else
@@ -235,6 +246,11 @@ begin
   edtTime.Text := FloatToStr(StrToFloatDef(edtTime.Text, 0.0) -
     StrToFloatDef(edtTimeIncrement.Text, 0.0));
   actRenderExecute(Self, StrToFloatDef(edtTime.Text, 0.0));
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  actRenderExecute(Self, 0);
 end;
 
 // Change the intended velocity when the slider in the UI is changed
@@ -310,7 +326,7 @@ end;
 // Add a message to the debug log
 procedure TForm1.LogMessage(const sMessage: string);
 begin
-//  lstEvents.Lines.Add(sMessage);
+  //  lstEvents.Lines.Add(sMessage);
 end;
 
 // Move the position of the puck when the game board is clicked
@@ -443,6 +459,23 @@ constructor TForm1.Create(AOwner: TComponent);
 var
   ACircle: ICircle;
   intfVector: IBasicVector;
+
+  function AddTargetCircle(pt: TPointF; const sText: string; Const clrBrush, clrPen :  TColor): ICircle;
+  var
+    intfCircle: ICircle;
+  begin
+    intfCircle := TBaseCircle.Create(TARGET_RADIUS, TARGET_MASS);
+    intfCircle.BrushColor := clrBrush;
+    intfCircle.PenColor := clrPen;
+  {$IFDEF DEBUG}
+    intfCircle.Text := sText;
+  {$ENDIF}
+    // Add a small amount of random to the position for each circle
+    pt.X := pt.X + Math.RandomRange(0,3000)/6000;
+    pt.Y := pt.Y + Math.RandomRange(0,3000)/6000;
+    FPathCalculator.AddCircleWithPosition(intfCircle, pt);
+  end;
+
 begin
   inherited Create(AOwner);
   FBoard := TCaromGameBoard.Create(Self);
@@ -456,25 +489,40 @@ begin
 
   FPathCalculator := TCirclePathCalculator.Create;
 
+  AddTargetCircle(TPointF.Create(300, 300),'Queen', clRed, clMaroon);
+  AddTargetCircle(TPointF.Create(300, 285),'Black1', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(300, 270),'White1', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(300, 315),'White2', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(300, 330),'White3', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(287, 277),'Black2', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(313, 277),'Black3', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(287, 292),'White4', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(313, 292),'White5', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(287, 307),'Black4', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(313, 307),'Black5', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(287, 322),'Black6', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(313, 322),'Black7', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(274, 285),'White6', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(274, 300),'Black8', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(274, 315),'White7', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(326, 285),'White8', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(326, 300),'Black9', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(326, 315),'White9', clBlue, clBlack);
+
+
+  {
   ACircle := TBaseCircle.Create(TARGET_RADIUS, TARGET_MASS);
   ACircle.BrushColor := clAqua;
   ACircle.PenColor := clBlue;
   {$IFDEF DEBUG}
   ACircle.Text := 'Target';
   {$ENDIF}
-  FPathCalculator.AddCircleWithPosition(ACircle, TPointF.Create(300, 300));
-
-    ACircle := TBaseCircle.Create(TARGET_RADIUS, TARGET_MASS);
-  ACircle.BrushColor := clAqua;
-  ACircle.PenColor := clBlue;
-  {$IFDEF DEBUG}
-  ACircle.Text := 'Target';
-  {$ENDIF}
   FPathCalculator.AddCircleWithPosition(ACircle, TPointF.Create(180, 200));
+  }
 
 
   ACircle := TBaseCircle.Create(PUCK_RADIUS, PUCK_MASS);
-  ACircle.BrushColor := clGray;
+  ACircle.BrushColor := clYellow;
   ACircle.PenColor := clBlack;
   {$IFDEF DEBUG}
   ACircle.Text := 'Puck';

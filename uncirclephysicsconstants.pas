@@ -12,13 +12,13 @@ const
   PUCK_RADIUS = 9;
 
 const
-  TARGET_MASS = 0.8;
+  TARGET_MASS = 5;
 
 const
   TARGET_RADIUS = 7;
 
 const
-  PUCK_MASS = 1;
+  PUCK_MASS = 15;
 
 const
   POCKET_RADIUS = 20;
