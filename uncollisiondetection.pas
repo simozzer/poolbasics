@@ -312,5 +312,27 @@ begin
   Result.Vector2 := finalv2;
 end;
 
+{
+
+Moving circles.
+
+Find the moving circle with the shortest duration
+
+for this duration check if the rectangle of movement (+radius) interesects with the other (+radius)
+
+if not then this becomes a stationary circle problem.
+
+
+(WHEN A BALL STOPS RECALCULATE TRAJETORIES!! -- probably not needed)
+
+If they do intersect then subtract the vector with minimum magnitude from the
+vector with max magnitude (does this make it static???) and apply the steps
+in  DetectStationaryCircleHit.
+
+
+
+
+
+}
 
 end.

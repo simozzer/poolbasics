@@ -26,7 +26,7 @@ type
     btnClearLog: TButton;
     btnTrigger: TButton;
     btnLessAngle: TButton;
-    chkUpdatePosition: TCheckBox;
+    chkContinueRandom: TCheckBox;
     edtTimeIncrement: TEdit;
     edtTime: TEdit;
     grpTakeShot: TGroupBox;
@@ -51,6 +51,7 @@ type
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
+    procedure chkContinueRandomChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure trkVelocityChange(Sender: TObject);
 
@@ -185,13 +186,15 @@ begin
     FPathCalculator.Reinitialize;
 
 
-    // RANDOM BIT
-    intfVector := TCircleUtils.GetPathPartForCircleID(
-      FPathCalculator.Timeslices[0].PathParts, FiPuckID).Vector;
-    intfVector.Angle := Random * (2 * pi);
-    intfVector.InitialVelocity := Random + 1.6;
-    actTrigger.Enabled:=true;
-    actTriggerExecute(Self);
+    if chkContinueRandom.Checked then
+    begin
+      intfVector := TCircleUtils.GetPathPartForCircleID(
+        FPathCalculator.Timeslices[0].PathParts, FiPuckID).Vector;
+      intfVector.Angle := Random * (2 * pi);
+      intfVector.InitialVelocity := Random + 3.6;
+      actTrigger.Enabled:=true;
+      actTriggerExecute(Self);
+    end;
 
   end
   else
@@ -246,6 +249,11 @@ begin
   edtTime.Text := FloatToStr(StrToFloatDef(edtTime.Text, 0.0) -
     StrToFloatDef(edtTimeIncrement.Text, 0.0));
   actRenderExecute(Self, StrToFloatDef(edtTime.Text, 0.0));
+end;
+
+procedure TForm1.chkContinueRandomChange(Sender: TObject);
+begin
+
 end;
 
 procedure TForm1.FormShow(Sender: TObject);

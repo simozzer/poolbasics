@@ -17,16 +17,14 @@ type
     function GetMagnitude: double;
     function GetAngle: double;
     function GetVector: Tvector2_double;
-  public
-    constructor CreateWithAngle(const dMagnitude, dAngle: double);
-    constructor Create(const dXLength, dYLength: double);
     function GetNormalised: I2DVector;
     function GetDotProduct(const AVector: I2DVector): double;
     function GetDotProductV(const AVec: Tvector2_double): double;
     function Minus(const AVector: I2DVector): I2DVector;
-    property Magnitude: double read GetMagnitude;
-    property Angle: double read GetAngle;
-    property Vector: Tvector2_double read GetVector;
+  public
+    constructor CreateWithAngle(const dMagnitude, dAngle: double);
+    constructor Create(const dXLength, dYLength: double);
+
   end;
 
   { TBasicVector }
@@ -51,9 +49,6 @@ type
     procedure SetEndTime(const dTime: double);
     function GetStartTime: double;
     function clone: IBasicVector;
-  public
-    constructor Create(const ptOrigin: TPointF;
-      const dVelocity, dAngle, dStartTime: double);
     function GetXAtTime(const dTime: double): double;
     function GetYAtTime(const dTime: double): double;
     function GetTimeToXDeplacement(const dDeplacement: double): double;
@@ -66,12 +61,10 @@ type
     function GetVelocityVectorAtTime(const dTime: double): Tvector2_double;
     function GetVelocityAtTime(const dTime: double): double;
     function ToString(): string; override;
-    property InitialVelocity: double read FdInitialVelocity write SetInitialVelocity;
-    property Origin: TPointF read GetOrigin;
-    property Angle: double read GetAngle write SetAngle;
-    property EndTime: double read GetEndTime write SetEndTime;
-    property StartTime: double read GetStartTime;
-    property Vector: Tvector2_double read GetVector;
+  public
+    constructor Create(const ptOrigin: TPointF;
+      const dVelocity, dAngle, dStartTime: double);
+
   end;
 
   { TBasicMotion }
@@ -199,8 +192,8 @@ end;
 
 function TBasicVector.clone: IBasicVector;
 begin
-  Result := TBasicVector.Create(TPOintF.Create(Origin.X, Origin.Y),
-    InitialVelocity, Angle, StartTime);
+  Result := TBasicVector.Create(TPOintF.Create(GetOrigin.X, GetOrigin.Y),
+    GetInitialVelocity, GetAngle, GetStartTime);
 end;
 
 procedure TBasicVector.SetAngle(AValue: double);
@@ -292,7 +285,7 @@ end;
 
 function TBasicVector.GetTimeToStop: double;
 begin
-  Result := TBasicMotion.GetTimeToStop(InitialVelocity);
+  Result := TBasicMotion.GetTimeToStop(GetInitialVelocity);
 end;
 
 procedure TBasicVector.ReverseX;
@@ -302,7 +295,7 @@ end;
 
 procedure TBasicVector.ReverseY;
 begin
-  Angle := -Angle;
+  FdAngle := -FdAngle;
 end;
 
 function TBasicVector.GetVelocityVectorAtTime(const dTime: double): Tvector2_double;
@@ -321,8 +314,8 @@ end;
 function TBasicVector.ToString: string;
 begin
   Result := Format('Time:%F, (%F, %F), V:%F, A:%F (%F)',
-    [StartTime, FptOrigin.X, FptOrigin.Y, InitialVelocity, Angle,
-    TBasicMotion.RadToDeg(Angle)]);
+    [FdStartTime, FptOrigin.X, FptOrigin.Y, FdInitialVelocity, FdAngle,
+    TBasicMotion.RadToDeg(FdAngle)]);
 end;
 
 

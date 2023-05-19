@@ -53,8 +53,6 @@ type
     procedure Clear;
     procedure Add(const intfCircle: ICircle);
   public
-    property Count: cardinal read GetCount;
-    property Item[const iIndex: integer]: ICircle read GetItem; default;
     constructor Create;
     destructor Destroy; override;
   end;

@@ -34,13 +34,12 @@ type
     procedure SetLogger(const intfLogger: IBasicLogger);
     function GetThePlotAtTime(const dTime: double): ITimeslice;
     procedure Reinitialize;
-  public
-    constructor Create;
-    destructor Destroy; override;
     procedure AddCircleWithPosition(const ACircle: ICircle; const Position: TPointF);
     procedure Clear;
     procedure GainThePlot;
-    property Timeslices: ITimesliceList read GetTimeslices;
+  public
+    constructor Create;
+    destructor Destroy; override;
   end;
 
 implementation
