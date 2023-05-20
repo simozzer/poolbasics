@@ -73,14 +73,47 @@ var
   ACanvas: TCanvas;
 begin
   ACanvas := FBitmap.Canvas;
-  ACanvas.Brush.Color := FBackColor;
+  ACanvas.Brush.Color := clWhite; //FBackColor;
   ACanvas.FillRect(0, 0, FiWidth, FiHeight);
+
+  ACanvas.Brush.Color := $fefaec;
+  ACanvas.FillRect(50 + (2*PUCK_RADIUS),50 + (2*PUCK_RADIUS),550 - (2*PUCK_RADIUS), 550 - (2*PUCK_RADIUS));
+
   ACanvas.Pen.Color := clLtGray;
+  ACanvas.Brush.Color := clWhite;
+  ACanvas.Ellipse(263,263,338,338);
+
+
   ACanvas.MoveTo(FiWidth div 2, 0);
   ACanvas.LineTo(FiWidth div 2, FiHeight);
   ACanvas.MoveTo(0, FiHeight div 2);
   ACanvas.LineTo(FiHeight, FiWidth div 2);
 
+
+  ACanvas.Brush.Color := $f0f0f0;
+  ACanvas.Pen.Color := $f0f0f0;
+
+  // draw circles at ends of launch zones;
+  ACanvas.Ellipse(80-PUCK_RADIUS,50,80+PUCK_RADIUS,50+(2*PUCK_RADIUS));
+  ACanvas.Ellipse(520-PUCK_RADIUS,50,520+PUCK_RADIUS, 50+(2*PUCK_RADIUS));
+
+  ACanvas.Ellipse(80-PUCK_RADIUS,550,80+PUCK_RADIUS,550-(2*PUCK_RADIUS));
+  ACanvas.Ellipse(520-PUCK_RADIUS,550,520+PUCK_RADIUS, 550-(2*PUCK_RADIUS));
+
+  ACanvas.Ellipse(50,80-PUCK_RADIUS,50+(2*PUCK_RADIUS),80+PUCK_RADIUS);
+  ACanvas.Ellipse(50, 520-PUCK_RADIUS,50+(2*PUCK_RADIUS),520+PUCK_RADIUS);
+
+  ACanvas.Ellipse(550,80-PUCK_RADIUS,550-(2*PUCK_RADIUS),80+PUCK_RADIUS);
+  ACanvas.Ellipse(550, 520-PUCK_RADIUS,550-(2*PUCK_RADIUS),520+PUCK_RADIUS);
+
+   // Draw launch zones
+  ACanvas.Rectangle(550,80,550 - (2*PUCK_RADIUS), 520);
+  ACanvas.Rectangle(80,50,520,50+ (2*PUCK_RADIUS));
+  ACanvas.Rectangle(80,550,520, 550- (2*PUCK_RADIUS));
+  ACanvas.Rectangle(50,80,50 + (2*PUCK_RADIUS), 520);
+
+
+  // Draw the pockets
   ACanvas.Brush.Color := clBlack;
   ACanvas.Ellipse(-POCKET_RADIUS, -POCKET_RADIUS, POCKET_RADIUS, POCKET_RADIUS);
   ACanvas.Ellipse(FiWidth - POCKET_RADIUS, -POCKET_RADIUS, FiWidth +
@@ -89,6 +122,8 @@ begin
     FiHeight + POCKET_RADIUS);
   ACanvas.Ellipse(FiWidth - POCKET_RADIUS, FiHeight - POCKET_RADIUS,
     FiWidth + POCKET_RADIUS, FiHeight + POCKET_RADIUS);
+
+
 end;
 
 end.

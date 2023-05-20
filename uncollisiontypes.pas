@@ -9,7 +9,7 @@ uses
 
 type
   // Enumeration for describing which objects were hit
-  TEdgeHit = (ehNone, ehLeft, ehTop, ehRight, ehBottom, ehCircle);
+  TEdgeHit = (ehNone, ehLeft, ehTop, ehRight, ehBottom, ehCircle, ehPocket);
 
 
   // Which edge was hit, and at what time

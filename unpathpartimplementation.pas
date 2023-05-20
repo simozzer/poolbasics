@@ -19,8 +19,6 @@ type
     function GetCircle: ICircle;
     function GetVector: IBasicVector;
     function ToString(): string;
-    property Circle: ICircle read GetCircle;
-    property Vector: IBasicVector read GetVector;
   public
     constructor Create(const intfCircle: ICircle; const intfVector: IBasicVector);
   end;
@@ -35,8 +33,7 @@ type
     function GetCount: cardinal;
     procedure Clear;
     procedure Add(const intfPathPart: IPathPart);
-    property Count: cardinal read GetCount;
-    property Item[const iIndex: integer]: IPathPart read GetItem; default;
+    procedure Delete(const intfPathPart: IPathPart);
   public
     constructor Create;
     destructor Destroy; override;
@@ -44,7 +41,7 @@ type
 
 implementation
 
-uses fgl, unCirclePhysics;
+uses fgl;
 
 type
   TIntPathPartList = specialize TFPGInterfacedObjectList<IPathPart>;
@@ -69,6 +66,15 @@ end;
 procedure TPathPartList.Add(const intfPathPart: IPathPart);
 begin
   TIntPathPartList(FList).Add(intfPathPart);
+end;
+
+procedure TPathPartList.Delete(const intfPathPart: IPathPart);
+var
+  iIndex : Integer;
+begin
+  iIndex := TIntPathPartList(FList).IndexOf(intfPathPart);
+  if (iIndex >= 0) then
+    TIntPathPartList(FList).Delete(iIndex);
 end;
 
 constructor TPathPartList.Create;
