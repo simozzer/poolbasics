@@ -52,6 +52,7 @@ type
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
     procedure chkContinueRandomChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure trkVelocityChange(Sender: TObject);
 
@@ -69,6 +70,8 @@ type
     FiPuckID: integer;
 
     FPathCalculator: IPathPlotter;
+
+    FiLastRenderedTimesliceIndex : Integer;
 
     procedure DrawTrajectoryPaths;
 
@@ -148,7 +151,9 @@ begin
   actTrigger.Enabled := False;
 
 
+  FiLastRenderedTimesliceIndex := -1;
   FPathCalculator.GainThePlot;
+  DrawTrajectoryPaths;
   FcStartAnimationTime := GetTickCount64;
 
   AnimationTimer.Enabled := True;
@@ -163,6 +168,8 @@ var
   i: integer;
   intfTimeslice: ITimeslice;
   intfVector : IBasicVector;
+  dTimeInSlice : Double;
+  iTimeSliceIndex : Integer;
 begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
 
@@ -181,17 +188,14 @@ begin
     AnimationTimer.Enabled := False;
     actTrigger.Enabled := True;
 
-
-    // TODO:: reduse origional circles (clone last
     FPathCalculator.Reinitialize;
-
 
     if chkContinueRandom.Checked then
     begin
       intfVector := TCircleUtils.GetPathPartForCircleID(
         FPathCalculator.Timeslices[0].PathParts, FiPuckID).Vector;
       intfVector.Angle := Random * (2 * pi);
-      intfVector.InitialVelocity := Random + 3.6;
+      intfVector.InitialVelocity := 0.5 + Random * 1.5;
       actTrigger.Enabled:=true;
       actTriggerExecute(Self);
     end;
@@ -200,6 +204,21 @@ begin
   else
   begin
     actRenderExecute(Self, cTimeSinceStart);
+
+
+    // Draw Trajectory at intervals
+    {
+    iTimesliceIndex := FPathCalculator.Timeslices.indexOf(intfTimeslice);
+    if (iTimeSliceIndex >= FiLastRenderedTimesliceIndex) then
+    begin
+      dTimeInSlice:= cTimeSinceStart - intfTimeslice. StartTime;
+      if (dTimeInSlice < 30) then
+      begin
+        DrawTrajectoryPaths;
+        FiLastRenderedTimesliceIndex:= iTimeSliceIndex;
+    end;
+    }
+
   end;
 
 end;
@@ -252,6 +271,11 @@ begin
 end;
 
 procedure TForm1.chkContinueRandomChange(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
 begin
 
 end;
@@ -479,8 +503,8 @@ var
     intfCircle.Text := sText;
   {$ENDIF}
     // Add a small amount of random to the position for each circle
-    pt.X := pt.X + Math.RandomRange(0,3000)/6000;
-    pt.Y := pt.Y + Math.RandomRange(0,3000)/6000;
+    pt.X := pt.X + Math.RandomRange(0,3000)/4000;
+    pt.Y := pt.Y + Math.RandomRange(0,3000)/4000;
     FPathCalculator.AddCircleWithPosition(intfCircle, pt);
   end;
 
@@ -516,17 +540,6 @@ begin
   AddTargetCircle(TPointF.Create(326, 285),'White8', clBlue, clBlack);
   AddTargetCircle(TPointF.Create(326, 300),'Black9', clDkGray, clBlack);
   AddTargetCircle(TPointF.Create(326, 315),'White9', clBlue, clBlack);
-
-
-  {
-  ACircle := TBaseCircle.Create(TARGET_RADIUS, TARGET_MASS);
-  ACircle.BrushColor := clAqua;
-  ACircle.PenColor := clBlue;
-  {$IFDEF DEBUG}
-  ACircle.Text := 'Target';
-  {$ENDIF}
-  FPathCalculator.AddCircleWithPosition(ACircle, TPointF.Create(180, 200));
-  }
 
 
   ACircle := TBaseCircle.Create(PUCK_RADIUS, PUCK_MASS);

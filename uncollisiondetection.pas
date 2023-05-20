@@ -41,9 +41,15 @@ type
     class function DetectStationaryCircleHit(const APathPart1: IPathPart;
       const APathPart2: IPathPart): ICircleCollisionResult;
 
+    class function DetectMovingCircleHit(const APathPart1: IPathPart;
+      const APathPart2: IPathPart): ICircleCollisionResult;
+
     class function CalculateBounceAfterHittingCircle(const APathPart: IPathPart;
       const dX, dY: double; const ATargetPathPart: IPathPart;
       const dHitTime: double): TBounceResult;
+
+    class procedure DetectPocketed(const APathPart: IPathPart;
+      var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
   end;
 
 { TCircleCollisionResult }
@@ -53,7 +59,7 @@ type
 implementation
 
 uses
-  uncirclephysicsconstants, unCirclePhysics, Matrix, unCircleUtils;
+  uncirclephysicsconstants, unCirclePhysics, Matrix, unCircleUtils, Types;
 
 { TCircleCollisionResult }
 
@@ -118,8 +124,6 @@ begin
   dRadius := APathPart.Circle.Radius;
   dXAtStop := AVector.GetXAtStop;
   dYAtStop := AVector.GetYAtStop;
-
-
 
   if (dXAtStop <= dRadius) then
   begin
@@ -259,6 +263,101 @@ begin
   end;
 end;
 
+class function TCollisionDetection.DetectMovingCircleHit(const APathPart1: IPathPart;
+  const APathPart2: IPathPart): ICircleCollisionResult;
+
+  // Return a rectangle for the path covered
+  function GetLimitRect(AVector: IBasicVector; ACircle: ICircle): TRectF;
+  var
+    dLeft, dRight, dTop, dBottom, dRadius: double;
+  begin
+    dRadius := ACircle.Radius;
+    ;
+    if AVector.Origin.X < AVector.GetXAtStop then
+    begin
+      // Moving Right
+      dLeft := AVector.origin.X - dRadius;
+      dRight := AVector.GetXAtStop + dRadius;
+    end
+    else
+    begin
+      // Moving Left;
+      dLeft := AVector.GetXAtStop - dRadius;
+      dRight := AVector.Origin.X + dRadius;
+    end;
+    if (dLeft < dRadius) then
+      dLeft := dRadius;
+    if (dRight > BOARD_WIDTH - dRadius) then
+      dRight := BOARD_WIDTH - dRadius;
+
+    if AVector.Origin.Y < AVector.GetYAtStop then
+    begin
+      // Moving Up
+      dTop := AVector.Origin.Y - AVector.GetYAtStop - dRadius;
+      dBottom := AVector.Origin.Y + dRadius;
+    end
+    else
+    begin
+      // Moving Down;
+      dTop := AVector.origin.Y - dRadius;
+      dBottom := AVector.GetYAtStop + dRadius;
+    end;
+    if (dTop < dRadius) then
+      dTop := dRadius;
+    if (dBottom > BOARD_HEIGHT - dRadius) then
+      dBottom := BOARD_HEIGHT - dRadius;
+
+    Result.Left := dLeft;
+    Result.Right := dRight;
+    Result.Top := dTop;
+    Result.Bottom := dBottom;
+  end;
+
+  function IntersectRectF(const R1, R2: TRectF): boolean;
+  var
+    lRect: TRectF;
+  begin
+    lRect := R1;
+    if R2.Left > R1.Left then
+      lRect.Left := R2.Left;
+    if R2.Top > R1.Top then
+      lRect.Top := R2.Top;
+    if R2.Right < R1.Right then
+      lRect.Right := R2.Right;
+    if R2.Bottom < R1.Bottom then
+      lRect.Bottom := R2.Bottom;
+
+    if (lRect.Width * lRect.Height) = 0 then
+    begin
+      RESULT := False;
+    end
+    else
+    begin
+      RESULT := True;
+    end;
+  end;
+
+var
+  ALimitRect1, ALimitRect2: TRectF;
+  AVector1, AVector2: IBasicVector;
+  ACircle1, ACircle2: ICircle;
+  SubtractedPathVelVector : Tvector2_double;
+begin
+  AVector1 := APathPart1.Vector;
+  AVector2 := APathPart2.Vector;
+  ACircle1 := APathPart1.Circle;
+  ACircle2 := APathPart2.Circle;
+
+  ALimitRect1 := GetLimitRect(AVector1, ACircle1);
+  ALimitRect2 := GetLimitRect(AVector2, ACircle2);
+
+  // If rects instersect then it might be possible for them to collide
+  if IntersectRectF(ALimitRect1, ALimitRect2) then
+  begin
+    SubtractedPathVelVector := AVector1.GetVelocityVectorAtTime(0) - AVector2.GetVelocityVectorAtTime(0);
+  end;
+end;
+
 class function TCollisionDetection.CalculateBounceAfterHittingCircle(
   const APathPart: IPathPart; const dX, dY: double; const ATargetPathPart: IPathPart;
   const dHitTime: double): TBounceResult;
@@ -312,6 +411,19 @@ begin
   Result.Vector2 := finalv2;
 end;
 
+class procedure TCollisionDetection.DetectPocketed(const APathPart: IPathPart;
+  var dEarliestHitTime: double; var EdgeHit: TEdgeHit);
+var
+  dDistanceToPocketCenter : Double;
+begin
+  if (APathPart.Vector.GetXAtStop < POCKET_RADIUS) and (APathPart.Vector.GetYAtStop < POCKET_RADIUS) then
+  begin
+    dDistanceToPocketCenter:= Sqrt(Sqr(APathPart.Vector.Origin.x) + Sqr(APathPart.Vector.Origin.y))-APathPart.Circle.Radius;
+
+
+  end;
+end;
+
 {
 
 Moving circles.
@@ -328,10 +440,6 @@ if not then this becomes a stationary circle problem.
 If they do intersect then subtract the vector with minimum magnitude from the
 vector with max magnitude (does this make it static???) and apply the steps
 in  DetectStationaryCircleHit.
-
-
-
-
 
 }
 

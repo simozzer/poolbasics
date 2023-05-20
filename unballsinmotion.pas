@@ -288,7 +288,6 @@ end;
 
 constructor TCirclePathCalculator.Create;
 begin
-  // FlstCircles := TCirclesList.Create;
   FlstTimeslices := TTimesliceList.Create;
   FintfLogger := nil;
 end;
@@ -296,7 +295,6 @@ end;
 destructor TCirclePathCalculator.Destroy;
 begin
   FlstTimeslices := nil;
-  // FlstCircles := nil;
   inherited Destroy;
 end;
 
@@ -371,7 +369,7 @@ begin
         AHitDetail.HitTime);
 
       // adjust the angle of the item(s) affected
-      if (AHitDetail.EdgeHit <> ehCircle) then
+      if (AHitDetail.EdgeHit <> ehCircle) and (AHitDetail.EdgeHit <> ehPocket) then
       begin
         APathPart := TCircleUtils.GetPathPartForCircleID(APathPartList,
           AHitDetail.iCircleId);
@@ -380,7 +378,7 @@ begin
           ehTop, ehBottom: APathPart.Vector.ReverseY;
         end;
       end
-      else
+      else if (AHitDetail.EdgeHit = ehCircle) then
       begin
         // handle circle hit
         if not supports(AHitDetail.intfDetails, ICircleCollisionResult,
@@ -414,6 +412,13 @@ begin
           ArcTan2(BounceResult.Vector2.Data[1], BounceResult.Vector2.Data[0]);
         APathPart2.Vector.EndTime :=
           TBasicMotion.GetTimeToStop(APathPart2.Vector.InitialVelocity);
+      end
+      else if AHitDetail.EdgeHit = ehPocket then
+      begin
+        // todo .. remove circle from board
+        APathPart := TCircleUtils.GetPathPartForCircleID(APathPartList,
+          AHitDetail.iCircleId);
+        APathPartList.Delete(APathPart);
       end;
 
     end;

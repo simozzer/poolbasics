@@ -21,10 +21,6 @@ type
     function GetPathParts: IPathPartList;
     procedure SetStartTime(const dStartTime: double);
     procedure SetEndTime(const dEndTime: double);
-    property StartTime: double read GetStartTime write SetStartTime;
-    property EndTime: double read GetEndTime write SetEndTime;
-    property PathParts: IPathPartList read GetPathParts;
-
     function ToString(): string; override;
   public
     constructor Create(const APathParts: IPathPartList);
@@ -42,10 +38,9 @@ type
   protected
     function getItem(const iIndex: integer): ITimeslice;
     function GetCount: cardinal;
+    function indexOf(Const intfTimeSlice: ITimeslice): Integer;
     procedure Clear;
     procedure Add(const intfTimeslice: ITimeslice);
-    property Count: cardinal read GetCount;
-    property Item[const iIndex: integer]: ITimeslice read GetItem; default;
   public
     constructor Create;
     destructor Destroy; override;
@@ -68,6 +63,11 @@ end;
 function TTimesliceList.GetCount: cardinal;
 begin
   Result := TInternalTimesliceList(FList).Count;
+end;
+
+function TTimesliceList.indexOf(const intfTimeSlice: ITimeslice): Integer;
+begin
+  Result := TInternalTimesliceList(FList).IndexOf(intfTimeSlice);
 end;
 
 procedure TTimesliceList.Clear;

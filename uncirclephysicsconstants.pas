@@ -21,7 +21,7 @@ const
   PUCK_MASS = 15;
 
 const
-  POCKET_RADIUS = 20;
+  POCKET_RADIUS = 25;
 
 const
   BOARD_WIDTH = 600;

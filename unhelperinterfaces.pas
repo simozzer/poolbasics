@@ -115,6 +115,7 @@ type
     function GetCount: cardinal;
     procedure Clear;
     procedure Add(const intfPathPart: IPathPart);
+    procedure Delete(const intfPathPart: IPathPart);
     property Count: cardinal read GetCount;
     property Item[const iIndex: integer]: IPathPart read GetItem; default;
   end;
@@ -171,6 +172,7 @@ type
     ['{600F53EB-6DAD-41F1-865A-227196461EC4}']
     function getItem(const iIndex: integer): ITimeslice;
     function GetCount: cardinal;
+    function indexOf(Const intfTimeSlice: ITimeslice): Integer;
     procedure Clear;
     procedure Add(const intfTimeslice: ITimeslice);
     property Count: cardinal read GetCount;

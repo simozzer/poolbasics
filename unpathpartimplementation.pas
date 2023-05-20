@@ -33,6 +33,7 @@ type
     function GetCount: cardinal;
     procedure Clear;
     procedure Add(const intfPathPart: IPathPart);
+    procedure Delete(const intfPathPart: IPathPart);
   public
     constructor Create;
     destructor Destroy; override;
@@ -65,6 +66,15 @@ end;
 procedure TPathPartList.Add(const intfPathPart: IPathPart);
 begin
   TIntPathPartList(FList).Add(intfPathPart);
+end;
+
+procedure TPathPartList.Delete(const intfPathPart: IPathPart);
+var
+  iIndex : Integer;
+begin
+  iIndex := TIntPathPartList(FList).IndexOf(intfPathPart);
+  if (iIndex >= 0) then
+    TIntPathPartList(FList).Delete(iIndex);
 end;
 
 constructor TPathPartList.Create;
