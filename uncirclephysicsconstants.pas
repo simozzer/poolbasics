@@ -9,13 +9,13 @@ uses
   Classes, SysUtils;
 
 const
-  PUCK_RADIUS = 9;
+  PUCK_RADIUS = 12;
 
 const
   TARGET_MASS = 5;
 
 const
-  TARGET_RADIUS = 7;
+  TARGET_RADIUS = 9;
 
 const
   PUCK_MASS = 15;
