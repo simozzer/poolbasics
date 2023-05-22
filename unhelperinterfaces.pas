@@ -172,7 +172,7 @@ type
     ['{600F53EB-6DAD-41F1-865A-227196461EC4}']
     function getItem(const iIndex: integer): ITimeslice;
     function GetCount: cardinal;
-    function indexOf(Const intfTimeSlice: ITimeslice): Integer;
+    function indexOf(const intfTimeSlice: ITimeslice): integer;
     procedure Clear;
     procedure Add(const intfTimeslice: ITimeslice);
     property Count: cardinal read GetCount;

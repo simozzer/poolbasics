@@ -46,7 +46,8 @@ implementation
 
 uses
   unCollisionDetection, ComObj, unOtherCircles, unCirclePhysics,
-  unPathPartImplementation, unTimesliceImpl, Math, unCircleUtils;
+  unPathPartImplementation, unTimesliceImpl, Math, unCircleUtils,
+  uncirclephysicsconstants;
 
 
 { TCirclePathCalculator }
@@ -132,12 +133,14 @@ var
   dEarliestHitTime: double;
   dEdgeHitTime: double;
   intfPathPart: IPathPart;
-  ATempEdgeHit : TEdgeHit;
+  ATempEdgeHit: TEdgeHit;
   AEdgeHit: TEdgeHit;
   intfEdgeHitPathPart: IPathPart;
   intfCircleCollisionResult: ICircleCollisionResult;
   intfStoreCircleCollisionResult: ICircleCollisionResult;
   iCircleId: integer;
+
+  ptPocketORigin : TPointF;
 begin
   Result.EdgeHit := ehNone;
   Result.HitTime := 0;
@@ -145,7 +148,7 @@ begin
   AEdgeHit := ehNone;
   ATempEdgeHit := ehNone;
 
-  LogMessage('-----------------------------------');
+  //LogMessage('-----------------------------------');
 
   // for each moving circle find the next edge hit and return the detail from the 1st collision
   intfMovingPathParts := GetMovingPathPartsAtTime(lstPathParts, dTime);
@@ -168,8 +171,10 @@ begin
       iCircleId := TCircleUtils.GetCircleId(intfPathPart.Circle);
       AEdgeHit := ATempEdgeHit;
 
+      {
       LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
         EdgeHitToStr(AEdgeHit), dEdgeHitTime]));
+        }
     end;
 
 
@@ -187,11 +192,60 @@ begin
         intfStoreCircleCollisionResult := intfCircleCollisionResult;
         dEarliestHitTime := intfCircleCollisionResult.HitTime;
 
+        {
         LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
           'Circle', dEarliestHitTime]));
+          }
       end;
     end;
 
+    ptPocketOrigin.X := 0;
+    ptPocketOrigin.Y := 0;
+    intfCircleCollisionResult := TCollisionDetection.DetectPocketed(intfPathPart,ptPocketORigin);
+    if supports(intfCircleCollisionResult, ICircleCollisionResult) and
+        ((intfCircleCollisionResult.HitTime < dEarliestHitTime) or
+        (dEarliestHitTime < 0)) then
+      begin
+        AEdgeHit := ehPocket;
+        intfStoreCircleCollisionResult := intfCircleCollisionResult;
+        dEarliestHitTime := intfCircleCollisionResult.HitTime;
+      end;
+
+    ptPocketOrigin.X := 0;
+    ptPocketOrigin.Y := BOARD_HEIGHT;
+    intfCircleCollisionResult := TCollisionDetection.DetectPocketed(intfPathPart,ptPocketORigin);
+    if supports(intfCircleCollisionResult, ICircleCollisionResult) and
+        ((intfCircleCollisionResult.HitTime < dEarliestHitTime) or
+        (dEarliestHitTime < 0)) then
+      begin
+        AEdgeHit := ehPocket;
+        intfStoreCircleCollisionResult := intfCircleCollisionResult;
+        dEarliestHitTime := intfCircleCollisionResult.HitTime;
+      end;
+
+        ptPocketOrigin.X := BOARD_WIDTH;
+    ptPocketOrigin.Y := 0;
+    intfCircleCollisionResult := TCollisionDetection.DetectPocketed(intfPathPart,ptPocketORigin);
+    if supports(intfCircleCollisionResult, ICircleCollisionResult) and
+        ((intfCircleCollisionResult.HitTime < dEarliestHitTime) or
+        (dEarliestHitTime < 0)) then
+      begin
+        AEdgeHit := ehPocket;
+        intfStoreCircleCollisionResult := intfCircleCollisionResult;
+        dEarliestHitTime := intfCircleCollisionResult.HitTime;
+      end;
+
+     ptPocketOrigin.X := BOARD_HEIGHT;
+    ptPocketOrigin.Y := BOARD_WIDTH;
+    intfCircleCollisionResult := TCollisionDetection.DetectPocketed(intfPathPart,ptPocketORigin);
+    if supports(intfCircleCollisionResult, ICircleCollisionResult) and
+        ((intfCircleCollisionResult.HitTime < dEarliestHitTime) or
+        (dEarliestHitTime < 0)) then
+      begin
+        AEdgeHit := ehPocket;
+        intfStoreCircleCollisionResult := intfCircleCollisionResult;
+        dEarliestHitTime := intfCircleCollisionResult.HitTime;
+      end
   end;
 
   if AEdgeHit = ehCircle then
@@ -207,6 +261,12 @@ begin
     Result.iCircleId := iCircleId;
     Result.intfDetails := intfEdgeHitPathPart;
   end
+  else if (AEdgeHit = ehPocket) then
+  begin
+    Result.EdgeHit := ehNone;
+    Result.HitTime := intfStoreCircleCollisionResult.HitTime;
+    Result.intfDetails := intfStoreCircleCollisionResult;
+  end
   else
   begin
     Result.EdgeHit := ehNone;
@@ -214,7 +274,7 @@ begin
     Result.intfDetails := nil;
   end;
 
-  LogMessage('-----------------------------------');
+  //LogMessage('-----------------------------------');
 end;
 
 
@@ -362,7 +422,7 @@ begin
       intfTimeslice.EndTime := AHitDetail.HitTime + intfTimeslice.StartTime;
       dLastEndTime := intfTimeslice.EndTime;
       FlstTimeslices.add(intfTimeslice);
-      LogMessage(intfTimeslice.ToString);
+    //  LogMessage(intfTimeslice.ToString);
 
       //Copy the path parts from the previous timeslice to a new timeslice (with positions and velocities adjusted)
       APathPartList := GetPathPartsStateAtTime(intfTimeslice.PathParts,
@@ -426,7 +486,7 @@ begin
   until AHitDetail.EdgeHit = ehNone;
 
   FlstTimeslices.add(intfTimeslice);
-  LogMessage(intfTimeslice.ToString);
+//  LogMessage(intfTimeslice.ToString);
 end;
 
 

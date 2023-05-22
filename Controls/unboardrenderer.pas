@@ -61,7 +61,9 @@ end;
 
 procedure TBoardRenderer.RenderBoardBackground;
 var
-  ACanvas : TCanvas;
+  ACanvas: TCanvas;
+  dAngle : Double;
+  dRadius : Double;
 begin
   if not assigned(FBoardBackgroundBitmap) then
   begin
@@ -74,24 +76,37 @@ begin
 
     ACanvas := FBoardBackgroundBitmap.Canvas;
     ACanvas.Pen.Color := clLtGray;
-    ACanvas.Brush.Color := clWhite; //FBackColor;
+    ACanvas.Brush.Color := FBackColor;
     ACanvas.FillRect(0, 0, FiWidth, FiHeight);
 
 
-    ACanvas.FillRect(50 + (2 * PUCK_RADIUS), 50 + (2 * PUCK_RADIUS), 550 -
-      (2 * PUCK_RADIUS), 550 - (2 * PUCK_RADIUS));
+    ACanvas.FillRect(50 + (2 * PUCK_RADIUS), 50 + (2 * PUCK_RADIUS),
+      550 - (2 * PUCK_RADIUS), 550 - (2 * PUCK_RADIUS));
 
     ACanvas.MoveTo(FiWidth div 2, 0);
     ACanvas.LineTo(FiWidth div 2, FiHeight);
     ACanvas.MoveTo(0, FiHeight div 2);
     ACanvas.LineTo(FiHeight, FiWidth div 2);
 
+    // Draw center circle
     ACanvas.Pen.Color := clLtGray;
     ACanvas.Brush.Color := clcream;
     ACanvas.Ellipse(Round(BOARD_WIDTH / 2 - (5.3 * TARGET_RADIUS)),
       Round(BOARD_HEIGHT / 2 - (5.3 * TARGET_RADIUS)),
       Round(BOARD_WIDTH / 2 + (5.3 * TARGET_RADIUS)),
       Round(BOARD_HEIGHT / 2 + (5.3 * TARGET_RADIUS)));
+
+    // Draw center swirl
+    ACanvas.moveTo(BOARD_WIDTH div 2, BOARD_HEIGHT div 2);
+    dAngle:= 0;
+    dRadius := 0;
+    while (dRadius <(5.3 * TARGET_RADIUS)) do
+    begin
+      ACanvas.LineTo( BOARD_WIDTH div 2 +  Round(dRadius * cos(dAngle)), + BOARD_HEIGHT div  2 + Round(dRadius * sin(dAngle)));
+      dRadius += 0.3;
+      dAngle += 0.2;
+
+    end;
 
 
 
@@ -127,6 +142,8 @@ begin
       FiHeight + POCKET_RADIUS);
     ACanvas.Ellipse(FiWidth - POCKET_RADIUS, FiHeight - POCKET_RADIUS,
       FiWidth + POCKET_RADIUS, FiHeight + POCKET_RADIUS);
+
+
   end;
 end;
 
@@ -154,7 +171,7 @@ var
   ACanvas: TCanvas;
 begin
   RenderBoardBackground;
-  FBitmap.Canvas.Draw(0,0, FBoardBackgroundBitmap);
+  FBitmap.Canvas.Draw(0, 0, FBoardBackgroundBitmap);
 
 end;
 
