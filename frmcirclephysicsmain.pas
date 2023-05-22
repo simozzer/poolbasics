@@ -358,7 +358,7 @@ end;
 // Add a message to the debug log
 procedure TForm1.LogMessage(const sMessage: string);
 begin
-  //  lstEvents.Lines.Add(sMessage);
+    lstEvents.Lines.Add(sMessage);
 end;
 
 // Move the position of the puck when the game board is clicked
@@ -545,69 +545,67 @@ begin
     0.5, dHalfHeight - (3 * (TARGET_RADIUS + 0.5)))
     , 'Black2', clDkGray, clBlack);
 
-  AddTargetCircle(TPointF.Create( dHalfWidth - (TARGET_RADIUS * 2) +
+  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 2) +
     0.5, dHalfHeight - (1 * (TARGET_RADIUS + 0.5))),
     'White4', clBlue, clBlack);
 
-  AddTargetCircle(TPointF.Create( dHalfWidth - (TARGET_RADIUS * 2) +
+  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 2) +
     0.5, dHalfHeight - (-1 * (TARGET_RADIUS + 0.5))), 'Black4', clDkGray, clBlack);
 
-  AddTargetCircle(TPointF.Create( dHalfWidth - (TARGET_RADIUS * 2) +
+  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 2) +
     0.5, dHalfHeight - (-3 * (TARGET_RADIUS + 0.5))), 'Black6', clDkGray, clBlack);
 
 
 
 
-
-  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 2) - 0.5,
-  dHalfHeight - (3 * (TARGET_RADIUS + 0.5))),
-  'Black3', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 2) -
+    0.5, dHalfHeight - (3 * (TARGET_RADIUS + 0.5))),
+    'Black3', clDkGray, clBlack);
 
   AddTargetCircle(
-    TPointF.Create(dHalfWidth + (TARGET_RADIUS * 2) - 0.5,
-    dHalfHeight - (1 * (TARGET_RADIUS + 0.5))),
-  'White5', clBlue, clBlack);
+    TPointF.Create(dHalfWidth + (TARGET_RADIUS * 2) - 0.5, dHalfHeight -
+    (1 * (TARGET_RADIUS + 0.5))),
+    'White5', clBlue, clBlack);
 
 
 
-  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 2) - 0.5,
-  dHalfHeight - (-1 * (TARGET_RADIUS + 0.5))), 'Black5', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 2) -
+    0.5, dHalfHeight - (-1 * (TARGET_RADIUS + 0.5))), 'Black5', clDkGray, clBlack);
 
 
-  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 2) - 0.5,
-    dHalfHeight - (-3 * (TARGET_RADIUS + 0.5))), 'Black6', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 2) -
+    0.5, dHalfHeight - (-3 * (TARGET_RADIUS + 0.5))), 'Black6', clDkGray, clBlack);
 
 
 
-  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 4) + 0.5
-  , dHalfHeight), 'Black7', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 4) + 0.5, dHalfHeight),
+    'Black7', clDkGray, clBlack);
 
 
-  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 4) + 0.5,
-  dHalfHeight -  2 * (TARGET_RADIUS + 0.5)), 'White6', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 4) +
+    0.5, dHalfHeight - 2 * (TARGET_RADIUS + 0.5)), 'White6', clBlue, clBlack);
 
 
-  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 4) - 0.5,
-  dHalfHeight -  2 * (TARGET_RADIUS + 0.5)), 'White9', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 4) -
+    0.5, dHalfHeight - 2 * (TARGET_RADIUS + 0.5)), 'White9', clBlue, clBlack);
 
-  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 4) - 0.5, dHalfHeight), 'Black8', clDkGray, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 4) - 0.5, dHalfHeight),
+    'Black8', clDkGray, clBlack);
 
 
-  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 4) - 0.5,
-  dHalfHeight +  2 * (TARGET_RADIUS + 0.5)), 'White7', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 4) -
+    0.5, dHalfHeight + 2 * (TARGET_RADIUS + 0.5)), 'White7', clBlue, clBlack);
 
-    AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 4) - 0.5,
-  dHalfHeight +  2 * (TARGET_RADIUS + 0.5)), 'White8', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth + (TARGET_RADIUS * 4) -
+    0.5, dHalfHeight + 2 * (TARGET_RADIUS + 0.5)), 'White8', clBlue, clBlack);
 
 
   // bottom left
-  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 4) - 0.5,
-  dHalfHeight +  2 * (TARGET_RADIUS + 0.5)), 'White8', clBlue, clBlack);
+  AddTargetCircle(TPointF.Create(dHalfWidth - (TARGET_RADIUS * 4) -
+    0.5, dHalfHeight + 2 * (TARGET_RADIUS + 0.5)), 'White8', clBlue, clBlack);
 
 
-  {
 
-  }
   {
 
 
