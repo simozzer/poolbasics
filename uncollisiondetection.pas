@@ -49,7 +49,7 @@ type
       const dHitTime: double): TBounceResult;
 
     class function DetectPocketed(const APathPart1: IPathPart;
-      const ptPocket :TPointF): ICircleCollisionResult;
+      const ptPocket: TPointF): ICircleCollisionResult;
   end;
 
 { TCircleCollisionResult }
@@ -60,7 +60,7 @@ implementation
 
 uses
   uncirclephysicsconstants, unCirclePhysics, Matrix, unCircleUtils,
-  unPathPartImplementation, unOtherCircles, Forms;
+  unPathPartImplementation, unOtherCircles, Forms, Math;
 
 procedure LogMessage(const sMessage: string);
 var
@@ -205,69 +205,71 @@ begin
   iCircleId1 := TCircleUtils.GetCircleId(ACircle1);
   iCircleId2 := TCircleUtils.GetCircleId(ACircle2);
 
-
-  // check if we travel far enough to hit circle
-  dDistanceBetween2Centers := ACircle2Vector.Origin.Distance(ACircle1Vector.Origin);
-  dSumRadii := ACircle1.Radius + ACircle2.Radius;
-  dDistanceBewteen2Circles := dDistanceBetween2Centers - dSumRadii;
-  if (dDistanceBewteen2Circles < TBasicMotion.GetDistanceToStop(
-    ACircle1Vector.InitialVelocity)) then
+  if (iCircleId1 <> iCircleId2) then
   begin
-    AThisVector := T2DVector.CreateWithAngle(dDistanceBewteen2Circles,
-      ACircle1Vector.Angle);
-
-    // Get the normalized vector for this ball
-    NormalizedVector_N := AThisVector.GetNormalised;
-
-    // Get the vector between the 2 ball centers
-    AVectorBetween2Centers :=
-      T2DVector.Create(ACircle2Vector.Origin.X - ACircle1Vector.Origin.X,
-      ACircle2Vector.Origin.Y - ACircle1Vector.Origin.Y);
-
-    //dDotProduct := AVectorBetween2Centers.Magnitude * cos(-AVectorBetween2Centers.Angle);
-    dDotProduct_D := AVectorBetween2Centers.GetDotProduct(NormalizedVector_N);
-
-    // check we're moving towards the target
-    if (dDotProduct_D > 0) then
+    // check if we travel far enough to hit circle
+    dDistanceBetween2Centers := ACircle2Vector.Origin.Distance(ACircle1Vector.Origin);
+    dSumRadii := ACircle1.Radius + ACircle2.Radius;
+    dDistanceBewteen2Circles := dDistanceBetween2Centers - dSumRadii;
+    if (dDistanceBewteen2Circles < TBasicMotion.GetDistanceToStop(
+      ACircle1Vector.InitialVelocity)) then
     begin
-      // Check that we get close enough for collision
-      // double F = (lengthC * lengthC) - (D * D);
-      dyDistanceToColissionSquared_F :=
-        Sqr(AVectorBetween2Centers.Magnitude) - sqr(dDotProduct_D);
-      if (dyDistanceToColissionSquared_F < SQr(dSumRadii)) then
+      AThisVector := T2DVector.CreateWithAngle(dDistanceBewteen2Circles,
+        ACircle1Vector.Angle);
+
+      // Get the normalized vector for this ball
+      NormalizedVector_N := AThisVector.GetNormalised;
+
+      // Get the vector between the 2 ball centers
+      AVectorBetween2Centers :=
+        T2DVector.Create(ACircle2Vector.Origin.X - ACircle1Vector.Origin.X,
+        ACircle2Vector.Origin.Y - ACircle1Vector.Origin.Y);
+
+      //dDotProduct := AVectorBetween2Centers.Magnitude * cos(-AVectorBetween2Centers.Angle);
+      dDotProduct_D := AVectorBetween2Centers.GetDotProduct(NormalizedVector_N);
+
+      // check we're moving towards the target
+      if (dDotProduct_D > 0) then
       begin
-        // find the distance
-        //double T = sumRadiiSquared - F;
-        dXDiffereneAtCollision_T :=
-          Sqr(dSumRadii) - dyDistanceToColissionSquared_F;
-        if (dXDiffereneAtCollision_T >= 0) then
+        // Check that we get close enough for collision
+        // double F = (lengthC * lengthC) - (D * D);
+        dyDistanceToColissionSquared_F :=
+          Sqr(AVectorBetween2Centers.Magnitude) - sqr(dDotProduct_D);
+        if (dyDistanceToColissionSquared_F < SQr(dSumRadii)) then
         begin
-          //doubleble distance = D - sqrt(T);
-          dXDistanceToCollision_distance :=
-            dDotProduct_D - Sqrt(dXDiffereneAtCollision_T);
-          // check distance to travel is enough for possible collision
-          if TBasicMotion.GetDistanceToStop(ACircle1Vector.InitialVelocity) >=
-            dXDistanceToCollision_distance then
+          // find the distance
+          //double T = sumRadiiSquared - F;
+          dXDiffereneAtCollision_T :=
+            Sqr(dSumRadii) - dyDistanceToColissionSquared_F;
+          if (dXDiffereneAtCollision_T >= 0) then
           begin
-            // Set the length so that the circles will just touch.
-            dXCircleHit :=
-              (NormalizedVector_N.Vector.Data[0] *
-              dXDistanceToCollision_distance);
-            dYCircleHit :=
-              (NormalizedVector_N.Vector.Data[1] *
-              dXDistanceToCollision_distance);
+            //doubleble distance = D - sqrt(T);
+            dXDistanceToCollision_distance :=
+              dDotProduct_D - Sqrt(dXDiffereneAtCollision_T);
+            // check distance to travel is enough for possible collision
+            if TBasicMotion.GetDistanceToStop(ACircle1Vector.InitialVelocity) >=
+              dXDistanceToCollision_distance then
+            begin
+              // Set the length so that the circles will just touch.
+              dXCircleHit :=
+                (NormalizedVector_N.Vector.Data[0] *
+                dXDistanceToCollision_distance);
+              dYCircleHit :=
+                (NormalizedVector_N.Vector.Data[1] *
+                dXDistanceToCollision_distance);
 
-            // Calculate the time at which the collision occurred
-            dActualDistanceToCollision :=
-              Sqrt(Sqr(dXCircleHit) + Sqr(dYCircleHit));
-            dHitTime :=
-              TBasicMotion.GetTimeToDistance(
-              ACircle1Vector.InitialVelocity, dActualDistanceToCollision);
+              // Calculate the time at which the collision occurred
+              dActualDistanceToCollision :=
+                Sqrt(Sqr(dXCircleHit) + Sqr(dYCircleHit));
+              dHitTime :=
+                TBasicMotion.GetTimeToDistance(
+                ACircle1Vector.InitialVelocity, dActualDistanceToCollision);
 
-            Result := TCircleCollisionResult.Create(iCircleId1, iCircleId2,
-              dHitTime, dXCircleHit + ACircle1Vector.Origin.X,
-              dYCircleHit + ACircle1Vector.Origin.Y, ACircle2Vector.Origin.X,
-              ACircle2Vector.Origin.Y);
+              Result := TCircleCollisionResult.Create(iCircleId1,
+                iCircleId2, dHitTime, dXCircleHit + ACircle1Vector.Origin.X,
+                dYCircleHit + ACircle1Vector.Origin.Y, ACircle2Vector.Origin.X,
+                ACircle2Vector.Origin.Y);
+            end;
           end;
         end;
       end;
@@ -281,43 +283,39 @@ class function TCollisionDetection.DetectMovingCircleHit(const APathPart1: IPath
   // Return a rectangle for the path covered
   function GetLimitRect(AVector: IBasicVector; ACircle: ICircle): TRectF;
   var
-    dLeft, dRight, dTop, dBottom, dRadius: double;
+    dLeft, dRight, dTop, dBottom, dRadius, xAtSTop, yAtStop, originX, originY: double;
   begin
     dRadius := ACircle.Radius;
-    ;
-    if AVector.Origin.X < AVector.GetXAtStop then
+    xAtSTop := AVector.GetXAtStop;
+    YAtStop := AVector.GetYAtStop;
+    originX := AVector.Origin.X;
+    OriginY := AVector.Origin.Y;
+
+    if originX < XAtStop then
     begin
       // Moving Right
-      dLeft := AVector.origin.X - dRadius;
-      dRight := AVector.GetXAtStop + dRadius;
+      dLeft := originX - dRadius;
+      dRight := XAtStop + dRadius;
     end
     else
     begin
       // Moving Left;
-      dLeft := AVector.GetXAtStop - dRadius;
-      dRight := AVector.Origin.X + dRadius;
+      dLeft := XAtStop - dRadius;
+      dRight := OriginX + dRadius;
     end;
-    if (dLeft < dRadius) then
-      dLeft := dRadius;
-    if (dRight > BOARD_WIDTH - dRadius) then
-      dRight := BOARD_WIDTH - dRadius;
 
-    if AVector.Origin.Y < AVector.GetYAtStop then
+    if YAtStop > originY then
     begin
-      // Moving Up
-      dTop := AVector.Origin.Y - AVector.GetYAtStop - dRadius;
-      dBottom := AVector.Origin.Y + dRadius;
+      // Moving Down
+      dTop := OriginY - dRadius;
+      dBottom := YAtStop + dRadius;
     end
     else
     begin
-      // Moving Down;
-      dTop := AVector.origin.Y - dRadius;
-      dBottom := AVector.GetYAtStop + dRadius;
+      // Moving Up;
+      dTop := YAtStop - dRadius;
+      dBottom := OriginY + dRadius;
     end;
-    if (dTop < dRadius) then
-      dTop := dRadius;
-    if (dBottom > BOARD_HEIGHT - dRadius) then
-      dBottom := BOARD_HEIGHT - dRadius;
 
     Result.Left := dLeft;
     Result.Right := dRight;
@@ -329,7 +327,7 @@ class function TCollisionDetection.DetectMovingCircleHit(const APathPart1: IPath
   var
     lRect: TRectF;
   begin
-    lRect := R1;
+        lRect := R1;
     if R2.Left > R1.Left then
       lRect.Left := R2.Left;
     if R2.Top > R1.Top then
@@ -339,7 +337,7 @@ class function TCollisionDetection.DetectMovingCircleHit(const APathPart1: IPath
     if R2.Bottom < R1.Bottom then
       lRect.Bottom := R2.Bottom;
 
-    if (lRect.Width * lRect.Height) = 0 then
+    if (lRect.Left > lRect.Right) or (lRect.Top > lRect.Bottom) then
     begin
       Result := False;
     end
@@ -352,22 +350,94 @@ class function TCollisionDetection.DetectMovingCircleHit(const APathPart1: IPath
 var
   ALimitRect1, ALimitRect2: TRectF;
   AVector1, AVector2: IBasicVector;
-  ACircle1, ACircle2: ICircle;
+  ACircle1, ACircle2, ATempCircle1, aTempCircle2: ICircle;
+  Circle1ID, Circle2ID, TempCircle1ID, TempCircle2ID: integer;
   SubtractedPathVelVector: Tvector2_double;
+  intfStationaryHitResult: ICircleCollisionResult;
+  ATempPathPart1, ATempPathPart2: IPathPart;
+  ATempVector1, ATempVector2: IBasicVector;
+  dVelocity, dAngle, dMaxTravelTime1, dMaxTravelTime2, dHitTime: double;
 begin
+  Result := nil;
   AVector1 := APathPart1.Vector;
   AVector2 := APathPart2.Vector;
   ACircle1 := APathPart1.Circle;
   ACircle2 := APathPart2.Circle;
+  Circle1ID := TCircleUtils.GetCircleId(ACircle1);
+  Circle2ID := TCircleUtils.GetCircleId(ACircle2);
+  dMaxTravelTime1 := AVector1.GetTimeToStop;
+  dMaxTravelTime2 := AVector2.GetTimeToStop;
 
-  ALimitRect1 := GetLimitRect(AVector1, ACircle1);
-  ALimitRect2 := GetLimitRect(AVector2, ACircle2);
+  {
+  LogMessage(Format('Circle1: Vel: %f, Angle: %f',
+    [AVector1.GetInitialVelocity, AVector1.Angle]));
 
-  // If rects instersect then it might be possible for them to collide
-  if IntersectRectF(ALimitRect1, ALimitRect2) then
+  LogMessage(Format('Circle2: Vel: %f, Angle: %f',
+    [AVector2.GetInitialVelocity, AVector2.Angle]));
+    }
+
+
+  if Circle1ID <> Circle2ID then
   begin
-    SubtractedPathVelVector :=
-      AVector1.GetVelocityVectorAtTime(0) - AVector2.GetVelocityVectorAtTime(0);
+    ALimitRect1 := GetLimitRect(AVector1, ACircle1);
+    ALimitRect2 := GetLimitRect(AVector2, ACircle2);
+
+    // If rects instersect then it might be possible for them to collide
+    if IntersectRectF(ALimitRect1, ALimitRect2) then
+    begin
+      SubtractedPathVelVector :=
+        AVector1.GetVelocityVectorAtTime(0) - AVector2.GetVelocityVectorAtTime(0);
+
+      // TODO
+      dVelocity := SubtractedPathVelVector.length;
+      dAngle := ArcTan2(SubtractedPathVelVector.Data[1],
+        SubtractedPathVelVector.Data[0]);
+
+
+      //LogMessage(Format('Subtracted: Vel: %f, Angle: %f',[SubtractedPathVelVector.length, dANgle]));
+
+      ATempCircle1 := TBaseCircle.Create(ACircle1.GetRadius, ACircle1.Mass);
+      TempCircle1ID := TCircleUtils.GetCircleId(ATempCircle1);
+      ATempVector1 := TBasicVector.Create(AVector1.Origin, dVelocity, dAngle, 0);
+      ATempPathPart1 := TPathPart.Create(ATempCircle1, ATEmpVector1);
+
+      ATempCircle2 := TBaseCircle.Create(ACircle2.GetRadius, ACircle2.Mass);
+      TempCircle2ID := TCircleUtils.GetCircleId(ATempCircle2);
+      ATempVector2 := TBasicVector.Create(AVector2.Origin, 0, 0, 0);
+      ATempPathPart2 := TPathPart.Create(ATempCircle2, ATEmpVector2);
+
+
+      intfStationaryHitResult :=
+        DetectStationaryCircleHit(ATempPathPart1, ATempPathPart2);
+
+      if supports(intfStationaryHitResult, ICircleCollisionResult) then
+      begin
+        dHitTime := intfStationaryHitResult.GetHitTime;
+        if (dHItTime < dMaxTravelTime1) and (dHitTime < dMaxTravelTime2) then
+        begin
+          {
+          LogMessage(Format('Hit time %f. Mall Bax Travel times (%f, %f)',
+            [intfStationaryHitResult.GetHitTime, dMaxTravelTime1, dMaxTravelTime2]));
+
+          LogMessage(
+            Format('Position at collision. Vec1: (%f, %f), Vec2: (%f, %f)', [AVector1.GetXAtTime(dHitTime),
+            AVector1.GetYAtTime(dHitTime), AVector2.GetXAtTime(dHitTime),
+            AVector2.GetYAtTime(dHitTime)]));
+            }
+
+          Result := TCircleCollisionResult.Create(Circle1ID, Circle2ID, dHitTime,
+          AVector1.GetXAtTime(dHitTime),
+          AVector1.GetYAtTime(dHitTime),
+          AVector2.GetXAtTime(dHitTime),
+          AVector2.GetYAtTime(dHitTime));
+
+        end;
+
+
+      end;
+
+    end;
+
   end;
 end;
 
@@ -424,8 +494,8 @@ begin
   Result.Vector2 := finalv2;
 end;
 
-class function TCollisionDetection.DetectPocketed(
-  const APathPart1: IPathPart; const ptPocket :TPointF): ICircleCollisionResult;
+class function TCollisionDetection.DetectPocketed(const APathPart1: IPathPart;
+  const ptPocket: TPointF): ICircleCollisionResult;
 var
   dDistanceBetween2Centers, dSumRadii, dDistanceBewteen2Circles,
   dDotProduct_D, dyDistanceToColissionSquared_F, dXDiffereneAtCollision_T,
@@ -437,9 +507,10 @@ var
   ACircle1, aCircle2: ICircle;
   iCircleId1, iCircleId2: integer;
 
-  APathPart2 : IPathPart;
+  APathPart2: IPathPart;
 begin
   Result := nil;
+  exit;
 
 
   //TODO - moving circle should have radius of 0 or 1
@@ -448,7 +519,7 @@ begin
   ACircle1Vector := APathPart1.Vector;
 
   aCircle2 := TBaseCircle.Create(POCKET_RADIUS, 1);
-  ACircle2Vector := TBasicVector.Create(ptPocket, 0, 0,0);
+  ACircle2Vector := TBasicVector.Create(ptPocket, 0, 0, 0);
 
 
   APathPart2 := TPathPart.Create(aCircle2, ACircle2Vector);
@@ -458,7 +529,7 @@ begin
 
   // check if we travel far enough to hit circle
   dDistanceBetween2Centers := ACircle2Vector.Origin.Distance(ACircle1Vector.Origin);
-  dSumRadii := POCKET_RADIUS -   ACircle1.Radius;
+  dSumRadii := POCKET_RADIUS - ACircle1.Radius;
   dDistanceBewteen2Circles := dDistanceBetween2Centers - dSumRadii;
   if (dDistanceBewteen2Circles < TBasicMotion.GetDistanceToStop(
     ACircle1Vector.InitialVelocity)) then
@@ -542,6 +613,45 @@ if not then this becomes a stationary circle problem.
 If they do intersect then subtract the vector with minimum magnitude from the
 vector with max magnitude (does this make it static???) and apply the steps
 in  DetectStationaryCircleHit.
+
+// RETHINK
+
+Find interection rect R.
+
+IF no intersection EXIT
+
+Find Cirle1 Origin Pt1
+
+Find Circe2 Origin Pt2
+
+Measure the distance (D) between Pt1 & Pt2
+
+Advance the fastest moving circle by (Circle1 radius * Crircle 2 radius)/4
+
+Get circle 1 Point atfter moving Pt1M
+
+Get circle 2 Point atfter moving Pt2M
+
+Measure the distance (DM) between Pt1M & Pt2M.
+
+If distance if greater then exit (points not moving towards each other)
+
+If circles collide/overlap then rewind to the point at which they don't (i.e.)
+
+subtract the amount they overlap (and binary chop to find the closest, or
+
+move to the point where they don't ovelap and and check if an additonal micro-move
+brings them closer together, or further apart )
+
+
+
+
+
+
+
+
+
+
 
 }
 

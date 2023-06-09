@@ -6,7 +6,6 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 804
   ClientWidth = 1180
-  OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '2.2.4.0'
   object edtTime: TEdit
@@ -77,14 +76,15 @@ object Form1: TForm1
     Width = 1
     ParentColor = False
   end
-  object btnClearLog: TButton
-    Left = 1096
-    Height = 25
-    Top = 776
-    Width = 75
-    Caption = '&Clear'
-    OnClick = btnClearLogClick
-    TabOrder = 5
+  object Label2: TLabel
+    Left = 96
+    Height = 15
+    Top = 48
+    Width = 481
+    Caption = 'Click on board to place puck then setup velocity and angle and press the trigger button'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
   end
   object grpTakeShot: TGroupBox
     Left = 664
@@ -94,7 +94,7 @@ object Form1: TForm1
     Caption = 'Take &Shot'
     ClientHeight = 613
     ClientWidth = 133
-    TabOrder = 6
+    TabOrder = 5
     object lblAngle: TLabel
       Left = 32
       Height = 15
@@ -110,7 +110,6 @@ object Form1: TForm1
       Width = 117
       Caption = '&Continue Random'
       Checked = True
-      OnChange = chkContinueRandomChange
       State = cbChecked
       TabOrder = 0
     end
@@ -160,30 +159,70 @@ object Form1: TForm1
       TabOrder = 4
     end
   end
-  object Label2: TLabel
-    Left = 96
+  object lblTimeMs: TLabel
+    Left = 8
     Height = 15
-    Top = 48
-    Width = 481
-    Caption = 'Click on board to place puck then setup velocity and angle and press the trigger button'
-    Font.Style = [fsBold]
-    ParentColor = False
-    ParentFont = False
-  end
-  object lstEvents: TMemo
-    Left = 816
-    Height = 762
     Top = 8
+    Width = 55
+    Caption = 'lblTimeMs'
+    ParentColor = False
+  end
+  object Panel1: TPanel
+    Left = 820
+    Height = 804
+    Top = 0
     Width = 360
-    Lines.Strings = (
-      'lstEvents'
-    )
-    TabOrder = 7
+    Align = alRight
+    BevelInner = bvLowered
+    Caption = 'Panel1'
+    ClientHeight = 804
+    ClientWidth = 360
+    Color = clMenuHighlight
+    ParentColor = False
+    TabOrder = 6
+    object lstEvents: TMemo
+      Left = 2
+      Height = 611
+      Top = 2
+      Width = 356
+      Align = alTop
+      Lines.Strings = (
+        'lstEvents'
+      )
+      ScrollBars = ssVertical
+      TabOrder = 0
+    end
+    object btnClearLog: TButton
+      Left = 280
+      Height = 25
+      Top = 618
+      Width = 75
+      Caption = '&Clear'
+      OnClick = btnClearLogClick
+      TabOrder = 1
+    end
+    object btnTestMove: TButton
+      Left = 16
+      Height = 25
+      Top = 728
+      Width = 75
+      Caption = 'Test Moving'
+      OnClick = btnTestMoveClick
+      TabOrder = 2
+    end
+    object btnDrawRects: TButton
+      Left = 112
+      Height = 25
+      Top = 728
+      Width = 75
+      Caption = 'Draw Rects'
+      OnClick = btnDrawRectsClick
+      TabOrder = 3
+    end
   end
   object ActionList1: TActionList
     Images = ImageList1
-    Left = 1024
-    Top = 88
+    Left = 136
     object actTrigger: TAction
       Caption = '&Trigger'
       Enabled = False
@@ -191,14 +230,12 @@ object Form1: TForm1
     end
   end
   object ImageList1: TImageList
-    Left = 1112
-    Top = 80
+    Left = 264
   end
   object AnimationTimer: TTimer
     Enabled = False
     Interval = 5
     OnTimer = AnimationTimerTimer
-    Left = 1080
-    Top = 16
+    Left = 208
   end
 end

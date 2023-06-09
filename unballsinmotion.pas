@@ -199,6 +199,29 @@ begin
       end;
     end;
 
+
+    for j := 0 to pred(intfMovingPathParts.Count) do
+    begin
+      intfCircleCollisionResult :=
+        TCollisionDetection.DetectMovingCircleHit(intfPathPart,
+        intfMovingPathParts[j]);
+      if supports(intfCircleCollisionResult, ICircleCollisionResult) and
+        ((intfCircleCollisionResult.HitTime < dEarliestHitTime) or
+        (dEarliestHitTime < 0)) then
+      begin
+        // store circle collision result
+        AEdgeHit := ehCircle;
+        intfStoreCircleCollisionResult := intfCircleCollisionResult;
+        dEarliestHitTime := intfCircleCollisionResult.HitTime;
+
+        LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
+          'Circle', dEarliestHitTime]));
+
+      end;
+    end
+
+    {
+
     ptPocketOrigin.X := 0;
     ptPocketOrigin.Y := 0;
     intfCircleCollisionResult := TCollisionDetection.DetectPocketed(intfPathPart,ptPocketORigin);
@@ -223,7 +246,7 @@ begin
         dEarliestHitTime := intfCircleCollisionResult.HitTime;
       end;
 
-        ptPocketOrigin.X := BOARD_WIDTH;
+    ptPocketOrigin.X := BOARD_WIDTH;
     ptPocketOrigin.Y := 0;
     intfCircleCollisionResult := TCollisionDetection.DetectPocketed(intfPathPart,ptPocketORigin);
     if supports(intfCircleCollisionResult, ICircleCollisionResult) and
@@ -246,6 +269,9 @@ begin
         intfStoreCircleCollisionResult := intfCircleCollisionResult;
         dEarliestHitTime := intfCircleCollisionResult.HitTime;
       end
+  }
+
+
   end;
 
   if AEdgeHit = ehCircle then
@@ -254,7 +280,7 @@ begin
     Result.HitTime := intfStoreCircleCollisionResult.HitTime;
     Result.intfDetails := intfStoreCircleCollisionResult;
   end
-  else if (AEdgeHit <> ehNone) then
+  else if (AEdgeHit <> ehNone) and (AEdgeHit <> ehCircle) then
   begin
     Result.EdgeHit := AEdgeHit;
     Result.HitTime := dEarliestHitTime;
@@ -478,7 +504,8 @@ begin
         // todo .. remove circle from board
         APathPart := TCircleUtils.GetPathPartForCircleID(APathPartList,
           AHitDetail.iCircleId);
-        APathPartList.Delete(APathPart);
+        if (supports(APathPart,IPathPart) and   (APathPart.Circle.GetLabel() <> 'Puck')) then
+          APathPartList.Delete(APathPart);
       end;
 
     end;

@@ -34,7 +34,7 @@ type
 implementation
 
 uses
-  uncirclephysicsconstants;
+  uncirclephysicsconstants, GraphType;
 
 { TBoardRenderer }
 
@@ -103,11 +103,26 @@ begin
     while (dRadius <(5.3 * TARGET_RADIUS)) do
     begin
       ACanvas.LineTo( BOARD_WIDTH div 2 +  Round(dRadius * cos(dAngle)), + BOARD_HEIGHT div  2 + Round(dRadius * sin(dAngle)));
-      dRadius += 0.3;
+      dRadius += 0.5;
       dAngle += 0.2;
-
     end;
 
+    ACanvas.moveTo(BOARD_WIDTH div 2, BOARD_HEIGHT div 2);
+    dAngle:= 0;
+    dRadius := 0;
+    while (dRadius <(5.3 * TARGET_RADIUS)) do
+    begin
+      ACanvas.LineTo( BOARD_WIDTH div 2 +  Round(dRadius * cos(dAngle)), + BOARD_HEIGHT div  2 + Round(dRadius * sin(dAngle)));
+      dRadius += 0.4;
+      dAngle += 0.2;
+    end;
+
+    ACanvas.Brush.Color := clWhite;
+    ACanvas.FloodFill(
+    (BOARD_WIDTH div 2) + 4, (BOARD_WIDTH div 2)+ 5, clLtGray, fsBorder);
+    ACanvas.Brush.Color :=  TColor($321280);
+    ACanvas.FloodFill(
+    (BOARD_WIDTH div 2) + 2, (BOARD_WIDTH div 2)+ 2, clLtGray, fsBorder);
 
 
     ACanvas.Brush.Color := $f0f0f0;

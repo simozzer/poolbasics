@@ -10,7 +10,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, StdCtrls,
   MaskEdit, ExtCtrls, ComCtrls, unGameBoard,
   unCirclePhysics, BGRABitmap, unHelperInterfaces,
-  unOtherCircles, unAngleSelectorControl, unBallsInMotion;
+  unOtherCircles, unAngleSelectorControl, unBallsInMotion, Types;
 
 type
 
@@ -19,40 +19,43 @@ type
   TForm1 = class(TForm, IBasicLogger)
     actTrigger: TAction;
     ActionList1: TActionList;
+    btnClearLog: TButton;
+    btnLessAngle: TButton;
     btnMoreAngle: TButton;
     btnRenderFrame: TButton;
+    btnTestMove: TButton;
+    btnDrawRects: TButton;
     btnTimeAdd: TButton;
     btnTimeSubtract: TButton;
-    btnClearLog: TButton;
     btnTrigger: TButton;
-    btnLessAngle: TButton;
     chkContinueRandom: TCheckBox;
     edtTimeIncrement: TEdit;
     edtTime: TEdit;
     grpTakeShot: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
+    lblTimeMs: TLabel;
     lblAngle: TLabel;
     lblTimeIncrement: TLabel;
     lblFrameTime: TLabel;
     lblVel: TLabel;
     lstEvents: TMemo;
-    trkVelocity: TTrackBar;
     ImageList1: TImageList;
     AnimationTimer: TTimer;
+    Panel1: TPanel;
+    trkVelocity: TTrackBar;
     procedure actRenderExecute(Sender: TObject; const dTime: double);
     procedure actTriggerExecute(Sender: TObject);
     procedure AnimationTimerTimer(Sender: TObject);
 
     procedure btnClearLogClick(Sender: TObject);
-    procedure btnDrawTrajectoryClick(Sender: TObject);
+    procedure btnDrawRectsClick(Sender: TObject);
     procedure btnLessAngleClick(Sender: TObject);
     procedure btnMoreAngleClick(Sender: TObject);
     procedure btnRenderFrameClick(Sender: TObject);
     procedure btnTimeAddClick(Sender: TObject);
     procedure btnTimeSubtractClick(Sender: TObject);
-    procedure chkContinueRandomChange(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
+    procedure btnTestMoveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure trkVelocityChange(Sender: TObject);
 
@@ -87,6 +90,8 @@ type
 
     function GetPuck: ICircle;
     function GetVelocity: double;
+    function AddTargetCircle(pt: TPointF; const sText: string;
+      const clrBrush, clrPen: TColor): ICircle;
 
   public
     procedure DoAngleChanged(Sender: TObject);
@@ -101,9 +106,12 @@ implementation
 
 
 uses
-  uncirclephysicsconstants, types, unCircleUtils, Math;
+  uncirclephysicsconstants, unCircleUtils, Math;
 
 {$R *.lfm}
+
+type
+  pRectF = ^TRectF;
 
 
 { TForm1 }
@@ -168,10 +176,13 @@ var
   i: integer;
   intfTimeslice: ITimeslice;
   intfVector: IBasicVector;
-  dTimeInSlice: double;
-  iTimeSliceIndex: integer;
+  APathPart: IPathPart;
 begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
+
+  // TODO: REMOVE (speed up for tests)
+  // cTimeSinceStart:= cTimeSinceStart * 4;
+  lblTimeMs.Caption := IntToStr(cTimeSinceStart);
 
   intfTimeslice := FPathCalculator.GetThePlotAtTime(cTimeSinceStart);
 
@@ -192,12 +203,17 @@ begin
 
     if chkContinueRandom.Checked then
     begin
-      intfVector := TCircleUtils.GetPathPartForCircleID(
-        FPathCalculator.Timeslices[0].PathParts, FiPuckID).Vector;
-      intfVector.Angle := Random * (2 * pi);
-      intfVector.InitialVelocity := 0.5 + Random * 1.5;
-      actTrigger.Enabled := True;
-      actTriggerExecute(Self);
+      APathPart := TCircleUtils.GetPathPartForCircleID(
+        FPathCalculator.Timeslices[0].PathParts, FiPuckID);
+      if supports(APathPart, IPathPart) then
+      begin
+        intfVector := APathPart.Vector;
+        intfVector.Angle := Random * (2 * pi);
+        intfVector.InitialVelocity := 0.5 + Random * 1.5;
+        actTrigger.Enabled := True;
+        actTriggerExecute(Self);
+      end;
+
     end;
 
   end
@@ -230,11 +246,120 @@ begin
   lstEvents.Clear;
 end;
 
-// Draw the trajectories of all objects
-procedure TForm1.btnDrawTrajectoryClick(Sender: TObject);
+
+procedure TForm1.btnDrawRectsClick(Sender: TObject);
+
+
+  function GetLimitRect(AVector: IBasicVector; ACircle: ICircle): TRectF;
+  var
+    dLeft, dRight, dTop, dBottom, dRadius, xAtSTop, yAtStop, originX, originY: double;
+  begin
+    dRadius := ACircle.Radius;
+    xAtSTop := AVector.GetXAtStop;
+    YAtStop := AVector.GetYAtStop;
+    originX := AVector.Origin.X;
+    OriginY := AVector.Origin.Y;
+
+    if originX < XAtStop then
+    begin
+      // Moving Right
+      dLeft := originX - dRadius;
+      dRight := XAtStop + dRadius;
+    end
+    else
+    begin
+      // Moving Left;
+      dLeft := XAtStop - dRadius;
+      dRight := OriginX + dRadius;
+    end;
+
+    if YAtStop > originY then
+    begin
+      // Moving Down
+      dTop := OriginY - dRadius;
+      dBottom := YAtStop + dRadius;
+    end
+    else
+    begin
+      // Moving Up;
+      dTop := YAtStop - dRadius;
+      dBottom := OriginY + dRadius;
+    end;
+
+    Result.Left := dLeft;
+    Result.Right := dRight;
+    Result.Top := dTop;
+    Result.Bottom := dBottom;
+  end;
+
+
+  function IntersectRectF(const R1, R2: TRectF; pInterectRect: pRectF): Boolean;
+  var
+    lRect: TRectF;
+  begin
+    lRect := R1;
+    if R2.Left > R1.Left then
+      lRect.Left := R2.Left;
+    if R2.Top > R1.Top then
+      lRect.Top := R2.Top;
+    if R2.Right < R1.Right then
+      lRect.Right := R2.Right;
+    if R2.Bottom < R1.Bottom then
+      lRect.Bottom := R2.Bottom;
+
+    if (lRect.Left > lRect.Right) or (lRect.Top > lRect.Bottom) then
+    begin
+      Result := False;
+    end
+    else
+    begin
+      Result := True;
+      if assigned(pInterectRect) then
+      begin
+        pInterectRect^.Left:= lRect.Left;
+        pInterectRect^.Top:= lRect.Top;
+        pInterectRect^.Right:= lRect.Right;
+        pInterectRect^.Bottom:= lRect.Bottom;
+      end;
+    end;
+  end;
+
+var
+  intfPathPart: IPathPart;
+  lRect1,lRect2, IntersectRect: TRectF;
+
 begin
-  DrawTrajectoryPaths;
+
+  FBoard.Canvas.Brush.Color:= clRed;
+  intfPathPart := FPathCalculator.Timeslices[0].PathParts[0];
+  if supports(intfPathPart, IPathPart) then
+  begin
+    lRect1 := GetLimitRect(intfPathPart.Vector, intfPathPart.Circle);
+    FBoard.Canvas.Rectangle(Round(lRect1.Left), Round(lRect1.Top), Round(
+      lRect1.Right), Round(lRect1.Bottom));
+  end;
+
+  intfPathPart := FPathCalculator.Timeslices[0].PathParts[1];
+  if supports(intfPathPart, IPathPart) then
+  begin
+    lRect2 := GetLimitRect(intfPathPart.Vector, intfPathPart.Circle);
+    FBoard.Canvas.Rectangle(Round(lRect2.Left), Round(lRect2.Top), Round(
+      lRect2.Right), Round(lRect2.Bottom));
+
+    IntersectRect.Left := 0;
+    IntersectRect.Top := 0;
+    IntersectRect.Right := 0;
+    IntersectRect.Bottom := 0;
+    If IntersectRectF(lRect1,lRect2,@IntersectRect) then
+    begin
+        FBoard.Canvas.Brush.Color:= clWhite;
+        FBoard.Canvas.Rectangle(Round(IntersectRect.Left), Round(IntersectRect.Top), Round(
+      IntersectRect.Right), Round(IntersectRect.Bottom));
+    end;
+  end;
+
 end;
+
 
 // Decrease the target angle by a small amount
 procedure TForm1.btnLessAngleClick(Sender: TObject);
@@ -270,14 +395,38 @@ begin
   actRenderExecute(Self, StrToFloatDef(edtTime.Text, 0.0));
 end;
 
-procedure TForm1.chkContinueRandomChange(Sender: TObject);
+procedure TForm1.btnTestMoveClick(Sender: TObject);
+var
+  ACircle: ICircle;
+  intfVector: IBasicVector;
+  iCircleID: integer;
+  dVelocity: double;
 begin
+  //  TODO
+  FPathCalculator.Clear;
 
-end;
+  dVelocity := 0.75;
 
-procedure TForm1.FormCreate(Sender: TObject);
-begin
+  ACircle := AddTargetCircle(TPointF.Create(BOARD_WIDTH div 2,
+    BOARD_HEIGHT - TARGET_RADIUS), 'PUCK', clYellow, clBlack);
+  iCircleId := TCircleUtils.GetCircleId(ACircle);
+  intfVector := TCircleUtils.GetPathPartForCircleID(
+    FPathCalculator.Timeslices[0].PathParts, iCircleId).Vector;
+  intfVector.Angle := -pi / 2;
+  intfVector.InitialVelocity := dVelocity;
 
+  ACircle := AddTargetCircle(TPointF.Create(BOARD_WIDTH -
+    TARGET_RADIUS, BOARD_HEIGHT div 2), 'target', clBlue, clBlack);
+  iCircleId := TCircleUtils.GetCircleId(ACircle);
+  intfVector := TCircleUtils.GetPathPartForCircleID(
+    FPathCalculator.Timeslices[0].PathParts, iCircleId).Vector;
+  intfVector.Angle := pi;
+  intfVector.InitialVelocity := dVelocity;
+
+  chkContinueRandom.Checked := False;
+
+  actRenderExecute(Self, 0);
+ actTriggerExecute(Self);
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
@@ -358,7 +507,7 @@ end;
 // Add a message to the debug log
 procedure TForm1.LogMessage(const sMessage: string);
 begin
-    lstEvents.Lines.Add(sMessage);
+  lstEvents.Lines.Add(sMessage);
 end;
 
 // Move the position of the puck when the game board is clicked
@@ -487,32 +636,31 @@ begin
   DrawTrajectoryPaths;
 end;
 
-constructor TForm1.Create(AOwner: TComponent);
 
-
-  function AddTargetCircle(pt: TPointF; const sText: string;
+function TForm1.AddTargetCircle(pt: TPointF; const sText: string;
   const clrBrush, clrPen: TColor): ICircle;
-  var
-    intfCircle: ICircle;
-  begin
-    intfCircle := TBaseCircle.Create(TARGET_RADIUS, TARGET_MASS);
-    intfCircle.BrushColor := clrBrush;
-    intfCircle.PenColor := clrPen;
-  {$IFDEF DEBUG}
-    intfCircle.Text := sText;
-  {$ENDIF}
-    // Add a small amount of random to the position for each circle
-    pt.X := pt.X + Math.RandomRange(0, 3000) / 6000;
-    pt.Y := pt.Y + Math.RandomRange(0, 3000) / 6000;
-    FPathCalculator.AddCircleWithPosition(intfCircle, pt);
-  end;
+var
+  intfCircle: ICircle;
+begin
+  intfCircle := TBaseCircle.Create(TARGET_RADIUS, TARGET_MASS);
+  intfCircle.BrushColor := clrBrush;
+  intfCircle.PenColor := clrPen;
+{$IFDEF DEBUG}
+  intfCircle.Text := sText;
+{$ENDIF}
+  // Add a small amount of random to the position for each circle
+  pt.X := pt.X + Math.RandomRange(0, 3000) / 6000;
+  pt.Y := pt.Y + Math.RandomRange(0, 3000) / 6000;
+  FPathCalculator.AddCircleWithPosition(intfCircle, pt);
+  Result := intfCircle;
+end;
 
+
+constructor TForm1.Create(AOwner: TComponent);
 var
   ACircle: ICircle;
   intfVector: IBasicVector;
   dHalfWidth, dHalfHeight: double;
-  dHypotenuse: double;
-
 begin
   inherited Create(AOwner);
   FBoard := TCaromGameBoard.Create(Self);
