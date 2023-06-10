@@ -161,7 +161,7 @@ begin
 
   FiLastRenderedTimesliceIndex := -1;
   FPathCalculator.GainThePlot;
-  DrawTrajectoryPaths;
+  //DrawTrajectoryPaths;
   FcStartAnimationTime := GetTickCount64;
 
   AnimationTimer.Enabled := True;
@@ -181,7 +181,7 @@ begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
 
   // TODO: REMOVE (speed up for tests)
-  // cTimeSinceStart:= cTimeSinceStart * 4;
+ // cTimeSinceStart:= cTimeSinceStart div 4;
   lblTimeMs.Caption := IntToStr(cTimeSinceStart);
 
   intfTimeslice := FPathCalculator.GetThePlotAtTime(cTimeSinceStart);
@@ -420,13 +420,13 @@ begin
   iCircleId := TCircleUtils.GetCircleId(ACircle);
   intfVector := TCircleUtils.GetPathPartForCircleID(
     FPathCalculator.Timeslices[0].PathParts, iCircleId).Vector;
-  intfVector.Angle := pi;
+  intfVector.Angle := pi + 0.01;
   intfVector.InitialVelocity := dVelocity;
 
   chkContinueRandom.Checked := False;
 
   actRenderExecute(Self, 0);
- actTriggerExecute(Self);
+ //actTriggerExecute(Self);
 end;
 
 procedure TForm1.FormShow(Sender: TObject);

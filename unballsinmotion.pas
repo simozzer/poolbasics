@@ -214,8 +214,10 @@ begin
         intfStoreCircleCollisionResult := intfCircleCollisionResult;
         dEarliestHitTime := intfCircleCollisionResult.HitTime;
 
+        {
         LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
           'Circle', dEarliestHitTime]));
+          }
 
       end;
     end

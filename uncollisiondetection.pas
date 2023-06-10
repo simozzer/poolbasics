@@ -388,20 +388,24 @@ begin
       SubtractedPathVelVector :=
         AVector1.GetVelocityVectorAtTime(0) - AVector2.GetVelocityVectorAtTime(0);
 
-      // TODO
       dVelocity := SubtractedPathVelVector.length;
+
+      //TODO.. check this angle (might need adjustment)
       dAngle := ArcTan2(SubtractedPathVelVector.Data[1],
         SubtractedPathVelVector.Data[0]);
 
 
       //LogMessage(Format('Subtracted: Vel: %f, Angle: %f',[SubtractedPathVelVector.length, dANgle]));
 
-      ATempCircle1 := TBaseCircle.Create(ACircle1.GetRadius, ACircle1.Mass);
+      // Set up the 1st circle with
+//      ATempCircle1 := TBaseCircle.Create(ACircle1.GetRadius, ACircle1.Mass);
+      ATempCircle1 := TBaseCircle.Create(ACircle1.GetRadius /2 , ACircle1.Mass);
       TempCircle1ID := TCircleUtils.GetCircleId(ATempCircle1);
       ATempVector1 := TBasicVector.Create(AVector1.Origin, dVelocity, dAngle, 0);
       ATempPathPart1 := TPathPart.Create(ATempCircle1, ATEmpVector1);
 
-      ATempCircle2 := TBaseCircle.Create(ACircle2.GetRadius, ACircle2.Mass);
+//      ATempCircle2 := TBaseCircle.Create(ACircle2.GetRadius, ACircle2.Mass);
+      ATempCircle2 := TBaseCircle.Create(ACircle2.GetRadius /2, ACircle2.Mass);
       TempCircle2ID := TCircleUtils.GetCircleId(ATempCircle2);
       ATempVector2 := TBasicVector.Create(AVector2.Origin, 0, 0, 0);
       ATempPathPart2 := TPathPart.Create(ATempCircle2, ATEmpVector2);
@@ -419,17 +423,19 @@ begin
           LogMessage(Format('Hit time %f. Mall Bax Travel times (%f, %f)',
             [intfStationaryHitResult.GetHitTime, dMaxTravelTime1, dMaxTravelTime2]));
 
+
           LogMessage(
             Format('Position at collision. Vec1: (%f, %f), Vec2: (%f, %f)', [AVector1.GetXAtTime(dHitTime),
             AVector1.GetYAtTime(dHitTime), AVector2.GetXAtTime(dHitTime),
             AVector2.GetYAtTime(dHitTime)]));
             }
 
-          Result := TCircleCollisionResult.Create(Circle1ID, Circle2ID, dHitTime,
-          AVector1.GetXAtTime(dHitTime),
-          AVector1.GetYAtTime(dHitTime),
-          AVector2.GetXAtTime(dHitTime),
-          AVector2.GetYAtTime(dHitTime));
+
+          Result := TCircleCollisionResult.Create(Circle1ID, Circle2ID, AVector1.StartTime + dHitTime,
+          AVector1.StartTime + AVector1.GetXAtTime(dHitTime),
+          AVector1.StartTime + AVector1.GetYAtTime(dHitTime),
+          AVector2.StartTime + AVector2.GetXAtTime(dHitTime),
+          AVector2.StartTime + AVector2.GetYAtTime(dHitTime));
 
         end;
 
