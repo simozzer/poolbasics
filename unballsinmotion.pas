@@ -191,15 +191,11 @@ begin
         AEdgeHit := ehCircle;
         intfStoreCircleCollisionResult := intfCircleCollisionResult;
         dEarliestHitTime := intfCircleCollisionResult.HitTime;
-
-        {
-        LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
-          'Circle', dEarliestHitTime]));
-          }
       end;
     end;
 
 
+    {
     for j := 0 to pred(intfMovingPathParts.Count) do
     begin
       intfCircleCollisionResult :=
@@ -213,14 +209,9 @@ begin
         AEdgeHit := ehCircle;
         intfStoreCircleCollisionResult := intfCircleCollisionResult;
         dEarliestHitTime := intfCircleCollisionResult.HitTime;
-
-        {
-        LogMessage(Format('%s hit %s at %f', [intfPathPart.Circle.Text,
-          'Circle', dEarliestHitTime]));
-          }
-
       end;
     end
+    }
 
     {
 

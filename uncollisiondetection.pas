@@ -398,14 +398,12 @@ begin
       //LogMessage(Format('Subtracted: Vel: %f, Angle: %f',[SubtractedPathVelVector.length, dANgle]));
 
       // Set up the 1st circle with
-//      ATempCircle1 := TBaseCircle.Create(ACircle1.GetRadius, ACircle1.Mass);
-      ATempCircle1 := TBaseCircle.Create(ACircle1.GetRadius /2 , ACircle1.Mass);
+      ATempCircle1 := TBaseCircle.Create(ACircle1.GetRadius, ACircle1.Mass);
       TempCircle1ID := TCircleUtils.GetCircleId(ATempCircle1);
       ATempVector1 := TBasicVector.Create(AVector1.Origin, dVelocity, dAngle, 0);
       ATempPathPart1 := TPathPart.Create(ATempCircle1, ATEmpVector1);
 
-//      ATempCircle2 := TBaseCircle.Create(ACircle2.GetRadius, ACircle2.Mass);
-      ATempCircle2 := TBaseCircle.Create(ACircle2.GetRadius /2, ACircle2.Mass);
+      ATempCircle2 := TBaseCircle.Create(ACircle2.GetRadius, ACircle2.Mass);
       TempCircle2ID := TCircleUtils.GetCircleId(ATempCircle2);
       ATempVector2 := TBasicVector.Create(AVector2.Origin, 0, 0, 0);
       ATempPathPart2 := TPathPart.Create(ATempCircle2, ATEmpVector2);

@@ -220,6 +220,24 @@ object Form1: TForm1
       TabOrder = 3
     end
   end
+  object trkSpeedMultiplier: TTrackBar
+    Left = 152
+    Height = 25
+    Top = 728
+    Width = 200
+    Min = -10
+    Position = 0
+    TabOrder = 7
+  end
+  object lblPlaybackSpeed: TLabel
+    Left = 232
+    Height = 15
+    Top = 712
+    Width = 32
+    Caption = 'Speed'
+    FocusControl = trkSpeedMultiplier
+    ParentColor = False
+  end
   object ActionList1: TActionList
     Images = ImageList1
     Left = 136

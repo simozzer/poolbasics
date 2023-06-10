@@ -34,6 +34,7 @@ type
     grpTakeShot: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
+    lblPlaybackSpeed: TLabel;
     lblTimeMs: TLabel;
     lblAngle: TLabel;
     lblTimeIncrement: TLabel;
@@ -43,6 +44,7 @@ type
     ImageList1: TImageList;
     AnimationTimer: TTimer;
     Panel1: TPanel;
+    trkSpeedMultiplier: TTrackBar;
     trkVelocity: TTrackBar;
     procedure actRenderExecute(Sender: TObject; const dTime: double);
     procedure actTriggerExecute(Sender: TObject);
@@ -126,6 +128,7 @@ var
   intfPathPart: IPathPart;
   ptPosition: TPointF;
   dRadius: double;
+  dVectorLen : Double;
 begin
   FBoard.Render;
   BoardCanvas := FBoard.BoardCanvas;
@@ -147,6 +150,14 @@ begin
         round(ptPosition.Y - dRadius),
         round(ptPosition.X + dRadius),
         round(ptPosition.Y + dRadius));
+      if intfPathPart.Vector.GetVelocityAtTime(dTime - intfTimeslice.StartTime) > 0 then
+      begin
+        dVectorLen := dRadius + (4 * dRadius * intfPathPart.Vector.GetVelocityAtTime(dTime));
+        BoardCanvas.Pen.Color := clBlack;
+        BoardCanvas.moveTo(round(ptPosition.X),round(ptPosition.Y));
+        BoardCanvas.lineTo(Round(ptPosition.X + Cos(intfPathPart.Vector.Angle) *  dVectorLen),
+        Round(ptPosition.Y + Sin(intfPathPart.Vector.Angle) * dVectorLen));
+      end;
 
     end;
 
@@ -181,7 +192,12 @@ begin
   cTimeSinceStart := GetTickCount64 - FcStartAnimationTime;
 
   // TODO: REMOVE (speed up for tests)
- // cTimeSinceStart:= cTimeSinceStart div 4;
+  if trkSpeedMultiplier.Position > 0 then
+    cTimeSinceStart:= cTimeSinceStart * (trkSpeedMultiplier.Position)
+  else if trkSpeedMultiplier.Position < 0 then
+    cTimeSinceStart:= cTimeSinceStart div (-trkSpeedMultiplier.Position);
+
+
   lblTimeMs.Caption := IntToStr(cTimeSinceStart);
 
   intfTimeslice := FPathCalculator.GetThePlotAtTime(cTimeSinceStart);
@@ -209,7 +225,7 @@ begin
       begin
         intfVector := APathPart.Vector;
         intfVector.Angle := Random * (2 * pi);
-        intfVector.InitialVelocity := 0.5 + Random * 1.5;
+        intfVector.InitialVelocity := 0.5 + Random * 8;  // /2
         actTrigger.Enabled := True;
         actTriggerExecute(Self);
       end;
@@ -426,7 +442,7 @@ begin
   chkContinueRandom.Checked := False;
 
   actRenderExecute(Self, 0);
- //actTriggerExecute(Self);
+ actTriggerExecute(Self);
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
