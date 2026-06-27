@@ -12,7 +12,7 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, tachartlazaruspkg, frmCirclePhysicsMain, unCirclePhysics,
+  Forms, frmCirclePhysicsMain, unCirclePhysics,
   uncirclephysicsconstants, unHelperInterfaces,
   unOtherCircles, unAngleSelectorControl, unBoardRenderer, unGameBoard,
   unBallsInMotion, unCollisionTypes, unCollisionDetection,

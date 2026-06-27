@@ -26,15 +26,6 @@
     </RunParams>
     <RequiredPackages>
       <Item>
-        <PackageName Value="bgracontrols"/>
-      </Item>
-      <Item>
-        <PackageName Value="bgragames"/>
-      </Item>
-      <Item>
-        <PackageName Value="TAChartLazarusPkg"/>
-      </Item>
-      <Item>
         <PackageName Value="LCL"/>
       </Item>
     </RequiredPackages>

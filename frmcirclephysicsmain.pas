@@ -9,7 +9,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ActnList, StdCtrls,
   MaskEdit, ExtCtrls, ComCtrls, unGameBoard,
-  unCirclePhysics, BGRABitmap, unHelperInterfaces,
+  unCirclePhysics, unHelperInterfaces,
   unOtherCircles, unAngleSelectorControl, unBallsInMotion;
 
 type
