@@ -60,7 +60,7 @@ implementation
 
 uses
   uncirclephysicsconstants, unCirclePhysics, Matrix, unCircleUtils,
-  unPathPartImplementation, unOtherCircles, Forms;
+  unPathPartImplementation, unOtherCircles, Forms, Math;
 
 procedure LogMessage(const sMessage: string);
 var
@@ -68,6 +68,190 @@ var
 begin
   if supports(Application.MainForm, IBasicLogger, intfLogger) then
     intfLogger.LogMessage(sMessage);
+end;
+
+{ ----------------------------------------------------------------------------
+  Analytic root finders for the two-moving-circle collision solve.
+
+  While both discs move, the relative position is  A + B t + C t^2  (constant
+  relative acceleration), so |relative position| = sumRadii is a QUARTIC in t.
+  We solve it exactly: bracket the first downcrossing using the quartic's
+  critical points (roots of its cubic derivative) then bisect. Ported from the
+  JavaScript engine (roots.js / events.js).
+  ---------------------------------------------------------------------------- }
+
+const
+  ROOT_EPS = 1e-12;
+  MC_TIME_EPS = 1e-9;
+  MC_CONTACT_EPS = 1e-4; // metres-equivalent: treat as already-touching
+
+// Real cube root (Power() can't take a negative base with a fractional exponent).
+function SignedCbrt(const x: double): double;
+begin
+  if x < 0 then
+    Result := -Power(-x, 1.0 / 3.0)
+  else
+    Result := Power(x, 1.0 / 3.0);
+end;
+
+// Real roots of a t^2 + b t + c (0..2), written into r[]; count is the result.
+function QuadRealRoots(const a, b, c: double; var r: array of double): integer;
+var
+  disc, s: double;
+begin
+  if Abs(a) < ROOT_EPS then
+  begin
+    if Abs(b) < ROOT_EPS then
+      Result := 0
+    else
+    begin
+      r[0] := -c / b;
+      Result := 1;
+    end;
+    Exit;
+  end;
+  disc := (b * b) - (4 * a * c);
+  if disc < 0 then
+  begin
+    Result := 0;
+    Exit;
+  end;
+  s := Sqrt(disc);
+  r[0] := (-b - s) / (2 * a);
+  r[1] := (-b + s) / (2 * a);
+  Result := 2;
+end;
+
+// Real roots of a cubic a t^3 + b t^2 + c t + d (Cardano; trig form for 3 real roots).
+function CubicRealRoots(const a, b, c, d: double; var r: array of double): integer;
+var
+  p, q, rr, bigP, bigQ, shift, disc, s, u, m, arg, th: double;
+  k: integer;
+begin
+  if Abs(a) < ROOT_EPS then
+  begin
+    Result := QuadRealRoots(b, c, d, r);
+    Exit;
+  end;
+  p := b / a;
+  q := c / a;
+  rr := d / a;
+  // depress: t = x - p/3  ->  x^3 + bigP x + bigQ
+  bigP := q - (p * p) / 3;
+  bigQ := (2 * p * p * p) / 27 - (p * q) / 3 + rr;
+  shift := -p / 3;
+  disc := (bigQ * bigQ) / 4 + (bigP * bigP * bigP) / 27;
+  if disc > ROOT_EPS then
+  begin
+    s := Sqrt(disc);
+    r[0] := SignedCbrt(-bigQ / 2 + s) + SignedCbrt(-bigQ / 2 - s) + shift;
+    Result := 1;
+  end
+  else if disc < -ROOT_EPS then
+  begin
+    m := 2 * Sqrt(-bigP / 3);
+    arg := (3 * bigQ) / (bigP * m);
+    if arg > 1 then arg := 1;
+    if arg < -1 then arg := -1;
+    th := ArcCos(arg) / 3;
+    for k := 0 to 2 do
+      r[k] := m * Cos(th - (2 * Pi * k) / 3) + shift;
+    Result := 3;
+  end
+  else
+  begin
+    u := SignedCbrt(-bigQ / 2);
+    r[0] := 2 * u + shift;
+    r[1] := -u + shift;
+    Result := 2;
+  end;
+end;
+
+function QuarticEval(const k4, k3, k2, k1, k0, t: double): double;
+begin
+  Result := ((((k4 * t) + k3) * t + k2) * t + k1) * t + k0;
+end;
+
+// First t in (lo,hi] where the quartic crosses to <= 0 (assuming q(lo) > 0). Brackets via
+// the quartic's critical points (cubic q'=0) then bisects the first sign-changing segment.
+function FirstQuarticRoot(const k4, k3, k2, k1, k0, lo, hi: double;
+  out tHit: double): boolean;
+var
+  crit: array[0..2] of double;
+  bps: array[0..3] of double;
+  nCrit, nbp, i, j: integer;
+  aSeg, bp, x0, x1, mid, tmp: double;
+begin
+  Result := False;
+  tHit := 0;
+  if hi <= lo then Exit;
+  if QuarticEval(k4, k3, k2, k1, k0, lo) <= 0 then
+  begin
+    tHit := lo;
+    Result := True;
+    Exit;
+  end;
+  // critical points: q'(t) = 4k4 t^3 + 3k3 t^2 + 2k2 t + k1
+  nCrit := CubicRealRoots(4 * k4, 3 * k3, 2 * k2, k1, crit);
+  nbp := 0;
+  for i := 0 to nCrit - 1 do
+    if (crit[i] > lo) and (crit[i] < hi) then
+    begin
+      bps[nbp] := crit[i];
+      Inc(nbp);
+    end;
+  // ascending sort of the in-range critical points
+  for i := 0 to nbp - 2 do
+    for j := 0 to nbp - 2 - i do
+      if bps[j] > bps[j + 1] then
+      begin
+        tmp := bps[j];
+        bps[j] := bps[j + 1];
+        bps[j + 1] := tmp;
+      end;
+  bps[nbp] := hi;
+  Inc(nbp);
+
+  aSeg := lo;
+  for i := 0 to nbp - 1 do
+  begin
+    bp := bps[i];
+    if QuarticEval(k4, k3, k2, k1, k0, bp) <= 0 then
+    begin
+      x0 := aSeg;
+      x1 := bp;
+      while (x1 - x0) > 1e-10 do
+      begin
+        mid := 0.5 * (x0 + x1);
+        if QuarticEval(k4, k3, k2, k1, k0, mid) <= 0 then
+          x1 := mid
+        else
+          x0 := mid;
+      end;
+      tHit := 0.5 * (x0 + x1);
+      Result := True;
+      Exit;
+    end;
+    aSeg := bp;
+  end;
+end;
+
+// First contact time of relative motion (A + B t + C t^2) reaching |.| = R, within (lo,hi].
+function FirstContactTime(const ax, ay, bx, by, cx, cy, R, lo, hi: double;
+  out tHit: double): boolean;
+var
+  k4, k3, k2, k1, k0: double;
+begin
+  Result := False;
+  tHit := 0;
+  if hi <= lo + MC_TIME_EPS then Exit;
+  k4 := (cx * cx) + (cy * cy);
+  k3 := 2 * ((bx * cx) + (by * cy));
+  k2 := ((bx * bx) + (by * by)) + 2 * ((ax * cx) + (ay * cy));
+  k1 := 2 * ((ax * bx) + (ay * by));
+  k0 := ((ax * ax) + (ay * ay)) - (R * R);
+  if FirstQuarticRoot(k4, k3, k2, k1, k0, lo, hi, tHit) then
+    Result := (tHit > MC_TIME_EPS);
 end;
 
 
@@ -275,100 +459,118 @@ begin
   end;
 end;
 
+// Earliest contact time between TWO MOVING circles (each decelerating along its own
+// heading), or nil. Solved analytically as a quartic in t, in two windows: [0, T1] while
+// both still move (constant relative acceleration), then [T1, T2] with the sooner-stopping
+// disc frozen and the other still moving. Mirrors the JavaScript engine's detectPair.
 class function TCollisionDetection.DetectMovingCircleHit(const APathPart1: IPathPart;
   const APathPart2: IPathPart): ICircleCollisionResult;
-
-  // Return a rectangle for the path covered
-  function GetLimitRect(AVector: IBasicVector; ACircle: ICircle): TRectF;
-  var
-    dLeft, dRight, dTop, dBottom, dRadius: double;
-  begin
-    dRadius := ACircle.Radius;
-    ;
-    if AVector.Origin.X < AVector.GetXAtStop then
-    begin
-      // Moving Right
-      dLeft := AVector.origin.X - dRadius;
-      dRight := AVector.GetXAtStop + dRadius;
-    end
-    else
-    begin
-      // Moving Left;
-      dLeft := AVector.GetXAtStop - dRadius;
-      dRight := AVector.Origin.X + dRadius;
-    end;
-    if (dLeft < dRadius) then
-      dLeft := dRadius;
-    if (dRight > BOARD_WIDTH - dRadius) then
-      dRight := BOARD_WIDTH - dRadius;
-
-    if AVector.Origin.Y < AVector.GetYAtStop then
-    begin
-      // Moving Up
-      dTop := AVector.Origin.Y - AVector.GetYAtStop - dRadius;
-      dBottom := AVector.Origin.Y + dRadius;
-    end
-    else
-    begin
-      // Moving Down;
-      dTop := AVector.origin.Y - dRadius;
-      dBottom := AVector.GetYAtStop + dRadius;
-    end;
-    if (dTop < dRadius) then
-      dTop := dRadius;
-    if (dBottom > BOARD_HEIGHT - dRadius) then
-      dBottom := BOARD_HEIGHT - dRadius;
-
-    Result.Left := dLeft;
-    Result.Right := dRight;
-    Result.Top := dTop;
-    Result.Bottom := dBottom;
-  end;
-
-  function IntersectRectF(const R1, R2: TRectF): boolean;
-  var
-    lRect: TRectF;
-  begin
-    lRect := R1;
-    if R2.Left > R1.Left then
-      lRect.Left := R2.Left;
-    if R2.Top > R1.Top then
-      lRect.Top := R2.Top;
-    if R2.Right < R1.Right then
-      lRect.Right := R2.Right;
-    if R2.Bottom < R1.Bottom then
-      lRect.Bottom := R2.Bottom;
-
-    if (lRect.Width * lRect.Height) = 0 then
-    begin
-      Result := False;
-    end
-    else
-    begin
-      Result := True;
-    end;
-  end;
-
 var
-  ALimitRect1, ALimitRect2: TRectF;
   AVector1, AVector2: IBasicVector;
   ACircle1, ACircle2: ICircle;
-  SubtractedPathVelVector: Tvector2_double;
+  R, Ta, Tb, T1, T2: double;
+  u1, u2, ang1, ang2: double;
+  v1x, v1y, v2x, v2y: double;
+  acc1x, acc1y, acc2x, acc2y: double;
+  p1x, p1y, p2x, p2y: double;
+  dpx, dpy, dist, nx, ny, vn: double;
+  Ax, Ay, Bx, By, Cx, Cy, tHit, Pfx, Pfy: double;
+  bFirstSooner, found: boolean;
+  iId1, iId2: integer;
 begin
+  Result := nil;
+
   AVector1 := APathPart1.Vector;
   AVector2 := APathPart2.Vector;
   ACircle1 := APathPart1.Circle;
   ACircle2 := APathPart2.Circle;
 
-  ALimitRect1 := GetLimitRect(AVector1, ACircle1);
-  ALimitRect2 := GetLimitRect(AVector2, ACircle2);
+  R := ACircle1.Radius + ACircle2.Radius;
+  u1 := AVector1.InitialVelocity;
+  u2 := AVector2.InitialVelocity;
+  if (u1 <= 0) and (u2 <= 0) then Exit; // neither moving
 
-  // If rects instersect then it might be possible for them to collide
-  if IntersectRectF(ALimitRect1, ALimitRect2) then
+  p1x := AVector1.Origin.X;  p1y := AVector1.Origin.Y;
+  p2x := AVector2.Origin.X;  p2y := AVector2.Origin.Y;
+  ang1 := AVector1.Angle;    ang2 := AVector2.Angle;
+
+  v1x := u1 * Cos(ang1);  v1y := u1 * Sin(ang1);
+  v2x := u2 * Cos(ang2);  v2y := u2 * Sin(ang2);
+
+  // Acceleration vectors. DECELERATION is negative, so these oppose each disc's motion.
+  acc1x := DECELERATION * Cos(ang1);  acc1y := DECELERATION * Sin(ang1);
+  acc2x := DECELERATION * Cos(ang2);  acc2y := DECELERATION * Sin(ang2);
+
+  iId1 := TCircleUtils.GetCircleId(ACircle1);
+  iId2 := TCircleUtils.GetCircleId(ACircle2);
+
+  // Re-collision guard: if already touching, only an event if approaching (a just-resolved
+  // pair is separating and must not be re-detected at t ~ 0).
+  dpx := p1x - p2x;  dpy := p1y - p2y;
+  dist := Sqrt((dpx * dpx) + (dpy * dpy));
+  if (dist - R) <= MC_CONTACT_EPS then
   begin
-    SubtractedPathVelVector :=
-      AVector1.GetVelocityVectorAtTime(0) - AVector2.GetVelocityVectorAtTime(0);
+    if dist < ROOT_EPS then Exit; // coincident centres
+    nx := dpx / dist;  ny := dpy / dist;
+    vn := ((v1x - v2x) * nx) + ((v1y - v2y) * ny);
+    if vn < 0 then
+      Result := TCircleCollisionResult.Create(iId1, iId2, MC_TIME_EPS,
+        p1x, p1y, p2x, p2y);
+    Exit;
   end;
+
+  Ta := AVector1.GetTimeToStop;
+  Tb := AVector2.GetTimeToStop;
+  if Ta <= Tb then
+  begin
+    T1 := Ta;  T2 := Tb;  bFirstSooner := True;
+  end
+  else
+  begin
+    T1 := Tb;  T2 := Ta;  bFirstSooner := False;
+  end;
+
+  found := False;
+  tHit := -1;
+
+  // Window 1: [0, T1] — both discs moving (constant relative acceleration).
+  if T1 > 0 then
+  begin
+    Ax := p1x - p2x;
+    Ay := p1y - p2y;
+    Bx := v1x - v2x;
+    By := v1y - v2y;
+    Cx := 0.5 * (acc1x - acc2x);
+    Cy := 0.5 * (acc1y - acc2y);
+    found := FirstContactTime(Ax, Ay, Bx, By, Cx, Cy, R, 0, T1, tHit);
+  end;
+
+  // Window 2: [T1, T2] — the sooner-stopping disc frozen at its rest point, the other moving.
+  if (not found) and (T2 > T1) then
+  begin
+    if bFirstSooner then
+    begin
+      Pfx := AVector1.GetXAtTime(T1);  // frozen disc 1
+      Pfy := AVector1.GetYAtTime(T1);
+      Ax := p2x - Pfx;  Ay := p2y - Pfy;
+      Bx := v2x;  By := v2y;
+      Cx := 0.5 * acc2x;  Cy := 0.5 * acc2y;
+    end
+    else
+    begin
+      Pfx := AVector2.GetXAtTime(T1);  // frozen disc 2
+      Pfy := AVector2.GetYAtTime(T1);
+      Ax := p1x - Pfx;  Ay := p1y - Pfy;
+      Bx := v1x;  By := v1y;
+      Cx := 0.5 * acc1x;  Cy := 0.5 * acc1y;
+    end;
+    found := FirstContactTime(Ax, Ay, Bx, By, Cx, Cy, R, T1, T2, tHit);
+  end;
+
+  if found then
+    Result := TCircleCollisionResult.Create(iId1, iId2, tHit,
+      AVector1.GetXAtTime(tHit), AVector1.GetYAtTime(tHit),
+      AVector2.GetXAtTime(tHit), AVector2.GetYAtTime(tHit));
 end;
 
 class function TCollisionDetection.CalculateBounceAfterHittingCircle(

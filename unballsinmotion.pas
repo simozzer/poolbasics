@@ -199,6 +199,25 @@ begin
       end;
     end;
 
+    // Moving-vs-moving circle collisions (analytic two-body solve). Only j > i so each
+    // pair is tested once. This is what lets two balls that are travelling at the same
+    // time actually collide, instead of only a moving ball hitting a stationary one.
+    for j := i + 1 to pred(intfMovingPathParts.Count) do
+    begin
+      intfCircleCollisionResult :=
+        TCollisionDetection.DetectMovingCircleHit(intfPathPart,
+        intfMovingPathParts[j]);
+      if supports(intfCircleCollisionResult, ICircleCollisionResult) and
+        (intfCircleCollisionResult.HitTime > 0) and
+        ((dEarliestHitTime < 0) or
+        (intfCircleCollisionResult.HitTime < dEarliestHitTime)) then
+      begin
+        AEdgeHit := ehCircle;
+        intfStoreCircleCollisionResult := intfCircleCollisionResult;
+        dEarliestHitTime := intfCircleCollisionResult.HitTime;
+      end;
+    end;
+
     ptPocketOrigin.X := 0;
     ptPocketOrigin.Y := 0;
     intfCircleCollisionResult := TCollisionDetection.DetectPocketed(intfPathPart,ptPocketORigin);
